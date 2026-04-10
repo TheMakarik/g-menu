@@ -1,0 +1,11 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:keys="clr-namespace:GMenu.Modules.Localization.Model"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <system:String x:Key="{x:Static keys:LocalizationKey.Global}">Глобальные</system:String>
+    <system:String x:Key="{x:Static keys:LocalizationKey.Local}">Пользовательские</system:String>
+    <system:String x:Key="{x:Static keys:LocalizationKey.CloseTheApp}">Закрыть приложение</system:String>
+    <system:String x:Key="{x:Static keys:LocalizationKey.MinimizeTheApp}">Скрыть приложение</system:String>
+    <system:String x:Key="{x:Static keys:LocalizationKey.OpenGithubSource}">Показать исходный код</system:String>
+</ResourceDictionary>

@@ -1,9 +1,14 @@
 using System;
-using GMenu.Services.LinuxSystem;
-using GMenu.Services.LinuxSystem.interfaces;
+using System.Text.Json;
+using GMenu.Modules.LinuxSystem;
+using GMenu.Modules.LinuxSystem.interfaces;
+using GMenu.Modules.Localization;
+using GMenu.Modules.Localization.Interfaces;
+using GMenu.Views.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using static Avalonia.Application;
 
 namespace GMenu;
 
@@ -18,6 +23,7 @@ public sealed class Bootstrapper
                 theme: AnsiConsoleTheme.Code,
                 outputTemplate: StaticConfiguration.SerilogOuputTemplate)
 #endif
+            .MinimumLevel.Debug()
             .CreateLogger();
         
         var services = new ServiceCollection();
@@ -27,6 +33,10 @@ public sealed class Bootstrapper
             .AddScoped<IGNOMEThemeLoader, GNOMEThemeLoader>()
             .AddSingleton<IRootRequirer, RootRequirer>();
         
+        services.AddSingleton<ILocalizationProvider>(new DynamicLocalizationProvider(
+            updateUIOnCultureChanging: (@new, old) => ResourceDictionaryUtil.Replace(old.ToString(), @new.ToString()),
+            getStringDynamic: (key) => Current!.Resources[key.ToString()]?.ToString() ?? key.ToString()
+        ));;
         
         return services.BuildServiceProvider();
         

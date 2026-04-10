@@ -1,13 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using GMenu.Models.Common;
-
-using GMenu.Models.GNOME;
-using GMenu.Services.LinuxSystem.interfaces;
+using GMenu.Modules.LinuxSystem.interfaces;
 using Serilog;
+using static System.Runtime.InteropServices.CallingConvention;
 
-namespace GMenu.Services.LinuxSystem;
+namespace GMenu.Modules.LinuxSystem;
 
 public sealed class GNOMEThemeLoader(ILogger logger) : IGNOMEThemeLoader
 {
@@ -15,23 +12,22 @@ public sealed class GNOMEThemeLoader(ILogger logger) : IGNOMEThemeLoader
     private const string GNOMEScheme = "org.gnome.desktop.interface";
     private const string AccentColorKey = "accent-color";
     
-    [DllImport(GioLibrary, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(GioLibrary, CallingConvention = Cdecl)]
     private static extern IntPtr g_settings_new(string schema);
 
-    [DllImport(GioLibrary, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(GioLibrary, CallingConvention = Cdecl)]
     private static extern IntPtr g_settings_get_string(IntPtr settings, string key);
 
-    [DllImport(GioLibrary, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(GioLibrary, CallingConvention = Cdecl)]
     private static extern void g_object_unref(IntPtr obj);
 
-    [DllImport(GioLibrary, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(GioLibrary, CallingConvention = Cdecl)]
     private static extern void g_free(IntPtr mem);
     
     public string GetThemeHex()
     {
         var settingsPointer = IntPtr.Zero;
         var accentColorNamePointer = IntPtr.Zero;
-        
         
         try
         {

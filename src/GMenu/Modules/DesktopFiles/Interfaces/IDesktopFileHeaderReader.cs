@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GMenu.Models.DesktopFiles;
 
-namespace GMenu.Services.DesktopFiles.Interfaces;
+namespace GMenu.Modules.DesktopFiles.Interfaces;
 
 public interface IDesktopFileHeaderReader
 {

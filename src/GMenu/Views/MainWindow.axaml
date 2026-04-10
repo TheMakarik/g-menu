@@ -1,6 +1,5 @@
 <Window
-    Icon="/Assets/avalonia-logo.ico"
-    Title="GMenu"
+    Title="gmenu"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -8,20 +7,77 @@
     x:DataType="vm:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:keys="clr-namespace:GMenu.Modules.Localization.Model"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <!--Main application UI-->
-    <Grid ColumnDefinitions="*, *">
-        
+    <!--  Main application UI  -->
+    <Grid RowDefinitions="Auto, Auto, *">
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.Services}}">
+                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.OpenGithubSource}}" />
+                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.CloseTheApp}}" Icon="{icons:MaterialIconExt Kind=Close}" />
+                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.MinimizeTheApp}}" Icon="{icons:MaterialIconExt Kind=Minimize}" />
+            </MenuItem>
+        </Menu>
+
+        <Separator Grid.Row="1" />
+
+        <Grid
+            ColumnDefinitions="*, 2*"
+            Grid.Row="2"
+            Margin="0,5,0,0">
+
+            <Grid RowDefinitions="Auto, *">
+
+                <Grid.Styles>
+                    <!--  Huge icons  -->
+                    <Style Selector="icons|MaterialIcon">
+                        <Setter Property="Width" Value="20" />
+                    </Style>
+                    <!--  Hidden border for outline button  -->
+                    <Style Selector="Button">
+                        <Setter Property="BorderThickness" Value="0" />
+                    </Style>
+                </Grid.Styles>
+
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,15"
+                    Orientation="Horizontal">
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=DeleteForever}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FileDocumentAddOutline}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FolderAddOutline}" />
+                </StackPanel>
+
+                <!--  Desktop files tree view  -->
+                <TreeView Grid.Row="1">
+
+                    <TreeViewItem Header="Item">
+                        <TreeViewItem Header="Item" />
+                        <TreeViewItem Header="Item" />
+                        <TreeViewItem Header="Item">
+                            <TreeViewItem Header="Item" />
+                            <TreeViewItem Header="Item" />
+                        </TreeViewItem>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Item">
+                        <TreeViewItem Header="Item" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Item" />
+                    <TreeViewItem Header="Item" />
+                </TreeView>
+
+            </Grid>
+
+        </Grid>
     </Grid>
+
 </Window>

@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using GMenu.Services.LinuxSystem.interfaces;
+using GMenu.Modules.LinuxSystem.interfaces;
 using Serilog;
 
-namespace GMenu.Services.LinuxSystem;
+namespace GMenu.Modules.LinuxSystem;
 
 public sealed class RootRequirer(ILogger logger) : IRootRequirer
 {

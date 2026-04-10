@@ -1,15 +1,32 @@
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using GMenu.Extensions;
+using GMenu.Modules.Configuration.Model;
+using GMenu.Modules.DesktopFiles.Model;
+using GMenu.Modules.Localization.Model;
 
 namespace GMenu;
 
 public static class StaticConfiguration
 {
-    public static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
+    private static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
     public const string DefaultAccentColor = "blue";
     public const string SerilogOuputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
+    public const string DefaultLocalizationPathPrefix = "/Resources/";
+    public const string AvaloniaResourcePrefix = "avares://GMenu";
+    public static readonly string ConfigurationPath = Path.Combine(ConfigurationDirectory, "g-menu.json");
+    public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
+    
+    public static readonly User DefaultUser = new() { Language = new CultureInfo("ru-RU") };
+    public static readonly DesktopFileDirectory[] DefaultDesktopFileDirectories = 
+    [
+        new DesktopFileDirectory("/usr/share/applications", LocalizationKey.Global)
+    ];
     
     public static readonly FrozenDictionary<string, string> AccentColorMap = new Dictionary<string, string>()
     {
@@ -23,4 +40,10 @@ public static class StaticConfiguration
         ["purple"] = "#9141AC",
         ["slate"]  = "#6F8396"
     }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
+    
+    public static readonly DefaultJSONConfiguration DefaultJsonConfiguration = new DefaultJSONConfiguration(
+        DefaultUser,
+        DefaultDesktopFileDirectories,
+        []
+    );
 }
