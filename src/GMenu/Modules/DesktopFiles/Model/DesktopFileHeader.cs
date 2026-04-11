@@ -8,6 +8,7 @@ public sealed class DesktopFileHeader
     public string? IconPath { get; set; }
     public string? Category { get; set; }
     public string? Name { get; set; }
+    public bool IsHidden { get; set; } = false;
     public bool IsDummy { get; set; } = false;
 
 }
