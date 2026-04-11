@@ -86,7 +86,8 @@ public class Configuration(ILogger logger) : IConfiguration
             };
             _ = HandleJSONChangingAsync(_channel.Reader);
         };
-
+        
+        backgroundWorker.RunWorkerAsync();
     }
 
     private async Task HandleJSONChangingAsync(ChannelReader<string?> reader)
