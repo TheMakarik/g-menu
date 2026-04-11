@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using FakeItEasy;
 using GMenu.Modules.Configuration.Interfaces;
 using GMenu.Modules.Configuration.Model;
@@ -330,6 +331,23 @@ Keywords=2d;curses;colour;single-player;"))
         var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert 
         _fileSystem.Should().TotalFileCount(result.Count);
+    }
+    
+    [Fact]
+    public async Task ReadAllHeadersAsync_UnexistedCategory_ReturnsAsDummyHeader()
+    {
+        //Arrange
+        A.CallTo(() => _configuration.GetObservable()).Returns(new ObservableConfiguration()
+        {
+            SearchDesktopFilesDirectories = [],
+            User = null!,
+            UnexistingCategories = new ObservableCollection<UnexistingCategory>()
+                { new UnexistingCategory() { Name = "mockName", Path = "mockPath/mockName" } }
+        });
+        //Act 
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        //Assert
+        Assert.True(result.First().IsDummy);
     }
 
 
