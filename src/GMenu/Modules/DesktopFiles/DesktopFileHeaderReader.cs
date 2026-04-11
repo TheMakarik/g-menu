@@ -2,13 +2,13 @@ using GMenu.Modules.Configuration.Interfaces;
 using GMenu.Modules.DesktopFiles.Interfaces;
 using GMenu.Modules.DesktopFiles.Model;
 using GMenu.Models.DesktopFiles;
-using Microsoft.Extensions.Logging;
+using Serilog; 
 using System.Linq.Async;
 
 namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileHeaderReader(
-    ILogger logger,
+    ILogger logger,  
     IConfiguration configuration,
     IRootRequirer rootRequirer) : IDesktopFileHeaderReader
 {
@@ -50,7 +50,7 @@ public sealed class DesktopFileHeaderReader(
         }
         catch (UnauthorizedAccessException ex)
         {
-            logger.LogWarning(ex, "Unauthorized access while reading desktop files");
+            logger.Warning(ex, "Unauthorized access while reading desktop files");
 
             try
             {
@@ -69,7 +69,7 @@ public sealed class DesktopFileHeaderReader(
     {
         if (!Directory.Exists(directory))
         {
-            logger.LogWarning("Directory not found: {Directory}", directory);
+            logger.Warning("Directory not found: {Directory}", directory);
             yield break;
         }
 
@@ -135,7 +135,7 @@ public sealed class DesktopFileHeaderReader(
                     }
                     continue;
                 }
-                
+
                 if (!isInsideDesktopEntry || string.IsNullOrWhiteSpace(line))
                 {
                     continue;
@@ -173,19 +173,19 @@ public sealed class DesktopFileHeaderReader(
 
             if (!isInsideDesktopEntry)
             {
-                logger.LogWarning("Missing [Desktop Entry] in: {FilePath}", filePath);
+                logger.Warning("Missing [Desktop Entry] in: {FilePath}", filePath);
                 return null;
             }
 
             if (!hasName)
             {
-                logger.LogWarning("Missing Name in: {FilePath}", filePath);
+                logger.Warning("Missing Name in: {FilePath}", filePath);
                 return null;
             }
 
             if (!hasExec)
             {
-                logger.LogWarning("Missing Exec in: {FilePath}", filePath);
+                logger.Warning("Missing Exec in: {FilePath}", filePath);
                 return null;
             }
 
@@ -193,7 +193,7 @@ public sealed class DesktopFileHeaderReader(
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            logger.LogError(ex, "Error parsing: {FilePath}", filePath);
+            logger.Error(ex, "Error parsing: {FilePath}", filePath);
             return null;
         }
     }
