@@ -2,13 +2,12 @@ using GMenu.Modules.Configuration.Interfaces;
 using GMenu.Modules.DesktopFiles.Interfaces;
 using GMenu.Modules.DesktopFiles.Model;
 using GMenu.Models.DesktopFiles;
-using Serilog; 
-using System.Linq.Async;
+using Serilog;
 
 namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileHeaderReader(
-    ILogger logger,  
+    ILogger logger,
     IConfiguration configuration,
     IRootRequirer rootRequirer) : IDesktopFileHeaderReader
 {
@@ -29,13 +28,22 @@ public sealed class DesktopFileHeaderReader(
             var searchDirectories = config.SearchDesktopFilesDirectories;
             var unexistingCategories = config.UnexistingCategories;
 
-            var allHeaders = await searchDirectories
-                .ToAsyncEnumerable()
-                .SelectMany(directory => GetDesktopFilesRecursively(directory.Path).ToAsyncEnumerable())
-                .SelectAwait(async filePath => await ParseDesktopFileAsync(filePath, cancellationTokenSource.Token))
+            var allFilePaths = searchDirectories
+                .SelectMany(directory => GetDesktopFilesRecursively(directory.Path))
+                .ToList();
+                
+            var parsedHeaders = new List<DesktopFileHeader?>();
+            foreach (var filePath in allFilePaths)
+            {
+                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                var header = await ParseDesktopFileAsync(filePath, cancellationTokenSource.Token);
+                parsedHeaders.Add(header);
+            }
+
+            var allHeaders = parsedHeaders
                 .Where(header => header != null)
                 .Select(header => header!)
-                .Concat(unexistingCategories.ToAsyncEnumerable().Select(category => new DesktopFileHeader
+                .Concat(unexistingCategories.Select(category => new DesktopFileHeader
                 {
                     Directory = string.Empty,
                     Category = category,
@@ -44,7 +52,7 @@ public sealed class DesktopFileHeaderReader(
                 }))
                 .OrderBy(header => header.Directory)
                 .ThenBy(header => header.Category ?? string.Empty)
-                .ToListAsync(cancellationTokenSource.Token);
+                .ToList();
 
             return allHeaders;
         }
