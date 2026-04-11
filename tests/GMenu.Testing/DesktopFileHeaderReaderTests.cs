@@ -97,7 +97,7 @@ Icon={icon}
             .Build();
         
         //Act 
-        var result = (await _systemUnderTest.GetAllHeadersAsync()).First();
+        var result = (await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>())).First();
         //Assert
         Assert.Equal(result.Category, category);
         Assert.Equal(result.IconPath, icon);
@@ -126,7 +126,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Empty(result);
     }
@@ -164,7 +164,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Single(result);
     }
@@ -191,7 +191,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Null(result.First().IconPath);
     }
@@ -217,7 +217,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Null(result.First().Category);
     }
@@ -242,7 +242,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Empty(result);
     }
@@ -267,7 +267,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Empty(result);
     }
@@ -292,7 +292,7 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert
         Assert.Empty(result);
     }
@@ -327,7 +327,7 @@ Keywords=2d;curses;colour;single-player;"))
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync();
+        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
         //Assert 
         _fileSystem.Should().TotalFileCount(result.Count);
     }
