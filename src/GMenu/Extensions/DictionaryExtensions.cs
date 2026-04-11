@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace GMenu.Extensions;
 
 public static class DictionaryExtensions

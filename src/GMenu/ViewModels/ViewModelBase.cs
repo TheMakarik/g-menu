@@ -1,6 +1,4 @@
-﻿using ReactiveUI;
-
-namespace GMenu.ViewModels;
+﻿namespace GMenu.ViewModels;
 
 public abstract class ViewModelBase : ReactiveObject
 {

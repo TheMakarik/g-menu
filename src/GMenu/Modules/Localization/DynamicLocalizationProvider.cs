@@ -1,9 +1,3 @@
-using System;
-using System.Globalization;
-using System.Threading;
-using GMenu.Modules.Localization.Interfaces;
-using GMenu.Modules.Localization.Model;
-
 namespace GMenu.Modules.Localization;
 
 public class DynamicLocalizationProvider(

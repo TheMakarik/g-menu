@@ -1,13 +1,3 @@
-using System;
-using System.Text.Json;
-using GMenu.Modules.LinuxSystem;
-using GMenu.Modules.LinuxSystem.interfaces;
-using GMenu.Modules.Localization;
-using GMenu.Modules.Localization.Interfaces;
-using GMenu.Views.Utils;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 using static Avalonia.Application;
 
 namespace GMenu;

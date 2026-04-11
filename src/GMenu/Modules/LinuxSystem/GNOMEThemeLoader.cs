@@ -1,7 +1,3 @@
-using System;
-using System.Runtime.InteropServices;
-using GMenu.Modules.LinuxSystem.interfaces;
-using Serilog;
 using static System.Runtime.InteropServices.CallingConvention;
 
 namespace GMenu.Modules.LinuxSystem;

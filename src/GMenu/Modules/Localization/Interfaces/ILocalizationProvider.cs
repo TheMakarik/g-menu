@@ -1,6 +1,3 @@
-using System.Globalization;
-using GMenu.Modules.Localization.Model;
-
 namespace GMenu.Modules.Localization.Interfaces;
 
 public interface ILocalizationProvider

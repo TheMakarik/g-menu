@@ -1,5 +1,3 @@
-using System;
-
 namespace GMenu.Modules;
 
 public static class Guard

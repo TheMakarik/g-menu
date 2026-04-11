@@ -1,20 +1,3 @@
-using System;
-using System.Globalization;
-using System.Text.Json;
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using GMenu.Modules.LinuxSystem.interfaces;
-using GMenu.Modules.Localization.Interfaces;
-using GMenu.Modules.Localization.Model;
-using GMenu.ViewModels;
-using GMenu.Views;
-using Material.Styles.Themes;
-using Material.Styles.Themes.Base;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace GMenu;
 
 public partial class App : Application
@@ -55,6 +38,5 @@ public partial class App : Application
     {
         var localizationProvider = provider.GetRequiredService<ILocalizationProvider>();
         localizationProvider.SetLocalization(new CultureInfo("ru-RU"));
-        Console.Write(Current!.Resources[LocalizationKey.CloseTheApp] ?? "NULL");
     }
 }

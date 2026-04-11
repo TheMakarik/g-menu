@@ -1,10 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml.Styling;
-using GMenu.Modules.Localization.Interfaces;
 using static Avalonia.Application;
 
 namespace GMenu.Views.Utils;

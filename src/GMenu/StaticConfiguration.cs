@@ -1,15 +1,3 @@
-using System;
-using System.Collections.Frozen;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using GMenu.Extensions;
-using GMenu.Modules.Configuration.Model;
-using GMenu.Modules.DesktopFiles.Model;
-using GMenu.Modules.Localization.Model;
-
 namespace GMenu;
 
 public static class StaticConfiguration

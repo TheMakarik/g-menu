@@ -1,8 +1,4 @@
-﻿using Avalonia;
-using ReactiveUI.Avalonia;
-using System;
-
-namespace GMenu;
+﻿namespace GMenu;
 
 sealed class Program
 {

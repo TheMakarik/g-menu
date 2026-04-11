@@ -1,10 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using GMenu.Modules.LinuxSystem.interfaces;
-using Serilog;
-
 namespace GMenu.Modules.LinuxSystem;
 
 public sealed class RootRequirer(ILogger logger) : IRootRequirer

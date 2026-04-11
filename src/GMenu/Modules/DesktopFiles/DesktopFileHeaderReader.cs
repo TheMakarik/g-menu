@@ -1,20 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using GMenu.Models.DesktopFiles;
-using GMenu.Modules.DesktopFiles.Interfaces;
-using Serilog;
-
 namespace GMenu.Modules.DesktopFiles;
 
-public sealed class DesktopFileHeaderReader(ILogger logger) : IDesktopFileHeaderReader
+public sealed class DesktopFileHeaderReader(ILogger logger, IConfiguration configuration) : IDesktopFileHeaderReader
 {
     const string CategoriesPrefix = "Catergories";
     
-    public Task<IReadOnlyCollection<DesktopFileHeader>> GetAllHeaders()
+    public async Task<IReadOnlyCollection<DesktopFileHeader>> GetAllHeadersAsync()
     {
-        var count = 0;
-        throw new Exception();
+        throw new NotImplementedException();
     }
 }

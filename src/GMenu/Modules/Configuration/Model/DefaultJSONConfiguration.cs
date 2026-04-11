@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using GMenu.Modules.DesktopFiles.Model;
-
 namespace GMenu.Modules.Configuration.Model;
 
 public sealed class DefaultJSONConfiguration(

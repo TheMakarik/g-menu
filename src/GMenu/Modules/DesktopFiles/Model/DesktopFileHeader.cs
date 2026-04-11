@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace GMenu.Models.DesktopFiles;
 
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]

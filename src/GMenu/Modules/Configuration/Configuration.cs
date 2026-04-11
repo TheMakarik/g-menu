@@ -1,22 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using GMenu.JSONSerializationContexts;
-using GMenu.Modules.Configuration.Interfaces;
-using GMenu.Modules.Configuration.Model;
-using GMenu.Modules.DesktopFiles.Model;
-using Serilog;
-
 namespace GMenu.Modules.Configuration;
 
 public class Configuration(ILogger logger) : IConfiguration
