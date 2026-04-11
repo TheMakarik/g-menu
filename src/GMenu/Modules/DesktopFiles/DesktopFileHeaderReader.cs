@@ -18,10 +18,8 @@ public sealed class DesktopFileHeaderReader(ILogger<DesktopFileHeaderReader> log
     private const string NoDisplayKey = "NoDisplay";
     private const string TrueValue = "true";
 
-    public async Task<IReadOnlyCollection<DesktopFileHeader>> GetAllHeadersAsync(CancellationTokenSource cancellationTokenSource)
-    {
-        try
-        {
+    public async Task<IReadOnlyCollection<DesktopFileHeader>> GetAllHeadersAsync(CancellationTokenSource cancellationTokenSource) {
+        try {
             var config = configuration.GetObservable();
             var searchDirectories = config.SearchDesktopFilesDirectories;
             var unexistingCategories = config.UnexistingCategories;
@@ -45,16 +43,13 @@ public sealed class DesktopFileHeaderReader(ILogger<DesktopFileHeaderReader> log
 
             return allHeaders;
         }
-        catch (UnauthorizedAccessException ex)
-        {
+        catch (UnauthorizedAccessException ex) {
             logger.LogWarning(ex, "Unauthorized access while reading desktop files");
 
-            try
-            {
+            try {
                 await rootRequirer.RequestRootAsync(cancellationTokenSource.Token);
             }
-            catch (OperationCanceledException)
-            {
+            catch (OperationCanceledException) {
                 throw new UnauthorizedAccessException("Access denied after cancellation", ex);
             }
 
@@ -62,70 +57,56 @@ public sealed class DesktopFileHeaderReader(ILogger<DesktopFileHeaderReader> log
         }
     }
 
-    private IEnumerable<string> GetDesktopFilesRecursively(string directory)
-    {
-        if (!Directory.Exists(directory))
-        {
+    private IEnumerable<string> GetDesktopFilesRecursively(string directory) {
+        if (!Directory.Exists(directory)) {
             logger.LogWarning("Directory not found: {Directory}", directory);
             yield break;
         }
 
-        foreach (var file in Directory.GetFiles(directory, "*.desktop"))
-        {
+        foreach (var file in Directory.GetFiles(directory, "*.desktop")) {
             yield return file;
         }
 
-        foreach (var subDir in Directory.GetDirectories(directory))
-        {
-            foreach (var file in GetDesktopFilesRecursively(subDir))
-            {
+        foreach (var subDir in Directory.GetDirectories(directory)) {
+            foreach (var file in GetDesktopFilesRecursively(subDir)) {
                 yield return file;
             }
         }
     }
 
-    private async Task<DesktopFileHeader?> ParseDesktopFileAsync(string filePath, CancellationToken cancellationToken)
-    {
-        try
-        {
+    private async Task<DesktopFileHeader?> ParseDesktopFileAsync(string filePath, CancellationToken cancellationToken) {
+        try {
             var lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
             var isInsideDesktopEntry = false;
-            var header = new DesktopFileHeader
-            {
+            var header = new DesktopFileHeader {
                 Directory = Path.GetDirectoryName(filePath) ?? string.Empty,
                 IsHidden = false
             };
             var hasExec = false;
             var hasName = false;
 
-            foreach (var rawLine in lines)
-            {
+            foreach (var rawLine in lines) {
                 cancellationToken.ThrowIfCancellationRequested();
                 var line = rawLine.Trim();
 
-                if (line.StartsWith('['))
-                {
-                    if (isInsideDesktopEntry)
-                    {
+                if (line.StartsWith('['))  {
+                    if (isInsideDesktopEntry) {
                         break;
                     }
                     
-                    if (line.Equals(DesktopEntryHeader, StringComparison.OrdinalIgnoreCase))
-                    {
+                    if (line.Equals(DesktopEntryHeader, StringComparison.OrdinalIgnoreCase))  {
                         isInsideDesktopEntry = true;
                     }
                     continue;
                 }
 
-                if (!isInsideDesktopEntry || string.IsNullOrWhiteSpace(line))
-                {
+                if (!isInsideDesktopEntry || string.IsNullOrWhiteSpace(line)) {
                     continue;
                 }
 
                 var (key, value) = line.ParseDesktopLine();
 
-                switch (key)
-                {
+                switch (key) {
                     case ExecKey:
                         hasExec = true;
                         break;
@@ -144,34 +125,29 @@ public sealed class DesktopFileHeaderReader(ILogger<DesktopFileHeaderReader> log
                         break;
                 }
 
-                if (hasExec && hasName && header.Category != null)
-                {
+                if (hasExec && hasName && header.Category != null) {
                     break;
                 }
             }
 
-            if (!isInsideDesktopEntry)
-            {
+            if (!isInsideDesktopEntry) {
                 logger.LogWarning("Missing [Desktop Entry] in: {FilePath}", filePath);
                 return null;
             }
 
-            if (!hasName)
-            {
+            if (!hasName) {
                 logger.LogWarning("Missing Name in: {FilePath}", filePath);
                 return null;
             }
 
-            if (!hasExec)
-            {
+            if (!hasExec) {
                 logger.LogWarning("Missing Exec in: {FilePath}", filePath);
                 return null;
             }
 
             return header;
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
+        catch (Exception ex) when (ex is not OperationCanceledException) {
             logger.LogError(ex, "Error parsing: {FilePath}", filePath);
             return null;
         }
