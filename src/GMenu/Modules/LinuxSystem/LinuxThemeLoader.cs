@@ -2,7 +2,7 @@ using static System.Runtime.InteropServices.CallingConvention;
 
 namespace GMenu.Modules.LinuxSystem;
 
-public sealed class GNOMEThemeLoader(ILogger logger) : IGNOMEThemeLoader
+public sealed class LinuxThemeLoader(ILogger logger) : ILinuxThemeLoader
 {
     private const string GioLibrary = "libgio-2.0.so.0";
     private const string GNOMEScheme = "org.gnome.desktop.interface";

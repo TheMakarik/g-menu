@@ -25,7 +25,7 @@ public sealed class Bootstrapper
         services
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfiguration, Configuration>()
-            .AddScoped<IGNOMEThemeLoader, GNOMEThemeLoader>()
+            .AddScoped<ILinuxThemeLoader, LinuxThemeLoader>()
             .AddSingleton<IRootRequirer, RootRequirer>();
         
         services.AddSingleton<ILocalizationProvider>(new DynamicLocalizationProvider(

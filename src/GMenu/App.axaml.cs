@@ -32,7 +32,7 @@ public partial class App : Application
     private void LoadMaterialTheme(IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
-        var gnomeLoader = scope.ServiceProvider.GetRequiredService<IGNOMEThemeLoader>();
+        var gnomeLoader = scope.ServiceProvider.GetRequiredService<ILinuxThemeLoader>();
         var hexTheme = gnomeLoader.GetThemeHex();
         var materialTheme = this.LocateMaterialTheme<CustomMaterialTheme>();
         materialTheme.PrimaryColor = Color.Parse(hexTheme);

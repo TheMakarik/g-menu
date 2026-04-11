@@ -341,8 +341,7 @@ Keywords=2d;curses;colour;single-player;"))
         {
             SearchDesktopFilesDirectories = [],
             User = null!,
-            UnexistingCategories = new ObservableCollection<UnexistingCategory>()
-                { new UnexistingCategory() { Name = "mockName", Path = "mockPath/mockName" } }
+            UnexistingCategories = [new UnexistingCategory() { Name = "mockName", Path = "mockPath/mockName" }]
         });
         //Act 
         var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());

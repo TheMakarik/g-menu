@@ -1,6 +1,6 @@
 namespace GMenu.Modules.LinuxSystem.interfaces;
 
-public interface IGNOMEThemeLoader
+public interface ILinuxThemeLoader
 {
     public string GetThemeHex();
 }
