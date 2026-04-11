@@ -32,19 +32,19 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     }
 
 
-    public required User User
+    public User User
     {
         get;
         set => SetField(ref field, value);
     }
 
-    public required ObservableCollection<DesktopFileDirectory> SearchDesktopFilesDirectories
+    public ObservableCollection<DesktopFileDirectory> SearchDesktopFilesDirectories
     {
         get;
         set => SetField(ref field, value);
     }
 
-    public required ObservableCollection<UnexistingCategory> UnexistingCategories
+    public ObservableCollection<UnexistingCategory> UnexistingCategories
     {
         get;
         set => SetField(ref field, value);

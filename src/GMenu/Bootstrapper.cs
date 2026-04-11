@@ -10,9 +10,13 @@ public sealed class Bootstrapper
             .Enrich.WithThreadId()
 #if  DEBUG
             .WriteTo.Console(
-                theme: AnsiConsoleTheme.Code,
-                outputTemplate: StaticConfiguration.SerilogOuputTemplate)
+                theme: StaticConfiguration.SerilogConsoleTheme,
+                outputTemplate: StaticConfiguration.SerilogOutputTemplate)
 #endif
+            .WriteTo.File(
+                outputTemplate: StaticConfiguration.SerilogOutputTemplate,
+                rollingInterval: StaticConfiguration.SerilogRollingInterval,
+                path: StaticConfiguration.LogsPath)
             .MinimumLevel.Debug()
             .CreateLogger();
         
@@ -20,6 +24,7 @@ public sealed class Bootstrapper
 
         services
             .AddSingleton(Log.Logger)
+            .AddSingleton<IConfiguration, Configuration>()
             .AddScoped<IGNOMEThemeLoader, GNOMEThemeLoader>()
             .AddSingleton<IRootRequirer, RootRequirer>();
         

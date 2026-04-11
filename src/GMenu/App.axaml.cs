@@ -7,11 +7,12 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         var provider = new Bootstrapper().BuildApplication();
         LoadMaterialTheme(provider);
         LoadLocalization(provider);
+        await LoadConfigurationAsync(provider);
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
@@ -21,6 +22,11 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private async Task LoadConfigurationAsync(IServiceProvider provider)
+    {
+        await provider.GetRequiredService<IConfiguration>().EnsureExistsAsync();
     }
 
     private void LoadMaterialTheme(IServiceProvider provider)

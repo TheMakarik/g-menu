@@ -18,13 +18,12 @@ public class Configuration(ILogger logger) : IConfiguration
         {
             logger.Information("Configuration file already exists");
             await LoadConfigurationAsync();
-            StartObserveConfiguration();
         }
         else
         {
             await CreateJsonFileAsync();
-            StartObserveConfiguration();
         }
+        StartObserveConfiguration();
     }
 
     private async Task LoadConfigurationAsync()
@@ -32,6 +31,7 @@ public class Configuration(ILogger logger) : IConfiguration
         await using var file = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
         _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file,
                 ObservableConfigurationSerializerContext.Default.Options);
+        logger.Information("Configuration loaded successfully: {configuration}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
     }
 
     private async Task CreateJsonFileAsync()
@@ -50,6 +50,7 @@ public class Configuration(ILogger logger) : IConfiguration
                 SearchDesktopFilesDirectories = new ObservableCollection<DesktopFileDirectory>(StaticConfiguration.DefaultJsonConfiguration.DefaultDesktopFileDirectories.AsEnumerable()),
                 UnexistingCategories = []
             };
+            await file.FlushAsync();
         }
         catch(Exception exception)
         {
@@ -62,23 +63,30 @@ public class Configuration(ILogger logger) : IConfiguration
 
     private void StartObserveConfiguration()
     {
-        _channel = Channel.CreateBounded<string?>(1);
-       
-        _configuration!.PropertyChanged += async void (_, args) =>
+        var backgroundWorker = new BackgroundWorker();
+        backgroundWorker.DoWork += (_, _) =>
         {
-            try
+            _channel = Channel.CreateBounded<string?>(1);
+
+            _configuration!.PropertyChanged += async void (_, args) =>
             {
-                await _channel.Writer.WriteAsync(args.PropertyName);
-            }
-            catch (Exception e)
-            {
-                logger.Error(e, "Something go wrong during configuration update");
-                throw;
-            }
-            logger.Information("Configuration key ({key}) will be changed in {path}", args.PropertyName, StaticConfiguration.ConfigurationPath);
-            
+                try
+                {
+                    await _channel.Writer.WriteAsync(args.PropertyName);
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e, "Something go wrong during configuration update");
+                    throw;
+                }
+
+                logger.Information("Configuration key ({key}) will be changed in {path}", args.PropertyName,
+                    StaticConfiguration.ConfigurationPath);
+
+            };
+            _ = HandleJSONChangingAsync(_channel.Reader);
         };
-        _ = HandleJSONChangingAsync(_channel.Reader);
+
     }
 
     private async Task HandleJSONChangingAsync(ChannelReader<string?> reader)

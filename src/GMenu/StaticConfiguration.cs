@@ -4,8 +4,13 @@ public static class StaticConfiguration
 {
     private static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
     public const string DefaultAccentColor = "blue";
-    public const string SerilogOuputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
+    public const string SerilogOutputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
     public const string DefaultLocalizationPathPrefix = "/Resources/";
+    public static readonly string LogsPath = Path.Combine(ConfigurationDirectory, "/logs/g-menu-log__");
+    #if DEBUG
+    public static readonly ConsoleTheme SerilogConsoleTheme = AnsiConsoleTheme.Code;
+    #endif
+    public static RollingInterval SerilogRollingInterval = RollingInterval.Day;
     public const string AvaloniaResourcePrefix = "avares://GMenu";
     public static readonly string ConfigurationPath = Path.Combine(ConfigurationDirectory, "g-menu.json");
     public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
