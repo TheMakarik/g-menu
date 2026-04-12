@@ -36,7 +36,7 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     {
         get;
         set => SetField(ref field, value);
-    }
+    } 
 
     public ObservableCollection<DesktopFileDirectory> SearchDesktopFilesDirectories
     {

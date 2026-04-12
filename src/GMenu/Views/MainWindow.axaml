@@ -37,7 +37,7 @@
             Grid.Row="2"
             Margin="0,5,0,0">
 
-            <Grid RowDefinitions="Auto, *">
+            <Grid RowDefinitions="Auto, Auto, *">
 
                 <Grid.Styles>
                     <!--  Huge icons  -->
@@ -55,12 +55,15 @@
                     Margin="0,0,0,15"
                     Orientation="Horizontal">
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=DeleteForever}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FileDocumentAddOutline}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FolderAddOutline}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=CategoryPlus}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FolderPlus}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FilePlus}" />
                 </StackPanel>
 
+                <StackPanel Grid.Row="1" Orientation="Horizontal" />
+
                 <!--  Desktop files tree view  -->
-                <TreeView Grid.Row="1">
+                <TreeView Grid.Row="2">
 
                     <TreeViewItem Header="Item">
                         <TreeViewItem Header="Item" />
