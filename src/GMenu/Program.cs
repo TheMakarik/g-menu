@@ -1,4 +1,7 @@
-﻿namespace GMenu;
+﻿using Splat;
+using Splat.Serilog;
+
+namespace GMenu;
 
 sealed class Program
 {
@@ -11,9 +14,24 @@ sealed class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var provider = Design.IsDesignMode
+            ? new ServiceCollection().BuildServiceProvider() 
+            : new Bootstrapper().BuildApplication();
+
+        if (!Design.IsDesignMode)
+        {
+            provider.UseMicrosoftDependencyResolver();
+            Locator.CurrentMutable.UseSerilogFullLogger(Log.Logger);
+        }
+        
+        App.Services =  provider;
+        
+        return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
             .UseReactiveUI(builder => builder.BuildApp());
+    }
+     
 }

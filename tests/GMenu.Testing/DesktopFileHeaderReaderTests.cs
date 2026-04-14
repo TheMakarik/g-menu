@@ -5,6 +5,7 @@ using GMenu.Modules.Configuration.Model;
 using GMenu.Modules.DesktopFiles;
 using GMenu.Modules.DesktopFiles.Interfaces;
 using GMenu.Modules.DesktopFiles.Model;
+using GMenu.Modules.LinuxSystem.interfaces;
 using Serilog;
 using TheMakarik.Testing.FileSystem;
 using TheMakarik.Testing.FileSystem.AutoNaming;
@@ -26,7 +27,7 @@ public class DesktopFileHeaderReaderTests : IDisposable
             User = null!,
             SearchDesktopFilesDirectories = [new DesktopFileDirectory(Path: _fileSystem!.Root, null)]
         });
-        _systemUnderTest = new DesktopFileHeaderReader(A.Dummy<ILogger>(), _configuration);
+        _systemUnderTest = new DesktopFileHeaderReader(A.Dummy<ILogger>(), _configuration, A.Dummy<IRootRequirer>());
     }
 
     [Theory]
@@ -313,6 +314,7 @@ Comment=Tetris clone for the terminal
 Comment[es]=Un clon del Tetris para la terminal
 Terminal=true
 Icon=tint
+Exec=tint
 Keywords=2d;curses;colour;single-player;
 ")
             .AddDirectoriesWithNameGenerating(3, (_, builder) => 
@@ -324,6 +326,7 @@ Comment=Tetris clone for the terminal
 Comment[es]=Un clon del Tetris para la terminal
 Terminal=true
 Icon=tint
+Exec=tint
 Keywords=2d;curses;colour;single-player;"))
             .Build();
         

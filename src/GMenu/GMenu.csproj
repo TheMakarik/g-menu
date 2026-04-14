@@ -33,11 +33,12 @@
         <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="19.3.1" />
+        <PackageReference Include="Splat.Serilog" Version="19.3.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Extensions\" />
-      <Folder Include="ViewModels\TreeView\" />
+      <Folder Include="ViewModels\Messages\" />
       <Folder Include="Views\Controls\" />
     </ItemGroup>
 </Project>

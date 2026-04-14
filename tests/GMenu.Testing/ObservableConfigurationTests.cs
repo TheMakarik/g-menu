@@ -1,3 +1,4 @@
+using System.Collections;
 using FakeItEasy;
 using GMenu.Modules.Configuration.Model;
 using GMenu.Modules.DesktopFiles.Model;

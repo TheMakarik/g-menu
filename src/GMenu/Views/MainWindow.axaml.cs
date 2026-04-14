@@ -8,10 +8,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         
         this.WhenActivated(action =>
         {
-            ReactiveUIInteractions.ErrorInteraction.RegisterHandler(context =>
-            {
-                
-            });
+          ViewModel.ErrorInteraction.RegisterHandler(context => )
         });
     }
 }

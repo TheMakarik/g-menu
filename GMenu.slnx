@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/benchmarks/">
+    <Project Path="benchmarks/GMenu.Benchmarks/GMenu.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/GMenu/GMenu.csproj" />
   </Folder>

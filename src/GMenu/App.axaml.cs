@@ -2,6 +2,12 @@ namespace GMenu;
 
 public partial class App : Application
 {
+    public static IServiceProvider Services
+    {
+        get => field ?? throw new InvalidOperationException("Provider is unconfigured"); 
+        set;
+    }
+    
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);

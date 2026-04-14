@@ -1,6 +1,6 @@
 namespace GMenu.Models.DesktopFiles;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+
 public sealed class DesktopFileHeader
 {
     public required string Directory { get; set; }
@@ -9,6 +9,8 @@ public sealed class DesktopFileHeader
     public string? Category { get; set; }
     public string? Name { get; set; }
     public bool IsHidden { get; set; } = false;
+    public string? Exec { get; set; }
     public bool IsDummy { get; set; } = false;
+    public bool IsBroken { get; set; }
 
 }
