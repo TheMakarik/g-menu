@@ -1,8 +1,10 @@
+using ILogger = Serilog.ILogger;
+
 namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileHeaderReader(
     ILogger logger,
-    IConfiguration configuration,
+    IConfigurationProvider configuration,
     IRootRequirer rootRequirer) : IDesktopFileHeaderReader
 {
     private const string DesktopEntryHeader = "[Desktop Entry]";
@@ -15,14 +17,18 @@ public sealed class DesktopFileHeaderReader(
 
     public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders()
     {
-        var observableConfiguration = configuration.GetObservable();
+        logger.Information("Start searching desktop files");
+        var observableConfiguration = configuration.CurrentObservable;
 
         var filesToHandle = observableConfiguration.SearchDesktopFilesDirectories
             .Select(directory => directory.Path)
             .SelectMany(directory => Directory
                 .EnumerateFiles(directory, "*.desktop", new EnumerationOptions() { RecurseSubdirectories = true }));
 
-        return filesToHandle
+        var stopwatch = Stopwatch.StartNew();
+        
+     
+        var result = filesToHandle
             .AsParallel()
             .WithDegreeOfParallelism(Environment.ProcessorCount)
             .Select<string, DesktopFileHeader?>(filePath =>
@@ -83,7 +89,7 @@ public sealed class DesktopFileHeaderReader(
                         break;
                 }
 
-                if (!IsDesktopFileCorrent(desktopFileHeader))
+                if (!IsDesktopFileCorrect(desktopFileHeader))
                     desktopFileHeader.IsBroken = true;
 
                 return desktopFileHeader;
@@ -91,9 +97,13 @@ public sealed class DesktopFileHeaderReader(
             .Cast<DesktopFileHeader>()
             .ToList()
             .AsReadOnly();
+
+        stopwatch.Stop();
+        logger.Information("Find desktop files: {count} for {time} ms", result.Count,  stopwatch.ElapsedMilliseconds);
+        return result;
     }
 
-    private static bool IsDesktopFileCorrent(DesktopFileHeader desktopFileHeader)
+    private static bool IsDesktopFileCorrect(DesktopFileHeader desktopFileHeader)
     {
         return desktopFileHeader.Name is not null 
                && desktopFileHeader.Exec is not null;

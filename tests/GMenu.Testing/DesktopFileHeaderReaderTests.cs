@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using FakeItEasy;
 using GMenu.Modules.Configuration.Interfaces;
 using GMenu.Modules.Configuration.Model;
@@ -10,29 +9,27 @@ using Serilog;
 using TheMakarik.Testing.FileSystem;
 using TheMakarik.Testing.FileSystem.AutoNaming;
 
-namespace GMenu.Testing;
-
 public class DesktopFileHeaderReaderTests : IDisposable
 {
     private IFileSystem _fileSystem;
     private readonly IDesktopFileHeaderReader _systemUnderTest;
-    private readonly IConfiguration _configuration;
+    private readonly IConfigurationProvider _configurationProvider;
 
     public DesktopFileHeaderReaderTests()
     {
-        _configuration = A.Fake<IConfiguration>();
-        A.CallTo(() => _configuration.GetObservable()).ReturnsLazily(() => new ObservableConfiguration()
+        _configurationProvider = A.Fake<IConfigurationProvider>();
+        A.CallTo(() => _configurationProvider.CurrentObservable).ReturnsLazily(() => new ObservableConfiguration()
         {
             UnexistingCategories = [],
             User = null!,
             SearchDesktopFilesDirectories = [new DesktopFileDirectory(Path: _fileSystem!.Root, null)]
         });
-        _systemUnderTest = new DesktopFileHeaderReader(A.Dummy<ILogger>(), _configuration, A.Dummy<IRootRequirer>());
+        _systemUnderTest = new DesktopFileHeaderReader(A.Dummy<ILogger>(), _configurationProvider, A.Dummy<IRootRequirer>());
     }
 
     [Theory]
     [InlineData("1cv8t-8.3.27-1508", "Office", "1C")]
-    public async Task ReadAllHeadersAsync_WithNormalDesktopFile_MustReturnNormalHeader(string icon, string category,
+    public void ReadAllHeaders_WithNormalDesktopFile_MustReturnNormalHeader(string icon, string category,
         string name)
     {
         //Arrange
@@ -99,16 +96,17 @@ Icon={icon}
             .Build();
         
         //Act 
-        var result = (await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>())).First();
+        var result = _systemUnderTest.GetAllHeaders().First();
         //Assert
         Assert.Equal(result.Category, category);
         Assert.Equal(result.IconPath, icon);
         Assert.Equal(result.Name, name);
         Assert.Equal(result.Directory, _fileSystem.Root);
+        Assert.False(result.IsBroken);
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_WithoutDesktopEntryHeader_MustSkipThisValue()
+    public void ReadAllHeaders_WithoutDesktopEntryHeader_MustBeBroken()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -128,13 +126,13 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
-        Assert.Empty(result);
+        Assert.True(result.First().IsBroken);
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_OneWithoutDesktopEntryHeaderAndOneNormal_MustValue()
+    public void ReadAllHeaders_OneWithoutDesktopEntryHeaderAndOneNormal_MustReturnOnlyValid()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -166,14 +164,14 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
-        Assert.Single(result);
+        Assert.Equal(2, result.Count);
+        Assert.True(result.FirstOrDefault(header => header.IsBroken) is not null);
     }
     
-    
     [Fact]
-    public async Task ReadAllHeadersAsync_WithoutIcon_IconIsNull()
+    public void ReadAllHeaders_WithoutIcon_IconIsNullButNotBroken()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -193,13 +191,14 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
         Assert.Null(result.First().IconPath);
+        Assert.False(result.First().IsBroken);
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_WithoutCategory_CategoryIsNull()
+    public void ReadAllHeaders_WithoutCategory_CategoryIsNullButNotBroken()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -219,63 +218,14 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
         Assert.Null(result.First().Category);
+        Assert.False(result.First().IsBroken);
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_WithoutName_Skipped()
-    {
-        //Arrange
-        _fileSystem = FileSystem.BeginBuilding()
-            .AddRandomRootName()
-            .AddNameGenerator(NameGenerationType.RandomName)
-            .AddFileWithNameGeneraing(".desktop", out var path, @"
-[Desktop Entry]
-Comment=Tetris clone for the terminal
-Comment[es]=Un clon del Tetris para la terminal
-Exec=sh -c '/usr/games/tint -l 1;echo;echo PRESS ENTER;read line'
-Terminal=true
-Type=Application
-Icon=tint
-Keywords=2d;curses;colour;single-player;
-")
-            .Build();
-        
-        //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
-        //Assert
-        Assert.Empty(result);
-    }
-    
-    [Fact]
-    public async Task ReadAllHeadersAsync_WithoutType_Skipped()
-    {
-        //Arrange
-        _fileSystem = FileSystem.BeginBuilding()
-            .AddRandomRootName()
-            .AddNameGenerator(NameGenerationType.RandomName)
-            .AddFileWithNameGeneraing(".desktop", out var path, @"
-[Desktop Entry]
-Name=TINT
-Comment=Tetris clone for the terminal
-Comment[es]=Un clon del Tetris para la terminal
-Exec=sh -c '/usr/games/tint -l 1;echo;echo PRESS ENTER;read line'
-Terminal=true
-Icon=tint
-Keywords=2d;curses;colour;single-player;
-")
-            .Build();
-        
-        //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
-        //Assert
-        Assert.Empty(result);
-    }
-    
-    [Fact]
-    public async Task ReadAllHeadersAsync_WithoutExec_Skipped()
+    public void ReadAllHeaders_WithoutExec_MustBeBroken()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -294,13 +244,13 @@ Keywords=2d;curses;colour;single-player;
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
-        Assert.Empty(result);
+        Assert.True(result.First().IsBroken);
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_SearchDesktopFilesRecursive()
+    public void ReadAllHeaders_SearchDesktopFilesRecursive()
     {
         //Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -331,27 +281,28 @@ Keywords=2d;curses;colour;single-player;"))
             .Build();
         
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert 
         _fileSystem.Should().TotalFileCount(result.Count);
+        Assert.All(result, header => Assert.False(header.IsBroken));
     }
     
     [Fact]
-    public async Task ReadAllHeadersAsync_UnexistedCategory_ReturnsAsDummyHeader()
+    public void ReadAllHeaders_UnexistedCategory_ReturnsAsDummyHeader()
     {
         //Arrange
-        A.CallTo(() => _configuration.GetObservable()).Returns(new ObservableConfiguration()
+        A.CallTo(() => _configurationProvider.CurrentObservable).Returns(new ObservableConfiguration()
         {
             SearchDesktopFilesDirectories = [],
             User = null!,
             UnexistingCategories = [new UnexistingCategory() { Name = "mockName", Path = "mockPath/mockName" }]
         });
         //Act 
-        var result = await _systemUnderTest.GetAllHeadersAsync(A.Dummy<CancellationTokenSource>());
+        var result = _systemUnderTest.GetAllHeaders();
         //Assert
         Assert.True(result.First().IsDummy);
+        Assert.False(result.First().IsBroken);
     }
-
 
     public void Dispose()
     {

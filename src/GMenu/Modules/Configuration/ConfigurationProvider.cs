@@ -1,56 +1,51 @@
+using ILogger = Serilog.ILogger;
+
 namespace GMenu.Modules.Configuration;
 
-public class Configuration(ILogger logger) : IConfiguration
+public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
 {
     private ObservableConfiguration? _configuration;
     private Channel<string?>? _channel;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-
-    public ObservableConfiguration GetObservable()
-    {
-       Guard.EnsureMemberNotNull(_configuration, nameof(_configuration));
-       return _configuration!;
-    }
+    
+    public  ObservableConfiguration CurrentObservable => _configuration ?? throw new InvalidOperationException("Configuration not initialized");
 
     public async Task EnsureExistsAsync()
     {
         if (File.Exists(StaticConfiguration.ConfigurationPath))
         {
-            logger.Information("Configuration file already exists");
+            logger.Information("ConfigurationProvider file already exists");
             await LoadConfigurationAsync();
         }
         else
         {
             await CreateJsonFileAsync();
         }
+        
         StartObserveConfiguration();
     }
 
     private async Task LoadConfigurationAsync()
     {
         await using var file = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
-        _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file,
-                ObservableConfigurationSerializerContext.Default.Options);
-        logger.Information("Configuration loaded successfully: {configuration}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
+        _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file, ObservableConfigurationSerializerContext.Default.Options);
+        logger.Information("ConfigurationProvider loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
     }
 
     private async Task CreateJsonFileAsync()
     {
         try
         {
+            if(!Directory.Exists(StaticConfiguration.ConfigurationDirectory))
+                Directory.CreateDirectory(StaticConfiguration.ConfigurationDirectory);
+
             await using var file = File.Create(StaticConfiguration.ConfigurationPath);
             await JsonSerializer.SerializeAsync(
                 file, 
                 StaticConfiguration.DefaultJsonConfiguration,
-                DefaultConfigurationSerializerContext.Default.Options);
+                ObservableConfigurationSerializerContext.Default.Options);
             logger.Information("Configuration file created in {path}", StaticConfiguration.ConfigurationPath);
-            _configuration = new ObservableConfiguration()
-            {
-                User = StaticConfiguration.DefaultJsonConfiguration.User,
-                SearchDesktopFilesDirectories = new ObservableCollection<DesktopFileDirectory>(StaticConfiguration.DefaultJsonConfiguration.DefaultDesktopFileDirectories.AsEnumerable()),
-                UnexistingCategories = []
-            };
-            await file.FlushAsync();
+            _configuration = StaticConfiguration.DefaultJsonConfiguration;
         }
         catch(Exception exception)
         {
@@ -60,7 +55,7 @@ public class Configuration(ILogger logger) : IConfiguration
             throw;
         }
     }
-
+    
     private void StartObserveConfiguration()
     {
         var backgroundWorker = new BackgroundWorker();
@@ -108,4 +103,5 @@ public class Configuration(ILogger logger) : IConfiguration
 
         }
     }
+    
 }

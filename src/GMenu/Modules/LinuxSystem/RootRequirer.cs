@@ -1,3 +1,5 @@
+using ILogger = Serilog.ILogger;
+
 namespace GMenu.Modules.LinuxSystem;
 
 public sealed class RootRequirer(ILogger logger) : IRootRequirer

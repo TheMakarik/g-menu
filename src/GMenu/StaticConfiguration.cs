@@ -2,7 +2,7 @@ namespace GMenu;
 
 public static class StaticConfiguration
 {
-    private static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
+    public static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
     public const string DefaultAccentColor = "blue";
     public const string SerilogOutputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
     public const string DefaultLocalizationPathPrefix = "/Resources/";
@@ -34,9 +34,10 @@ public static class StaticConfiguration
         ["slate"]  = "#6F8396"
     }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     
-    public static readonly DefaultJSONConfiguration DefaultJsonConfiguration = new DefaultJSONConfiguration(
-        DefaultUser,
-        DefaultDesktopFileDirectories,
-        []
-    );
+    public static readonly ObservableConfiguration DefaultJsonConfiguration = new ObservableConfiguration()
+    {
+        User = DefaultUser,
+        SearchDesktopFilesDirectories = new ObservableCollection<DesktopFileDirectory>(DefaultDesktopFileDirectories),
+        UnexistingCategories = []
+    };
 }

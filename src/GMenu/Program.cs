@@ -1,7 +1,4 @@
-﻿using Splat;
-using Splat.Serilog;
-
-namespace GMenu;
+﻿namespace GMenu;
 
 sealed class Program
 {
@@ -12,8 +9,8 @@ sealed class Program
     public static void Main(string[] args) => BuildAvaloniaApp()
         .StartWithClassicDesktopLifetime(args);
 
-    // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
+    // Avalonia configurationProvider, don't remove; also used by visual designer.
+    private static AppBuilder BuildAvaloniaApp()
     {
         var provider = Design.IsDesignMode
             ? new ServiceCollection().BuildServiceProvider() 
@@ -21,7 +18,6 @@ sealed class Program
 
         if (!Design.IsDesignMode)
         {
-            provider.UseMicrosoftDependencyResolver();
             Locator.CurrentMutable.UseSerilogFullLogger(Log.Logger);
         }
         
@@ -31,7 +27,8 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseReactiveUI(builder => builder.BuildApp());
+            .UseReactiveUI(builder => builder
+                .BuildApp());
     }
      
 }

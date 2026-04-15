@@ -2,6 +2,9 @@
   <Folder Name="/benchmarks/">
     <Project Path="benchmarks/GMenu.Benchmarks/GMenu.Benchmarks.csproj" />
   </Folder>
+  <Folder Name="/lua/">
+    <File Path="run-tests.lua" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/GMenu/GMenu.csproj" />
   </Folder>

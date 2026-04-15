@@ -1,12 +1,16 @@
+using ILogger = Serilog.ILogger;
+
 namespace GMenu.Modules.DesktopFiles;
 
 public class DesktopFilesHeaderSearcher(ILogger logger) : IDesktopFilesHeaderSearcher
 {
-    public IEnumerable<DesktopFileHeader> Search(Span<char> namePattern, IEnumerable<DesktopFileHeader> headers)
+    public IEnumerable<DesktopFileHeader> Search(string namePattern, IEnumerable<DesktopFileHeader> headers)
     {
-        headers
+        return headers
+            .AsParallel()
             .Where(header => !header.IsDummy)
             .Where(header => header.Name is not null)
-            .Where(header => header.Name.ContainsRange(namePattern))
+            .Where(header => header.Name!.ContainsRange(namePattern.AsSpan()));
+        
     }
 }

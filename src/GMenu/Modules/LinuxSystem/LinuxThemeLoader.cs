@@ -1,4 +1,5 @@
 using static System.Runtime.InteropServices.CallingConvention;
+using ILogger = Serilog.ILogger;
 
 namespace GMenu.Modules.LinuxSystem;
 

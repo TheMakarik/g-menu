@@ -12,12 +12,10 @@
     xmlns:keys="clr-namespace:GMenu.Modules.Localization.Model"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rxUI="http://reactiveui.net"
+    xmlns:userControls="clr-namespace:GMenu.Views"
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Design.DataContext>
-        <vm:MainWindowViewModel />
-    </Design.DataContext>
 
     <!--  Main application UI  -->
     <Grid RowDefinitions="Auto, Auto, *">
@@ -60,25 +58,8 @@
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FilePlus}" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" />
-
                 <!--  Desktop files tree view  -->
-                <TreeView Grid.Row="2">
-
-                    <TreeViewItem Header="Item">
-                        <TreeViewItem Header="Item" />
-                        <TreeViewItem Header="Item" />
-                        <TreeViewItem Header="Item">
-                            <TreeViewItem Header="Item" />
-                            <TreeViewItem Header="Item" />
-                        </TreeViewItem>
-                    </TreeViewItem>
-                    <TreeViewItem Header="Item">
-                        <TreeViewItem Header="Item" />
-                    </TreeViewItem>
-                    <TreeViewItem Header="Item" />
-                    <TreeViewItem Header="Item" />
-                </TreeView>
+                <userControls:DesktopFilesTreeView Grid.Row="2" />
 
             </Grid>
 

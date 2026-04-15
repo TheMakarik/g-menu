@@ -1,3 +1,6 @@
+using Avalonia.Threading;
+using ILogger = Serilog.ILogger;
+
 namespace GMenu;
 
 public partial class App : Application
@@ -13,26 +16,26 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+   
     public override async void OnFrameworkInitializationCompleted()
     {
-        var provider = new Bootstrapper().BuildApplication();
+        var provider = Services;
+        provider.GetRequiredService<ILogger>().Information("Initializing GMenu...");
         LoadMaterialTheme(provider);
-        LoadLocalization(provider);
-        await LoadConfigurationAsync(provider);
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
-        }
+            desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
+        
 
+        await LoadConfigurationAsync(provider).ConfigureAwait(false);
+        LoadLocalization(provider);
+        
         base.OnFrameworkInitializationCompleted();
     }
 
     private async Task LoadConfigurationAsync(IServiceProvider provider)
     {
-        await provider.GetRequiredService<IConfiguration>().EnsureExistsAsync();
+       await provider.GetRequiredService<IConfigurationProvider>().EnsureExistsAsync();
     }
 
     private void LoadMaterialTheme(IServiceProvider provider)
