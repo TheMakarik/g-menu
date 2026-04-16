@@ -1,5 +1,5 @@
 <Application
-    RequestedThemeVariant="Default"
+    RequestedThemeVariant="Light"
     x:Class="GMenu.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -21,6 +21,6 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 
-        <system:Double x:Key="IconInTreeViewSize">30</system:Double>
+        <system:Double x:Key="IconInTreeViewSize">23</system:Double>
     </Application.Resources>
 </Application>

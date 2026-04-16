@@ -1,3 +1,6 @@
+using Material.Icons;
+using Material.Icons.Avalonia;
+
 namespace GMenu;
 
 public static class StaticConfiguration
@@ -32,6 +35,67 @@ public static class StaticConfiguration
         "/usr/share/pixmaps/",
         "/usr/local/share/icons/"
     ];
+
+    public static readonly FrozenDictionary<string, MaterialIconKind> MaterialIconsForCategory =
+        new Dictionary<string, MaterialIconKind>
+        {
+            ["AudioVideo"] = MaterialIconKind.Multimedia,
+            ["Audio"] = MaterialIconKind.MusicNote,
+            ["Video"] = MaterialIconKind.Video,
+            ["Development"] = MaterialIconKind.CodeBraces,
+            ["Education"] = MaterialIconKind.School,
+            ["Game"] = MaterialIconKind.GamepadVariant,
+            ["Graphics"] = MaterialIconKind.Image,
+            ["Network"] = MaterialIconKind.Web,
+            ["Office"] = MaterialIconKind.OfficeBuilding,
+            ["Science"] = MaterialIconKind.Flask,
+            ["Settings"] = MaterialIconKind.Cog,
+            ["System"] = MaterialIconKind.Monitor,
+            ["Utility"] = MaterialIconKind.Tools,
+            ["Building"] = MaterialIconKind.Domain,
+            ["Core"] = MaterialIconKind.Apps,
+            ["Debugger"] = MaterialIconKind.Bug,
+            ["Dialup"] = MaterialIconKind.Phone,
+            ["Dictionary"] = MaterialIconKind.BookOpenPageVariant,
+            ["Email"] = MaterialIconKind.Email,
+            ["FileManager"] = MaterialIconKind.Folder,
+            ["GNOME"] = MaterialIconKind.Gnome,
+            ["GTK"] = MaterialIconKind.Gnome,
+            ["IDE"] = MaterialIconKind.ApplicationBrackets,
+            ["InstantMessaging"] = MaterialIconKind.Message,
+            ["IRCClient"] = MaterialIconKind.Pound,
+            ["Monitor"] = MaterialIconKind.ChartLine,
+            ["News"] = MaterialIconKind.Newspaper,
+            ["PackageManager"] = MaterialIconKind.PackageVariant,
+            ["Presentation"] = MaterialIconKind.Presentation,
+            ["Printing"] = MaterialIconKind.Printer,
+            ["ProjectManagement"] = MaterialIconKind.ClipboardList,
+            ["Publishing"] = MaterialIconKind.Book,
+            ["Qt"] = MaterialIconKind.LanguageCpp,
+            ["RasterGraphics"] = MaterialIconKind.Brush,
+            ["RemoteAccess"] = MaterialIconKind.RemoteDesktop,
+            ["RevisionControl"] = MaterialIconKind.SourceBranch,
+            ["Security"] = MaterialIconKind.Shield,
+            ["Spreadsheet"] = MaterialIconKind.FileExcel,
+            ["Telephony"] = MaterialIconKind.PhoneInTalk,
+            ["TerminalEmulator"] = MaterialIconKind.Console,
+            ["TextEditor"] = MaterialIconKind.TextBox,
+            ["VectorGraphics"] = MaterialIconKind.VectorSquare,
+            ["Viewer"] = MaterialIconKind.Eye,
+            ["WebBrowser"] = MaterialIconKind.Web,
+            ["WebDevelopment"] = MaterialIconKind.LanguageHtml5,
+            ["WordProcessor"] = MaterialIconKind.FileDocument,
+            ["X-GNOME-NetworkSettings"] = MaterialIconKind.Network,
+            ["X-GNOME-PersonalSettings"] = MaterialIconKind.Account,
+            ["KDE"] = MaterialIconKind.Linux,
+            ["LXDE"] = MaterialIconKind.Linux,
+            ["LXQt"] = MaterialIconKind.Linux,
+            ["MATE"] = MaterialIconKind.Linux,
+            ["ROX"] = MaterialIconKind.Linux,
+            ["XFCE"] = MaterialIconKind.Linux,
+            ["TDE"] = MaterialIconKind.Linux,
+            ["Unity"] = MaterialIconKind.Ubuntu,
+        }.ToFrozenDictionary();
 
     public static readonly FrozenDictionary<string, string> AccentColorMap = new Dictionary<string, string>()
     {

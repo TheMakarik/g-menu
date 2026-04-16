@@ -35,22 +35,25 @@
                     <icons:MaterialIcon
                         Height="{StaticResource IconInTreeViewSize}"
                         Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
-                        Margin="4,0,10,0"
+                        Margin="5,0,7,0"
                         Width="{StaticResource IconInTreeViewSize}" />
                     <Label Content="{Binding Path}" Margin="0,3,0,0" />
                 </StackPanel>
             </TreeDataTemplate>
 
             <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
-                <Label
-                    Content="{Binding CategoryName}"
-                    Margin="-10,0,0,0"
-                    VerticalAlignment="Center" />
+                <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+                    <ContentControl
+                        Content="{Binding CategoryName, Converter={converters:CategoryStringToMaterialIconConverter}}"
+                        Height="{StaticResource IconInTreeViewSize}"
+                        Width="{StaticResource IconInTreeViewSize}" />
+                    <Label Content="{Binding CategoryName}" Margin="0,3,0,0" />
+                </StackPanel>
             </TreeDataTemplate>
 
             <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
                 <StackPanel
-                    Margin="-10,0,0,0"
+                    Margin="-25,0,0,0"
                     Orientation="Horizontal"
                     VerticalAlignment="Center">
                     <controls:DesktopFileImage
