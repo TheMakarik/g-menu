@@ -15,12 +15,24 @@ public static class StaticConfiguration
     public static readonly string ConfigurationPath = Path.Combine(ConfigurationDirectory, "g-menu.json");
     public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
     
+    
     public static readonly User DefaultUser = new() { Language = new CultureInfo("ru-RU") };
     public static readonly DesktopFileDirectory[] DefaultDesktopFileDirectories = 
     [
-        new DesktopFileDirectory("/usr/share/applications", LocalizationKey.Global)
+        new DesktopFileDirectory("/usr/share/applications", LocalizationKey.Global),
+        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/", LocalizationKey.Local),
+        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/wine", null)
     ];
-    
+
+    public static readonly string[] PathsToRefineIcon =
+    [
+        $"/home/{Environment.UserName}/.local/share/icons/",
+        $"/home/{Environment.UserName}/.icons/",
+        "/usr/share/icons/",
+        "/usr/share/pixmaps/",
+        "/usr/local/share/icons/"
+    ];
+
     public static readonly FrozenDictionary<string, string> AccentColorMap = new Dictionary<string, string>()
     {
         ["blue"]   = "#3584E4",

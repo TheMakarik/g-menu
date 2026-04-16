@@ -6,7 +6,10 @@
     x:DataType="vm:DesktopFilesTreeViewModel"
     x:TypeArguments="vm:DesktopFilesTreeViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:controls="clr-namespace:GMenu.Views.Controls"
+    xmlns:converters="clr-namespace:GMenu.Views.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rx="http://reactiveui.net"
     xmlns:vm="using:GMenu.ViewModels"
@@ -14,19 +17,51 @@
 
     <TreeView ItemsSource="{Binding Children}">
 
+        <TreeView.Styles>
+            <Style Selector="TreeViewItem">
+                <Setter Property="FontSize" Value="15" />
+            </Style>
+        </TreeView.Styles>
+
         <Interaction.Behaviors>
             <EventTriggerBehavior EventName="Loaded">
                 <InvokeCommandAction Command="{Binding LoadDesktopFilesCommand}" />
             </EventTriggerBehavior>
         </Interaction.Behaviors>
 
-        <TreeDataTemplate>
-            <DataTemplates>
-                <DataTemplate DataType="vm:TreeViewDirectoriesViewModel">
-                    <Label Content="{Binding Path}" />
-                </DataTemplate>
-            </DataTemplates>
-        </TreeDataTemplate>
+        <TreeView.DataTemplates>
+            <TreeDataTemplate DataType="vm:TreeViewModelDirectories" ItemsSource="{Binding Children}">
+                <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+                    <icons:MaterialIcon
+                        Height="{StaticResource IconInTreeViewSize}"
+                        Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
+                        Margin="4,0,10,0"
+                        Width="{StaticResource IconInTreeViewSize}" />
+                    <Label Content="{Binding Path}" Margin="0,3,0,0" />
+                </StackPanel>
+            </TreeDataTemplate>
+
+            <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
+                <Label
+                    Content="{Binding CategoryName}"
+                    Margin="-10,0,0,0"
+                    VerticalAlignment="Center" />
+            </TreeDataTemplate>
+
+            <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
+                <StackPanel
+                    Margin="-10,0,0,0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center">
+                    <controls:DesktopFileImage
+                        Height="{StaticResource IconInTreeViewSize}"
+                        SourceString="{Binding IconPath}"
+                        Width="{StaticResource IconInTreeViewSize}" />
+                    <Label Content="{Binding Name}" Margin="6,3,0,0" />
+                </StackPanel>
+            </TreeDataTemplate>
+
+        </TreeView.DataTemplates>
     </TreeView>
 
 </rx:ReactiveUserControl>

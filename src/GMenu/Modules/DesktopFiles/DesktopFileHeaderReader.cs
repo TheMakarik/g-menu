@@ -22,6 +22,7 @@ public sealed class DesktopFileHeaderReader(
 
         var filesToHandle = observableConfiguration.SearchDesktopFilesDirectories
             .Select(directory => directory.Path)
+            .Where(Directory.Exists)
             .SelectMany(directory => Directory
                 .EnumerateFiles(directory, "*.desktop", new EnumerationOptions() { RecurseSubdirectories = true }));
 
@@ -63,7 +64,7 @@ public sealed class DesktopFileHeaderReader(
                     switch (key)
                     {
                         case NameKey:
-                            desktopFileHeader.Name = value.ToString();
+                            desktopFileHeader.Name = value.ToString().Replace("\\n", " ");
                             break;
                         case IconKey:
                             desktopFileHeader.IconPath = value.ToString();

@@ -23,6 +23,7 @@ public sealed class Bootstrapper
         var services = new ServiceCollection();
 
         services
+            .AddSingleton<IDesktopFileIconPathRefiner, DesktopFileIconPathRefiner>()
             .AddSingleton<IDesktopFileHeaderReader, DesktopFileHeaderReader>()
             .AddSingleton<DesktopFilesTreeViewModel>()
             .AddSingleton<MainWindowViewModel>()

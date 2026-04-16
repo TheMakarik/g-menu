@@ -131,6 +131,7 @@ Keywords=2d;curses;colour;single-player;
         Assert.True(result.First().IsBroken);
     }
     
+    
     [Fact]
     public void ReadAllHeaders_OneWithoutDesktopEntryHeaderAndOneNormal_MustReturnOnlyValid()
     {

@@ -26,12 +26,22 @@ public class DesktopFileImage : ContentControl
     private void UpdateContentControl()
     {
         var extension = Path.GetExtension(this.SourceString);
-        this.Content = extension switch
+        var image = new Image
         {
-            ".png" or ".jpg" or ".jpeg" => new Image() { Source = new Bitmap(_sourceString), Stretch = Stretch.Fill },
-            ".svg" => new SvgImage() { Source = new SvgSource(new Uri(_sourceString, UriKind.Absolute)) },
-            ".xpm" => new Image(),
-            _ => this.Content
+            Width = this.Width,
+            Height = this.Height,
+            Stretch = Stretch.Fill,
+            Source = extension switch
+            {
+                ".png" or ".jpg" or ".jpeg" => File.Exists(this.SourceString) 
+                    ? new Bitmap(this.SourceString) 
+                    : null,
+                ".svg" => File.Exists(this.SourceString)
+                    ? new SvgImage() { Source = SvgSource.Load(this.SourceString)  }
+                    : null,
+            }
         };
+
+        this.Content = image;
     }
 }
