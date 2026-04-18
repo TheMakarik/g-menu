@@ -22,7 +22,7 @@ public class DesktopFileHeaderReaderTests : IDisposable
         {
             UnexistingCategories = [],
             User = null!,
-            SearchDesktopFilesDirectories = [new DesktopFileDirectory(Path: _fileSystem!.Root, null)]
+            SearchDesktopFilesDirectories = [new DesktopFileDirectory(Path: _fileSystem!.Root)]
         });
         _systemUnderTest = new DesktopFileHeaderReader(A.Dummy<ILogger>(), _configurationProvider, A.Dummy<IRootRequirer>());
     }

@@ -1,7 +1,3 @@
-using Avalonia.Media.Imaging;
-using Avalonia.Svg.Skia;
-using GMenu.Views.SpecificModel;
-
 namespace GMenu.Views.Controls;
 
 public class DesktopFileImage : ContentControl

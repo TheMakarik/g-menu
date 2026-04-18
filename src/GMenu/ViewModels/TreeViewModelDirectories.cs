@@ -1,4 +1,3 @@
-using GMenu.ViewModels.Messages;
 using ILogger = Serilog.ILogger;
 
 namespace GMenu.ViewModels;
@@ -8,20 +7,22 @@ public sealed partial class TreeViewModelDirectories : TreeViewModelBase
     private readonly DirectoryTreeViewInfo _directoryInfo;
     private readonly ILogger _logger;
     public string Path => _directoryInfo.Path;
+    public string? LocalizationKey => _directoryInfo.LocalizationKey;
 
     public TreeViewModelDirectories(
         DirectoryTreeViewInfo directoryInfo,
         IDesktopFileIconPathRefiner iconPathRefiner,
         ILogger logger,
-        IRootRequirer rootRequirer) : base(logger, rootRequirer)
+        ILocalizationProvider localizationProvider,
+        IRootRequirer rootRequirer) : base(logger, rootRequirer, localizationProvider)
     {
         _directoryInfo = directoryInfo;
         _logger = logger;
 
         var groupedByCategoryHeaders = directoryInfo.Headers
-            .Where(header => header.Category is not null)
             .Where(header => !header.IsBroken)
-            .GroupBy(header => header.Category)
+            .GroupBy(header => string.IsNullOrEmpty(header.Category) ? StaticConfiguration.UncategorizedCategory : header.Category)
+            .OrderBy(group => group.Key)
             .Select(group => new TreeViewModelCategory(
                 new CategoryTreeViewInfo
                 {
@@ -31,7 +32,7 @@ public sealed partial class TreeViewModelDirectories : TreeViewModelBase
                 },
                 iconPathRefiner,
                 logger,
-                rootRequirer));
+                rootRequirer, localizationProvider));
         
         Children.AddRange(groupedByCategoryHeaders);
     }
@@ -42,7 +43,6 @@ public sealed partial class TreeViewModelDirectories : TreeViewModelBase
     private void RegisterNewDirectory()
     {
         MessageBus.Current.SendMessage(new RegisterNewDirectoryMessage());
-        _logger.Debug("Registered new directory from another directory using directory menu");
     }
 
     [ReactiveCommand]

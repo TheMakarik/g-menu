@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <data name="AudioVideo" xml:space="preserve">
+    <value>Audio &amp; Video</value>
+  </data>
+    <data name="Audio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+    <data name="Video" xml:space="preserve">
+    <value>Video</value>
+  </data>
+    <data name="Development" xml:space="preserve">
+    <value>Development</value>
+  </data>
+    <data name="Education" xml:space="preserve">
+    <value>Education</value>
+  </data>
+    <data name="Game" xml:space="preserve">
+    <value>Games</value>
+  </data>
+    <data name="Graphics" xml:space="preserve">
+    <value>Graphics</value>
+  </data>
+    <data name="Network" xml:space="preserve">
+    <value>Network</value>
+  </data>
+    <data name="Office" xml:space="preserve">
+    <value>Office</value>
+  </data>
+    <data name="Science" xml:space="preserve">
+    <value>Science</value>
+  </data>
+    <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+    <data name="System" xml:space="preserve">
+    <value>System</value>
+  </data>
+    <data name="Utility" xml:space="preserve">
+    <value>Utilities</value>
+  </data>
+    <data name="Building" xml:space="preserve">
+    <value>Building</value>
+  </data>
+    <data name="Core" xml:space="preserve">
+    <value>Core</value>
+  </data>
+    <data name="Debugger" xml:space="preserve">
+    <value>Debugger</value>
+  </data>
+    <data name="Dialup" xml:space="preserve">
+    <value>Dial-up</value>
+  </data>
+    <data name="Dictionary" xml:space="preserve">
+    <value>Dictionary</value>
+  </data>
+    <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+    <data name="FileManager" xml:space="preserve">
+    <value>File Manager</value>
+  </data>
+    <data name="GNOME" xml:space="preserve">
+    <value>GNOME</value>
+  </data>
+    <data name="GTK" xml:space="preserve">
+    <value>GTK</value>
+  </data>
+    <data name="IDE" xml:space="preserve">
+    <value>IDE</value>
+  </data>
+    <data name="InstantMessaging" xml:space="preserve">
+    <value>Instant Messaging</value>
+  </data>
+    <data name="IRCClient" xml:space="preserve">
+    <value>IRC Client</value>
+  </data>
+    <data name="Monitor" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+    <data name="News" xml:space="preserve">
+    <value>News</value>
+  </data>
+    <data name="PackageManager" xml:space="preserve">
+    <value>Package Manager</value>
+  </data>
+    <data name="Presentation" xml:space="preserve">
+    <value>Presentation</value>
+  </data>
+    <data name="Printing" xml:space="preserve">
+    <value>Printing</value>
+  </data>
+    <data name="ProjectManagement" xml:space="preserve">
+    <value>Project Management</value>
+  </data>
+    <data name="Publishing" xml:space="preserve">
+    <value>Publishing</value>
+  </data>
+    <data name="Qt" xml:space="preserve">
+    <value>Qt</value>
+  </data>
+    <data name="RasterGraphics" xml:space="preserve">
+    <value>Raster Graphics</value>
+  </data>
+    <data name="RemoteAccess" xml:space="preserve">
+    <value>Remote Access</value>
+  </data>
+    <data name="RevisionControl" xml:space="preserve">
+    <value>Revision Control</value>
+  </data>
+    <data name="Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+    <data name="Spreadsheet" xml:space="preserve">
+    <value>Spreadsheet</value>
+  </data>
+    <data name="Telephony" xml:space="preserve">
+    <value>Telephony</value>
+  </data>
+    <data name="TerminalEmulator" xml:space="preserve">
+    <value>Terminal Emulator</value>
+  </data>
+    <data name="TextEditor" xml:space="preserve">
+    <value>Text Editor</value>
+  </data>
+    <data name="VectorGraphics" xml:space="preserve">
+    <value>Vector Graphics</value>
+  </data>
+    <data name="Viewer" xml:space="preserve">
+    <value>Viewer</value>
+  </data>
+    <data name="WebBrowser" xml:space="preserve">
+    <value>Web Browser</value>
+  </data>
+    <data name="WebDevelopment" xml:space="preserve">
+    <value>Web Development</value>
+  </data>
+    <data name="WordProcessor" xml:space="preserve">
+    <value>Word Processor</value>
+  </data>
+    <data name="X-GNOME-NetworkSettings" xml:space="preserve">
+    <value>Network Settings</value>
+  </data>
+    <data name="X-GNOME-PersonalSettings" xml:space="preserve">
+    <value>Personal Settings</value>
+  </data>
+    <data name="KDE" xml:space="preserve">
+    <value>KDE</value>
+  </data>
+    <data name="LXDE" xml:space="preserve">
+    <value>LXDE</value>
+  </data>
+    <data name="LXQt" xml:space="preserve">
+    <value>LXQt</value>
+  </data>
+    <data name="MATE" xml:space="preserve">
+    <value>MATE</value>
+  </data>
+    <data name="ROX" xml:space="preserve">
+    <value>ROX</value>
+  </data>
+    <data name="XFCE" xml:space="preserve">
+    <value>XFCE</value>
+  </data>
+    <data name="TDE" xml:space="preserve">
+    <value>TDE</value>
+  </data>
+    <data name="Unity" xml:space="preserve">
+    <value>Unity</value>
+  </data>
+    <data name="Uncategorized" xml:space="preserve">
+    <value>Uncategorized</value>
+  </data>
+  <data name="Services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="OpenGithubSource" xml:space="preserve">
+    <value>Open github source code</value>
+  </data>
+  <data name="FilesCount" xml:space="preserve">
+    <value>Total files</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="OpenSettings" xml:space="preserve">
+    <value>Open settings</value>
+  </data>
+  <data name="CloseTheApp" xml:space="preserve">
+    <value>Close the app</value>
+  </data>
+  <data name="Global" xml:space="preserve">
+    <value>Global</value>
+  </data>
+</root>

@@ -9,7 +9,6 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:keys="clr-namespace:GMenu.Modules.Localization.Model"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rxUI="http://reactiveui.net"
     xmlns:userControls="clr-namespace:GMenu.Views"
@@ -18,13 +17,13 @@
 
 
     <!--  Main application UI  -->
-    <Grid RowDefinitions="Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *, Auto, Auto">
 
         <Menu Grid.Row="0">
-            <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.Services}}">
-                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.OpenGithubSource}}" />
-                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.CloseTheApp}}" Icon="{icons:MaterialIconExt Kind=Close}" />
-                <MenuItem Header="{DynamicResource {x:Static keys:LocalizationKey.MinimizeTheApp}}" Icon="{icons:MaterialIconExt Kind=Minimize}" />
+            <MenuItem Header="{Binding LocalizationProvider[Services]}">
+                <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
+                <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
+                <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
             </MenuItem>
         </Menu>
 
@@ -63,7 +62,21 @@
 
             </Grid>
 
+
         </Grid>
+
+        <Separator Grid.Row="3" />
+        <StackPanel
+            Grid.Row="4"
+            Margin="10,0,0,0"
+            Orientation="Horizontal"
+            VerticalAlignment="Center">
+            <TextBlock>
+                <Run Text="{Binding LocalizationProvider[FilesCount]}" />
+                <Run Text="{Binding DesktopFilesCount}" />
+            </TextBlock>
+        </StackPanel>
+
     </Grid>
 
 </rxUI:ReactiveWindow>

@@ -1,15 +1,17 @@
 namespace GMenu.Views.Converters;
 
-public sealed class CategoryStringToMaterialIconConverter : MarkupExtension, IValueConverter
+public class TryLocalizeValueConverter : MarkupExtension, IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if(value is not string category)
-            return null;
+        if (value is not string valueToLocalize)
+            return value;
+        
+        var result =  App.Services.GetRequiredService<ILocalizationProvider>()[valueToLocalize];
 
-        return StaticConfiguration.MaterialIconsForCategory.TryGetValue(category, out Material.Icons.MaterialIconKind iconKind)
-            ? new MaterialIcon(){Kind = iconKind}
-            : null;
+        return result == StaticConfiguration.CannotFoundKeyInLocalizationValue
+            ? valueToLocalize
+            : result;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

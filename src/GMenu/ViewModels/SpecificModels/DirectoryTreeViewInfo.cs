@@ -4,4 +4,5 @@ public class DirectoryTreeViewInfo
 {
     public required string Path { get; set; }
     public required IGrouping<string, DesktopFileHeader> Headers { get; set; }
+    public required string? LocalizationKey { get; set; }
 }

@@ -1,6 +1,3 @@
-using Material.Icons;
-using Material.Icons.Avalonia;
-
 namespace GMenu;
 
 public static class StaticConfiguration
@@ -10,21 +7,22 @@ public static class StaticConfiguration
     public const string SerilogOutputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
     public const string DefaultLocalizationPathPrefix = "/Resources/";
     public static readonly string LogsPath = Path.Combine(ConfigurationDirectory, "/logs/g-menu-log__");
-    #if DEBUG
+    public const string UncategorizedCategory = "Uncategorized";
     public static readonly ConsoleTheme SerilogConsoleTheme = AnsiConsoleTheme.Code;
-    #endif
     public static RollingInterval SerilogRollingInterval = RollingInterval.Day;
     public const string AvaloniaResourcePrefix = "avares://GMenu";
     public static readonly string ConfigurationPath = Path.Combine(ConfigurationDirectory, "g-menu.json");
     public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
-    
+    public const string CannotFoundKeyInLocalizationValue = "????";
+    public static readonly string[] ValidIconExtensions = [".svg", ".png", ".jpg", ".jpeg", ".xpm"];
     
     public static readonly User DefaultUser = new() { Language = new CultureInfo("ru-RU") };
     public static readonly DesktopFileDirectory[] DefaultDesktopFileDirectories = 
     [
-        new DesktopFileDirectory("/usr/share/applications", LocalizationKey.Global),
-        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/", LocalizationKey.Local),
-        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/wine", null)
+        new DesktopFileDirectory("/usr/share/applications", "Global"),
+        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/"),
+        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/wine"),
+        new DesktopFileDirectory($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}")
     ];
 
     public static readonly string[] PathsToRefineIcon =
@@ -60,7 +58,7 @@ public static class StaticConfiguration
             ["Email"] = MaterialIconKind.Email,
             ["FileManager"] = MaterialIconKind.Folder,
             ["GNOME"] = MaterialIconKind.Gnome,
-            ["GTK"] = MaterialIconKind.Gnome,
+            ["GTK"] = MaterialIconKind.LanguageC,
             ["IDE"] = MaterialIconKind.ApplicationBrackets,
             ["InstantMessaging"] = MaterialIconKind.Message,
             ["IRCClient"] = MaterialIconKind.Pound,
@@ -95,6 +93,7 @@ public static class StaticConfiguration
             ["XFCE"] = MaterialIconKind.Linux,
             ["TDE"] = MaterialIconKind.Linux,
             ["Unity"] = MaterialIconKind.Ubuntu,
+            [StaticConfiguration.UncategorizedCategory] = MaterialIconKind.QuestionMarkCircleOutline
         }.ToFrozenDictionary();
 
     public static readonly FrozenDictionary<string, string> AccentColorMap = new Dictionary<string, string>()

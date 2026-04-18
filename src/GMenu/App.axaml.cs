@@ -1,4 +1,4 @@
-using Avalonia.Threading;
+using HarfBuzzSharp;
 using ILogger = Serilog.ILogger;
 
 namespace GMenu;
@@ -27,6 +27,7 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
         
         await LoadConfigurationAsync(provider).ConfigureAwait(false);
+      
         LoadLocalization(provider);
         
         base.OnFrameworkInitializationCompleted();
@@ -46,11 +47,12 @@ public partial class App : Application
         materialTheme.PrimaryColor = Color.Parse(hexTheme);
         materialTheme.SecondaryColor = Color.Parse(hexTheme);
         materialTheme.BaseTheme = BaseThemeMode.Inherit;
+        this.Resources["AccentColor"] = materialTheme.PrimaryColor;
     }
     
     private void LoadLocalization(IServiceProvider provider)
     {
-      //  var localizationProvider = provider.GetRequiredService<ILocalizationProvider>();
-       // localizationProvider.SetLocalization(new CultureInfo("ru-RU"));
+       var localizationProvider = provider.GetRequiredService<ILocalizationProvider>();
+       localizationProvider.SetLocalization(new CultureInfo("ru-RU"));
     }
 }

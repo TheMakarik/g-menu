@@ -1,8 +1,11 @@
+using ILogger = Serilog.ILogger;
+
 namespace GMenu.Modules.Localization;
 
 public class DynamicLocalizationProvider(
-    Action<CultureInfo, CultureInfo> updateUIOnCultureChanging,
-    Func<LocalizationKey, string> getStringDynamic
+    Action<CultureInfo> updateUIOnCultureChanging,
+    Func<string, CultureInfo, string> getStringDynamic,
+    ILogger logger
     ) : ILocalizationProvider
 {
     private readonly Lock _lock = new Lock();
@@ -11,10 +14,17 @@ public class DynamicLocalizationProvider(
     public void SetLocalization(CultureInfo cultureInfo)
     {
         using var scope = _lock.EnterScope();
-        var oldCultureName = _currentCulture.ToString(); //To avoid reference at _currentCulture that will be updated 
+        logger.Information("Setting localization to {culture}", cultureInfo);
         _currentCulture = cultureInfo;
-        updateUIOnCultureChanging(_currentCulture, new CultureInfo(oldCultureName));
+        updateUIOnCultureChanging(cultureInfo);
     }
 
-    public string this[LocalizationKey key] => getStringDynamic(key);
+    public string this[string key]
+    {
+        get
+        {
+            var result = getStringDynamic(key, _currentCulture);
+            return result;
+        }
+    }
 }

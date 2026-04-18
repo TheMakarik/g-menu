@@ -4,30 +4,103 @@ namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIconPathRefiner
 {
-    private FrozenDictionary<string, string>? _iconsMapping = null;
-    
+    private readonly ConcurrentDictionary<string, string> _iconsMappingCache = new();
+
+    private readonly IReadOnlyCollection<string> _actualPathsToRefineIcon = StaticConfiguration.PathsToRefineIcon
+        .Where(Directory.Exists)
+        .ToArray()
+        .AsReadOnly();
+
     public string? RefinePath(string? path)
     {
-        if(path is null)
+        if (path is null)
             return string.Empty;
-        
-        if (_iconsMapping is null)
+
+        if (Path.IsPathRooted(path))
+            return path;
+
+        if (_iconsMappingCache.TryGetValue(path, out var result))
+            return result;
+
+        var iconPath = _actualPathsToRefineIcon
+            .Select(directory => Directory
+                .EnumerateFiles(directory, $"{path}.*", SearchOption.AllDirectories))
+            .SelectMany(paths => paths
+                .Where(pathToIcon => StaticConfiguration.ValidIconExtensions.Contains(Path.GetExtension(pathToIcon))))
+            .FirstOrDefault();
+
+        if (iconPath is null)
+            return null;
+
+        _iconsMappingCache.TryAdd(path, iconPath);
+        return iconPath;
+    }
+
+    public void StartBackgroundIconsLoading(IEnumerable<string> iconNamesInDesktopFiles)
+    {
+        var backgroundWorker = new  BackgroundWorker();
+        backgroundWorker.DoWork += async (self, args) =>
         {
-            var values = StaticConfiguration.PathsToRefineIcon
-                .Where(Directory.Exists)
-                .SelectMany(dir => Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories))
-                .ToHashSet();
+            var stopwatch = Stopwatch.StartNew();
+            logger.Debug("Start background icon loading...");
 
-            var dictionary = new Dictionary<string, string>(capacity: values.Count);
-            foreach (var value in values)
+            var iconNamesSet = iconNamesInDesktopFiles.ToHashSet();
+            if (iconNamesSet.Count == 0)
             {
-                var key = Path.GetFileNameWithoutExtension(value);
-                dictionary.TryAdd(key, value);
+                logger.Information("No icons to load");
+                return;
             }
+            
 
-            _iconsMapping = dictionary.ToFrozenDictionary();
+            var tasks = _actualPathsToRefineIcon
+                .Where(Directory.Exists)
+                .Select(dir => Task.Run(() => ProcessDirectory(dir, iconNamesSet,  StaticConfiguration.ValidIconExtensions)))
+                .ToArray();
+
+            var results = await Task.WhenAll(tasks);
+            var totalCount = results.Sum();
+
+            logger.Information("Found {count} icons in background, time elapsed: {time}ms",
+                totalCount, stopwatch.ElapsedMilliseconds);
+            stopwatch.Stop();
+        };
+
+        backgroundWorker.RunWorkerAsync(backgroundWorker);
+    }
+
+    private int ProcessDirectory(string directory, HashSet<string> iconNamesSet, string[] validExtensions)
+    {
+        var count = 0;
+        var enumerationOptions = new EnumerationOptions
+        {
+            RecurseSubdirectories = true,
+            IgnoreInaccessible = true,
+            AttributesToSkip = FileAttributes.System | FileAttributes.Temporary,
+        };
+
+        try
+        {
+            foreach (var file in Directory.EnumerateFiles(directory, "*.*", enumerationOptions))
+            {
+                var extension = Path.GetExtension(file);
+                
+                if (!validExtensions.Contains(extension))
+                    continue;
+
+                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+
+                if (iconNamesSet.Contains(fileNameWithoutExtension) &&
+                    _iconsMappingCache.TryAdd(fileNameWithoutExtension, file))
+                {
+                    Interlocked.Increment(ref count);
+                }
+            }
         }
-        
-        return Path.IsPathRooted(path) ? path : _iconsMapping.GetValueOrDefault(path, path);
+        catch (Exception ex)
+        {
+            logger.Warning(ex, "Error processing directory {Directory}", directory);
+        }
+
+        return count;
     }
 }

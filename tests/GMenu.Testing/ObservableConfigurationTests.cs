@@ -28,7 +28,7 @@ public class ObservableConfigurationTests
       var observableConfiguration = new ObservableConfiguration() {User = new  User(), SearchDesktopFilesDirectories = [], UnexistingCategories = []};
       observableConfiguration.PropertyChanged += (sender, args) => { wasPropertyChangedCalled = true; };
       //Act
-      observableConfiguration.SearchDesktopFilesDirectories = [new DesktopFileDirectory(string.Empty, null)];
+      observableConfiguration.SearchDesktopFilesDirectories = [new DesktopFileDirectory(string.Empty)];
       //Assert
       Assert.True(wasPropertyChangedCalled);
    }
@@ -41,7 +41,7 @@ public class ObservableConfigurationTests
       var observableConfiguration = new ObservableConfiguration() {User = new  User(), SearchDesktopFilesDirectories = [], UnexistingCategories = []};
       observableConfiguration.PropertyChanged += (sender, args) => { propertyName = args.PropertyName; };
       //Act
-      observableConfiguration.SearchDesktopFilesDirectories.Add(new   DesktopFileDirectory(string.Empty, null));
+      observableConfiguration.SearchDesktopFilesDirectories.Add(new   DesktopFileDirectory(string.Empty));
       //Assert
       Assert.EndsWith(propertyName, $"[{observableConfiguration.SearchDesktopFilesDirectories.Count - 1}]");
    }

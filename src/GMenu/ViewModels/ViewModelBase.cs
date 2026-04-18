@@ -2,9 +2,10 @@
 
 namespace GMenu.ViewModels;
 
-public abstract class ViewModelBase(ILogger logger, IRootRequirer rootRequirer) : ReactiveObject
+public abstract class ViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ReactiveObject
 {
-    
+
+    [Reactive] public ILocalizationProvider LocalizationProvider { get; } = localizationProvider;
     public Interaction<ErrorType, Unit> ErrorInteraction { get; } = new();
     public Interaction<Unit, string> SelectTheDirectory { get; } = new();
     public Interaction<IObservable<object>, Task<Task<object>>> AfterApplicationFullyLoading { get; } = new();

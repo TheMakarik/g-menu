@@ -15,56 +15,71 @@
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <TreeView ItemsSource="{Binding Children}">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <TreeView ItemsSource="{Binding Children}">
 
-        <TreeView.Styles>
-            <Style Selector="TreeViewItem">
-                <Setter Property="FontSize" Value="15" />
-            </Style>
-        </TreeView.Styles>
+            <TreeView.Styles>
+                <Style Selector="TreeViewItem">
+                    <Setter Property="FontSize" Value="15" />
+                </Style>
+            </TreeView.Styles>
 
-        <Interaction.Behaviors>
-            <EventTriggerBehavior EventName="Loaded">
-                <InvokeCommandAction Command="{Binding LoadDesktopFilesCommand}" />
-            </EventTriggerBehavior>
-        </Interaction.Behaviors>
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="Loaded">
+                    <InvokeCommandAction Command="{Binding LoadDesktopFilesCommand}" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
 
-        <TreeView.DataTemplates>
-            <TreeDataTemplate DataType="vm:TreeViewModelDirectories" ItemsSource="{Binding Children}">
-                <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
-                    <icons:MaterialIcon
-                        Height="{StaticResource IconInTreeViewSize}"
-                        Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
-                        Margin="5,0,7,0"
-                        Width="{StaticResource IconInTreeViewSize}" />
-                    <Label Content="{Binding Path}" Margin="0,3,0,0" />
-                </StackPanel>
-            </TreeDataTemplate>
+            <TreeView.DataTemplates>
+                <TreeDataTemplate DataType="vm:TreeViewModelDirectories" ItemsSource="{Binding Children}">
+                    <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+                        <icons:MaterialIcon
+                            Height="{StaticResource IconInTreeViewSize}"
+                            Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
+                            Margin="5,0,7,0"
+                            Width="{StaticResource IconInTreeViewSize}" />
+                        <Label Margin="0,3,0,0">
+                            <Label.Content>
+                                <MultiBinding Converter="{converters:TryLocalizeDirectoryConverter}">
+                                    <Binding Path="LocalizationKey" />
+                                    <Binding Path="Path" />
+                                </MultiBinding>
+                            </Label.Content>
+                        </Label>
+                    </StackPanel>
+                </TreeDataTemplate>
 
-            <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
-                <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
-                    <ContentControl
-                        Content="{Binding CategoryName, Converter={converters:CategoryStringToMaterialIconConverter}}"
-                        Height="{StaticResource IconInTreeViewSize}"
-                        Width="{StaticResource IconInTreeViewSize}" />
-                    <Label Content="{Binding CategoryName}" Margin="0,3,0,0" />
-                </StackPanel>
-            </TreeDataTemplate>
+                <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
+                    <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+                        <ContentControl
+                            Content="{Binding CategoryName, Converter={converters:CategoryStringToMaterialIconConverter}}"
+                            Height="{StaticResource IconInTreeViewSize}"
+                            Width="{StaticResource IconInTreeViewSize}" />
+                        <Label Content="{Binding CategoryName, Converter={converters:TryLocalizeValueConverter}}" Margin="0,3,0,0" />
+                        <icons:MaterialIcon
+                            Foreground="{DynamicResource AccentColor}"
+                            IsVisible="{Binding CategoryName, Converter={converters:IsCategoryUncategorizedConverter}}"
+                            Kind="QuestionBoxOutline"
+                            Margin="15,0,0,0" />
+                    </StackPanel>
+                </TreeDataTemplate>
 
-            <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
-                <StackPanel
-                    Margin="-25,0,0,0"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center">
-                    <controls:DesktopFileImage
-                        Height="{StaticResource IconInTreeViewSize}"
-                        SourceString="{Binding IconPath}"
-                        Width="{StaticResource IconInTreeViewSize}" />
-                    <Label Content="{Binding Name}" Margin="6,3,0,0" />
-                </StackPanel>
-            </TreeDataTemplate>
+                <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
+                    <StackPanel
+                        Margin="-25,0,0,0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                        <controls:DesktopFileImage
+                            Height="{StaticResource IconInTreeViewSize}"
+                            SourceString="{Binding IconPath}"
+                            Width="{StaticResource IconInTreeViewSize}" />
+                        <Label Content="{Binding Name}" Margin="6,3,0,0" />
+                    </StackPanel>
+                </TreeDataTemplate>
 
-        </TreeView.DataTemplates>
-    </TreeView>
+            </TreeView.DataTemplates>
+        </TreeView>
+    </ScrollViewer>
+
 
 </rx:ReactiveUserControl>

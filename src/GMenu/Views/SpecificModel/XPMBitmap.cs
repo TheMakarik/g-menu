@@ -1,6 +1,3 @@
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-
 namespace GMenu.Views.SpecificModel;
 
 public sealed class XPMBitmap(string filePath)
