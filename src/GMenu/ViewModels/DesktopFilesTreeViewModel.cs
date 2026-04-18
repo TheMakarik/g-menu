@@ -33,7 +33,7 @@ public sealed partial class DesktopFilesTreeViewModel(
             .ToDictionary(group => group.Key, g => g.ToList());
         
         var allPaths = allGroups.Keys
-            .Where(path => configuredPaths.Any(configuredPath => path.StartsWith(configuredPath.Path)))
+            .Where(path => configuredPaths.Any(configuredPath => Path.TrimEndingDirectorySeparator(path).StartsWith(Path.TrimEndingDirectorySeparator(configuredPath.Path))))
             .OrderBy(path => path.Length)
             .ToList();
 
@@ -54,7 +54,8 @@ public sealed partial class DesktopFilesTreeViewModel(
             
             viewModels[path] = viewModel;
 
-            if (!configuredPaths.Select(paths => paths.Path).Contains(path))
+            if (!configuredPaths.Select(paths => Path.TrimEndingDirectorySeparator(paths.Path))
+                    .Contains(Path.TrimEndingDirectorySeparator(path)))
             {
                 var lastSlash = path.LastIndexOf(Path.DirectorySeparatorChar);
                 var parentPath = lastSlash > 0 ? path[..lastSlash] : null;
@@ -65,6 +66,8 @@ public sealed partial class DesktopFilesTreeViewModel(
             else
                 _children.Insert(0, viewModel);
         }
+        
+        _logger.Information("Found {count} directories...", _children.Count);
         
     }
 }

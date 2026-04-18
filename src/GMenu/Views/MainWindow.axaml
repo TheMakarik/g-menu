@@ -9,6 +9,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:material="using:Material.Styles.Assists"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rxUI="http://reactiveui.net"
     xmlns:userControls="clr-namespace:GMenu.Views"
@@ -19,13 +20,46 @@
     <!--  Main application UI  -->
     <Grid RowDefinitions="Auto, Auto, *, Auto, Auto">
 
-        <Menu Grid.Row="0">
-            <MenuItem Header="{Binding LocalizationProvider[Services]}">
-                <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
-                <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
-                <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
-            </MenuItem>
-        </Menu>
+        <Grid ColumnDefinitions="Auto, Auto" Grid.Row="0">
+            <Menu Grid.Column="0">
+                <MenuItem Header="{Binding LocalizationProvider[Services]}">
+                    <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
+                    <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
+                    <MenuItem
+                        Header="{Binding LocalizationProvider[OpenSettings]}"
+                        Icon="{icons:MaterialIconExt Kind=Settings}"
+                        InputGesture="Ctrl+T" />
+                </MenuItem>
+                <MenuItem Header="{Binding LocalizationProvider[Open]}">
+                    <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
+                    <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
+                    <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
+                </MenuItem>
+                <MenuItem Header="{Binding LocalizationProvider[View]}">
+                    <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
+                    <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
+                    <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
+                </MenuItem>
+                <MenuItem Header="{Binding LocalizationProvider[Help]}">
+                    <MenuItem Header="{Binding LocalizationProvider[AboutDesktopFiles]}" Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
+                </MenuItem>
+            </Menu>
+            <TextBox
+                Classes="outline"
+                Grid.Column="1"
+                Watermark="{Binding LocalizationProvider[InputFileName]}"
+                Width="250">
+                <TextBox.InnerLeftContent>
+                    <icons:MaterialIcon
+                        Height="16"
+                        Kind="Search"
+                        Margin="10,5,0,0"
+                        Width="16" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+        </Grid>
+
 
         <Separator Grid.Row="1" />
 
@@ -34,7 +68,7 @@
             Grid.Row="2"
             Margin="0,5,0,0">
 
-            <Grid RowDefinitions="Auto, Auto, *">
+            <Grid RowDefinitions="Auto, *, Auto">
 
                 <Grid.Styles>
                     <!--  Huge icons  -->
@@ -55,10 +89,13 @@
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=CategoryPlus}" />
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FolderPlus}" />
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FilePlus}" />
+                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=Play}" />
                 </StackPanel>
 
+
+
                 <!--  Desktop files tree view  -->
-                <userControls:DesktopFilesTreeView Grid.Row="2" />
+                <userControls:DesktopFilesTreeView Grid.Row="1" Name="TreeViewDesktopFiles" />
 
             </Grid>
 

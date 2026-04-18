@@ -192,4 +192,25 @@
   <data name="Global" xml:space="preserve">
     <value>Global</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="AboutDesktopFiles" xml:space="preserve">
+    <value>About .desktop files</value>
+  </data>
+  <data name="Local" xml:space="preserve">
+    <value>Local (user-only)</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="SearchFile" xml:space="preserve">
+    <value>Search  file</value>
+  </data>
+  <data name="InputFileName" xml:space="preserve">
+    <value>Input file name...</value>
+  </data>
 </root>

@@ -35,6 +35,7 @@ public class DesktopFileImage : ContentControl
                 ".svg" => File.Exists(this.SourceString)
                     ? new SvgImage() { Source = SvgSource.Load(this.SourceString)  }
                     : null,
+                _ => null
             }
         };
 

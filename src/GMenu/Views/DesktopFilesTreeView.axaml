@@ -22,6 +22,7 @@
                 <Style Selector="TreeViewItem">
                     <Setter Property="FontSize" Value="15" />
                 </Style>
+
             </TreeView.Styles>
 
             <Interaction.Behaviors>

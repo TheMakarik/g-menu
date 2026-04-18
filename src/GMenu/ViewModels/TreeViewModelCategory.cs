@@ -18,5 +18,7 @@ public class TreeViewModelCategory : TreeViewModelBase
             rootRequirer,
             localizationProvider));
         Children.AddRange(children);
+        
+        MessageToSendOnTrueSelectedUpdateFunction = () => new UpdateSelectedCategoryMessage(){CategoryName = CategoryName};
     }
 }

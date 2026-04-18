@@ -5,7 +5,6 @@ public static class StaticConfiguration
     public static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "g-menu");
     public const string DefaultAccentColor = "blue";
     public const string SerilogOutputTemplate = "[{Level:u3}] [{Timestamp:yyyy-MM-dd HH:mm}] [{ThreadId}] {Message:lj}{NewLine}{Exception}";
-    public const string DefaultLocalizationPathPrefix = "/Resources/";
     public static readonly string LogsPath = Path.Combine(ConfigurationDirectory, "/logs/g-menu-log__");
     public const string UncategorizedCategory = "Uncategorized";
     public static readonly ConsoleTheme SerilogConsoleTheme = AnsiConsoleTheme.Code;
@@ -20,7 +19,7 @@ public static class StaticConfiguration
     public static readonly DesktopFileDirectory[] DefaultDesktopFileDirectories = 
     [
         new DesktopFileDirectory("/usr/share/applications", "Global"),
-        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/"),
+        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/", "Local"),
         new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/wine"),
         new DesktopFileDirectory($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}")
     ];

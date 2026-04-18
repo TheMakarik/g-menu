@@ -192,4 +192,25 @@
   <data name="Global" xml:space="preserve">
     <value>Глобальные</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Справка</value>
+  </data>
+  <data name="AboutDesktopFiles" xml:space="preserve">
+    <value>О .desktop файлах</value>
+  </data>
+  <data name="Local" xml:space="preserve">
+    <value>Пользовательские</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Открыть</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="SearchFile" xml:space="preserve">
+    <value>Искать файл</value>
+  </data>
+  <data name="InputFileName" xml:space="preserve">
+    <value>Введите название файла...</value>
+  </data>
 </root>
