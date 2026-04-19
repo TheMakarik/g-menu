@@ -16,9 +16,18 @@ public class TreeViewModelCategory : TreeViewModelBase
             iconPathRefiner,
             logger, 
             rootRequirer,
-            localizationProvider));
+            localizationProvider){Parent = this});
         Children.AddRange(children);
         
-        MessageToSendOnTrueSelectedUpdateFunction = () => new UpdateSelectedCategoryMessage(){CategoryName = CategoryName};
+    }
+
+    public override void SendSelectionChangeMessage()
+    {
+        this.Parent!.SendSelectionChangeMessage();
+        var message = new UpdateSelectedCategoryMessage()
+        {
+            CategoryName = CategoryName,
+        };
+        MessageBus.Current.SendMessage(message);
     }
 }

@@ -51,11 +51,7 @@ public class TryLocalizeDirectoryConverter : MarkupExtension, IMultiValueConvert
             ? parentLocalized 
             : $"{parentLocalized}/{subPath}";
     }
-
-    public object? ConvertBack(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {

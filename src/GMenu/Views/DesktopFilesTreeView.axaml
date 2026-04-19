@@ -16,11 +16,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <TreeView ItemsSource="{Binding Children}">
+        <TreeView ItemsSource="{Binding Children}" SelectedItem="{Binding SelectedItem}">
 
             <TreeView.Styles>
                 <Style Selector="TreeViewItem">
                     <Setter Property="FontSize" Value="15" />
+                    <Setter Property="DragDrop.AllowDrop" Value="True" />
                 </Style>
 
             </TreeView.Styles>
@@ -34,6 +35,7 @@
             <TreeView.DataTemplates>
                 <TreeDataTemplate DataType="vm:TreeViewModelDirectories" ItemsSource="{Binding Children}">
                     <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+
                         <icons:MaterialIcon
                             Height="{StaticResource IconInTreeViewSize}"
                             Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
@@ -66,16 +68,29 @@
                 </TreeDataTemplate>
 
                 <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
-                    <StackPanel
-                        Margin="-25,0,0,0"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center">
-                        <controls:DesktopFileImage
-                            Height="{StaticResource IconInTreeViewSize}"
-                            SourceString="{Binding IconPath}"
-                            Width="{StaticResource IconInTreeViewSize}" />
-                        <Label Content="{Binding Name}" Margin="6,3,0,0" />
-                    </StackPanel>
+                    <Border
+                        BorderThickness="3"
+                        DragDrop.AllowDrop="True"
+                        Height="{Binding Height, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
+                        PointerPressed="StartDrag"
+                        PointerReleased="StopDrag"
+                        Width="{Binding Width, RelativeSource={RelativeSource AncestorType=TreeView}}">
+                        <Grid
+                            ColumnDefinitions="Auto, *"
+                            Margin="-25,0,0,0"
+                            VerticalAlignment="Center">
+                            <controls:DesktopFileImage
+                                BorderThickness="3"
+                                Grid.Column="0"
+                                Height="{StaticResource IconInTreeViewSize}"
+                                SourceString="{Binding IconPath}"
+                                Width="{StaticResource IconInTreeViewSize}" />
+                            <Label
+                                Content="{Binding Name}"
+                                Grid.Column="1"
+                                Margin="6,3,0,0" />
+                        </Grid>
+                    </Border>
                 </TreeDataTemplate>
 
             </TreeView.DataTemplates>

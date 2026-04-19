@@ -14,7 +14,7 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
     {
         if (File.Exists(StaticConfiguration.ConfigurationPath))
         {
-            logger.Information("ConfigurationProvider file already exists");
+            logger.Information("Configuration file already exists");
             await LoadConfigurationAsync();
         }
         else
@@ -28,8 +28,12 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
     private async Task LoadConfigurationAsync()
     {
         await using var file = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
+#pragma warning disable IL2026
+#pragma warning disable IL3050
         _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file, ObservableConfigurationSerializerContext.Default.Options);
-        logger.Information("ConfigurationProvider loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
+#pragma warning restore IL2026
+#pragma warning restore IL3050
+        logger.Information("Configuration loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
     }
 
     private async Task CreateJsonFileAsync()
@@ -40,10 +44,14 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
                 Directory.CreateDirectory(StaticConfiguration.ConfigurationDirectory);
 
             await using var file = File.Create(StaticConfiguration.ConfigurationPath);
+#pragma warning disable IL2026
+#pragma warning disable IL3050
             await JsonSerializer.SerializeAsync(
                 file, 
                 StaticConfiguration.DefaultJsonConfiguration,
                 ObservableConfigurationSerializerContext.Default.Options);
+#pragma warning restore IL2026
+#pragma warning restore IL3050
             logger.Information("Configuration file created in {path}", StaticConfiguration.ConfigurationPath);
             _configuration = StaticConfiguration.DefaultJsonConfiguration;
         }
@@ -93,7 +101,11 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
             try
             {
                 await using var json = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
+#pragma warning disable IL2026
+#pragma warning disable IL3050
                 await JsonSerializer.SerializeAsync(json, _configuration, ObservableConfigurationSerializerContext.Default.Options);
+#pragma warning restore IL2026
+#pragma warning restore IL3050
                 logger.Debug("Configuration key ({key}) was fully changed in {path}", propertyName, StaticConfiguration.ConfigurationPath);
             }
             finally

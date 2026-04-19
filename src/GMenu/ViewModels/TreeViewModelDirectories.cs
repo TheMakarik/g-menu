@@ -32,7 +32,7 @@ public sealed partial class TreeViewModelDirectories : TreeViewModelBase
                 },
                 iconPathRefiner,
                 logger,
-                rootRequirer, localizationProvider));
+                rootRequirer, localizationProvider){Parent = this});
         
         Children.AddRange(groupedByCategoryHeaders);
     }
@@ -49,5 +49,15 @@ public sealed partial class TreeViewModelDirectories : TreeViewModelBase
     private void RemoveSelf()
     {
         MessageBus.Current.SendMessage(new RemoveTreeViewElementMessage<TreeViewModelDirectories>(this));
+    }
+
+    public override void SendSelectionChangeMessage()
+    {
+        var message = new UpdateSelectedDirectoryMessage()
+        {
+            Path = Path,
+            LocalizationKey = LocalizationKey,
+        };
+        MessageBus.Current.SendMessage(message);
     }
 }

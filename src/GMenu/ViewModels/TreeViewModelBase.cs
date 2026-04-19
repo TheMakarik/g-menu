@@ -2,19 +2,23 @@ using ILogger = Serilog.ILogger;
 
 namespace GMenu.ViewModels;
 
-public partial class TreeViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ViewModelBase(logger, rootRequirer, localizationProvider)
+public abstract partial class TreeViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ViewModelBase(logger, rootRequirer, localizationProvider)
 {
-    protected Func<object>? MessageToSendOnTrueSelectedUpdateFunction { get; set; }= null;
+    public  required TreeViewModelBase?  Parent { get; init; }
+    [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
+    
     public bool IsSelected
     {
         get => field;
         set
         {
-            if(value && MessageToSendOnTrueSelectedUpdateFunction is not null)
-                MessageBus.Current.SendMessage(MessageToSendOnTrueSelectedUpdateFunction());
+            if (value)
+                SendSelectionChangeMessage();
             this.RaiseAndSetIfChanged(ref field, value);
         }
     }
 
-    [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
+    
+    public abstract void SendSelectionChangeMessage();
+    
 }

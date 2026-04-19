@@ -12,6 +12,16 @@ public sealed partial class DesktopFilesTreeViewModel(
 {
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
     
+    public TreeViewModelBase? SelectedItem { 
+        get => field;
+        set
+        {
+            field?.IsSelected = false;
+            value?.IsSelected = true;
+            this.RaiseAndSetIfChanged(ref field, value);
+        }
+    }
+    
     private readonly ILogger _logger = logger;
     private readonly IRootRequirer _rootRequirer = rootRequirer;
 
@@ -50,7 +60,7 @@ public sealed partial class DesktopFilesTreeViewModel(
                 iconPathRefiner, 
                 _logger,
                 localizationProvider,
-                _rootRequirer);
+                _rootRequirer){Parent = null};
             
             viewModels[path] = viewModel;
 

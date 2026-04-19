@@ -8,6 +8,7 @@ public partial class TreeViewModelDesktopFile : TreeViewModelBase
     private readonly IDesktopFileIconPathRefiner _iconPathRefiner;
     private readonly string _iconPath;
 
+    public string FilePath { get; }
     public string Name { get; }
 
     public string? IconPath
@@ -29,9 +30,11 @@ public partial class TreeViewModelDesktopFile : TreeViewModelBase
         IRootRequirer rootRequirer,
         ILocalizationProvider localizationProvider) : base(logger, rootRequirer, localizationProvider)
     {
+        FilePath = filePath;
         Name = name;
         _iconPathRefiner =  iconPathRefiner;
         _iconPath = iconPath;
+        
     }
     
 
@@ -51,5 +54,15 @@ public partial class TreeViewModelDesktopFile : TreeViewModelBase
     private bool MustLoadIcon(string? iconPathField)
     {
         return iconPathField is null && !_searchingIcon;
+    }
+
+    public override void SendSelectionChangeMessage()
+    {
+        this.Parent!.SendSelectionChangeMessage();
+        var message = new UpdateSelectedDesktopFileMessage()
+        {
+            Name = Name,
+        };
+        MessageBus.Current.SendMessage(message);
     }
 }

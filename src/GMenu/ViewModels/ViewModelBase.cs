@@ -2,13 +2,12 @@
 
 namespace GMenu.ViewModels;
 
-public abstract class ViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ReactiveObject
+public abstract  partial class ViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ReactiveObject
 {
 
-    [Reactive] public ILocalizationProvider LocalizationProvider { get; } = localizationProvider;
+    [Reactive] private ILocalizationProvider _localizationProvider  = localizationProvider;
     public Interaction<ErrorType, Unit> ErrorInteraction { get; } = new();
     public Interaction<Unit, string> SelectTheDirectory { get; } = new();
-    public Interaction<IObservable<object>, Task<Task<object>>> AfterApplicationFullyLoading { get; } = new();
     
     protected IObservable<T> WithRootRequire<T>(IObservable<T> method, string methodName) where T : class
     {
@@ -32,8 +31,5 @@ public abstract class ViewModelBase(ILogger logger, IRootRequirer rootRequirer, 
             });
     }
 
-    protected async Task<T> AfterApplicationLoadedAsync<T>(IObservable<T> observable) where T : class
-    {
-        return (T) await await await AfterApplicationFullyLoading.Handle(observable);
-    }
+   
 }

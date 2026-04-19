@@ -7,6 +7,7 @@
     x:DataType="vm:MainWindowViewModel"
     x:TypeArguments="vm:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:GMenu.Views.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:material="using:Material.Styles.Assists"
@@ -45,7 +46,6 @@
                 </MenuItem>
             </Menu>
             <TextBox
-                Classes="outline"
                 Grid.Column="1"
                 Watermark="{Binding LocalizationProvider[InputFileName]}"
                 Width="250">
@@ -53,7 +53,7 @@
                     <icons:MaterialIcon
                         Height="16"
                         Kind="Search"
-                        Margin="10,5,0,0"
+                        Margin="10,5,10,0"
                         Width="16" />
                 </TextBox.InnerLeftContent>
             </TextBox>
@@ -103,16 +103,35 @@
         </Grid>
 
         <Separator Grid.Row="3" />
-        <StackPanel
+        <Grid
+            ColumnDefinitions="Auto, *"
             Grid.Row="4"
             Margin="10,0,0,0"
-            Orientation="Horizontal"
             VerticalAlignment="Center">
-            <TextBlock>
+            <TextBlock Grid.Column="0">
                 <Run Text="{Binding LocalizationProvider[FilesCount]}" />
                 <Run Text="{Binding DesktopFilesCount}" />
             </TextBlock>
-        </StackPanel>
+
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Margin="0,0,20,0">
+                <Run Text="{Binding LocalizationProvider[Path]}" />
+                <Run Text=": " />
+                <Run>
+                    <Run.Text>
+                        <MultiBinding Converter="{converters:AddStringSeparatorConverter}">
+                            <Binding Path="DirectoryPath" />
+                            <Binding Path="DirectoryLocalizationKey" />
+                            <Binding Path="CategoryName" />
+                            <Binding Path="DesktopFileName" />
+                        </MultiBinding>
+                    </Run.Text>
+                </Run>
+            </TextBlock>
+
+        </Grid>
 
     </Grid>
 

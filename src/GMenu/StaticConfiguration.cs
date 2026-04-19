@@ -14,15 +14,17 @@ public static class StaticConfiguration
     public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
     public const string CannotFoundKeyInLocalizationValue = "????";
     public static readonly string[] ValidIconExtensions = [".svg", ".png", ".jpg", ".jpeg", ".xpm"];
-    
-    public static readonly User DefaultUser = new() { Language = new CultureInfo("ru-RU") };
-    public static readonly DesktopFileDirectory[] DefaultDesktopFileDirectories = 
-    [
-        new DesktopFileDirectory("/usr/share/applications", "Global"),
-        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/", "Local"),
-        new DesktopFileDirectory($"/home/{Environment.UserName}/.local/share/applications/wine"),
-        new DesktopFileDirectory($"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}")
-    ];
+    public const string PathInFooterSeparator = " > ";
+    public static CultureInfo DefaultCulture = new CultureInfo("eng-US");
+    public static CultureInfo[] SupportedCultures = [new CultureInfo("ru-Ru"), new CultureInfo("eng-US")];
+    public static TimeSpan DragDropWaitTime = TimeSpan.FromMilliseconds(75);
+    public static readonly User DefaultUser = new()
+    { 
+        Language = SupportedCultures.Contains(CultureInfo.CurrentCulture) 
+        ? CultureInfo.CurrentCulture 
+        : DefaultCulture
+        
+    };
 
     public static readonly string[] PathsToRefineIcon =
     [
@@ -30,7 +32,8 @@ public static class StaticConfiguration
         $"/home/{Environment.UserName}/.icons/",
         "/usr/share/icons/",
         "/usr/share/pixmaps/",
-        "/usr/local/share/icons/"
+        "/usr/local/share/icons/",
+        "/var/lib/snapd/desktop/icons"
     ];
 
     public static readonly FrozenDictionary<string, MaterialIconKind> MaterialIconsForCategory =
@@ -111,7 +114,6 @@ public static class StaticConfiguration
     public static readonly ObservableConfiguration DefaultJsonConfiguration = new ObservableConfiguration()
     {
         User = DefaultUser,
-        SearchDesktopFilesDirectories = new ObservableCollection<DesktopFileDirectory>(DefaultDesktopFileDirectories),
         UnexistingCategories = []
     };
 }
