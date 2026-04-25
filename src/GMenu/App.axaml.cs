@@ -22,7 +22,8 @@ public partial class App : Application
         var provider = Services;
         provider.GetRequiredService<ILogger>().Information("Initializing GMenu...");
         LoadMaterialTheme(provider);
-        
+        provider.GetRequiredService<ILogger>().Information("Desktop files paths: {paths}", StaticConfiguration.PathToDesktopFiles);
+        provider.GetRequiredService<ILogger>().Information("Desktop files icons path: {paths}", StaticConfiguration.PathsToRefineIcon);
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
         

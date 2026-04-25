@@ -69,7 +69,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Assets\" />
       <Folder Include="Views\Utils\" />
     </ItemGroup>
 </Project>

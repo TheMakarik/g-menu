@@ -26,15 +26,17 @@ public static class StaticConfiguration
         
     };
 
-    public static readonly string[] PathsToRefineIcon =
-    [
-        $"/home/{Environment.UserName}/.local/share/icons/",
-        $"/home/{Environment.UserName}/.icons/",
-        "/usr/share/icons/",
-        "/usr/share/pixmaps/",
-        "/usr/local/share/icons/",
-        "/var/lib/snapd/desktop/icons"
-    ];
+    public static readonly string[] PathsToRefineIcon = Environment.GetEnvironmentVariable("XDG_DATA_DIRS")!
+        .Split(';')
+        .Select(x => Path.Combine(x, "/icons"))
+        .Where(Directory.Exists)
+        .ToArray();
+    
+    public static readonly string[] PathToDesktopFiles = Environment.GetEnvironmentVariable("XDG_DATA_DIRS")!
+        .Split(';')
+        .Select(x => Path.Combine(x, "/applications"))
+        .Where(Directory.Exists)
+        .ToArray();
 
     public static readonly FrozenDictionary<string, MaterialIconKind> MaterialIconsForCategory =
         new Dictionary<string, MaterialIconKind>
