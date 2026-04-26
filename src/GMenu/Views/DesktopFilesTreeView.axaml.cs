@@ -1,8 +1,3 @@
-
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
-
 namespace GMenu.Views;
 
 public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTreeViewModel>
@@ -18,7 +13,7 @@ public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTree
     {
        var treeViewItem = ((Control)sender).GetLogicalParent<TreeViewItem>() ?? throw new InvalidOperationException("Cannot found tree view item");
 
-       var dispatcherTimer = new DispatcherTimer() { Interval = StaticConfiguration.DragDropWaitTime };
+       var dispatcherTimer = new DispatcherTimer() {  };
 
        dispatcherTimer.Tick += (_, _) =>
        {

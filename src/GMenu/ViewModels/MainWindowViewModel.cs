@@ -1,8 +1,4 @@
-﻿using System.Reactive.Disposables;
-using System.Text;
-using ILogger = Serilog.ILogger;
-
-namespace GMenu.ViewModels;
+﻿namespace GMenu.ViewModels;
 
 public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 {

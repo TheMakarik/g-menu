@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/lib/">
+    <Project Path="lib\GMenu.DesktopFile.Core\GMenu.DesktopFile.Core.csproj" />
+  </Folder>
   <Folder Name="/lua/">
     <File Path="run-tests.lua" />
   </Folder>

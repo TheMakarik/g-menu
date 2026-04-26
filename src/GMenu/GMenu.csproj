@@ -10,6 +10,7 @@
         <PublishSingleFile>true</PublishSingleFile>
         <RuntimeIdentifiers>linux-x64;linux-arm64;linux-arm</RuntimeIdentifiers>
         <SelfContained>true</SelfContained>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,6 +32,7 @@
         <PackageReference Include="Material.Icons.Avalonia" Version="3.0.0" />
         <PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.7" />
         <PackageReference Include="ReactiveUI.Avalonia" Version="11.4.12" />
         <PackageReference Include="ReactiveUI.SourceGenerators" Version="2.6.1">
           <PrivateAssets>all</PrivateAssets>
@@ -42,6 +44,8 @@
         <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="19.3.1" />
         <PackageReference Include="Splat.Serilog" Version="19.3.1" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.9.5" />
+        <PackageReference Include="Tmds.DBus" Version="0.92.0" />
+        <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -69,6 +73,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Views\Utils\" />
+      <None Remove="appsettings.json" />
+      <Content Include="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Modules\LinuxSystem\DBus\org.freedesktop.portal.Desktop.xml" />
     </ItemGroup>
 </Project>

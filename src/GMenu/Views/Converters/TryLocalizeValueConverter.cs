@@ -9,7 +9,7 @@ public class TryLocalizeValueConverter : MarkupExtension, IValueConverter
         
         var result =  App.Services.GetRequiredService<ILocalizationProvider>()[valueToLocalize];
 
-        return result == StaticConfiguration.CannotFoundKeyInLocalizationValue
+        return result == App.Services.GetRequiredService<GMenuOptions>().Localization.NotFoundValue
             ? valueToLocalize
             : result;
     }

@@ -1,5 +1,3 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.Modules.DesktopFiles;
 
 public class DesktopFilesHeaderSearcher(ILogger logger) : IDesktopFilesHeaderSearcher

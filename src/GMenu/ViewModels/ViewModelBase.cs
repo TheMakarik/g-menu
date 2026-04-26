@@ -1,6 +1,4 @@
-﻿using ILogger = Serilog.ILogger;
-
-namespace GMenu.ViewModels;
+﻿namespace GMenu.ViewModels;
 
 public abstract  partial class ViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ReactiveObject
 {

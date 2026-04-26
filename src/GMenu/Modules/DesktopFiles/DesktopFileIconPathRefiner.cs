@@ -1,17 +1,10 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.Modules.DesktopFiles;
 
-public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIconPathRefiner
+public sealed class DesktopFileIconPathRefiner(ILogger logger, GMenuOptions options) : IDesktopFileIconPathRefiner
 {
     private readonly ConcurrentDictionary<string, string> _iconsMappingCache = new();
-
-    private readonly IReadOnlyCollection<string> _actualPathsToRefineIcon = StaticConfiguration.PathsToRefineIcon
-        .Where(Directory.Exists)
-        .ToArray()
-        .AsReadOnly();
-
-    public string? RefinePath(string? path)
+    
+    public string? RefinePath(string? path, IReadOnlyCollection<string> pathsToRefineIcon)
     {
         if (path is null)
             return string.Empty;
@@ -22,11 +15,11 @@ public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIco
         if (_iconsMappingCache.TryGetValue(path, out var result))
             return result;
 
-        var iconPath = _actualPathsToRefineIcon
+        var iconPath = pathsToRefineIcon
             .Select(directory => Directory
                 .EnumerateFiles(directory, $"{path}.*", SearchOption.AllDirectories))
             .SelectMany(paths => paths
-                .Where(pathToIcon => StaticConfiguration.ValidIconExtensions.Contains(Path.GetExtension(pathToIcon))))
+                .Where(pathToIcon => options.Configuration.ValidIconExtensions.Contains(Path.GetExtension(pathToIcon))))
             .FirstOrDefault();
 
         if (iconPath is null)
@@ -36,7 +29,7 @@ public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIco
         return iconPath;
     }
 
-    public void StartBackgroundIconsLoading(IEnumerable<string> iconNamesInDesktopFiles)
+    public void StartBackgroundIconsLoading(IEnumerable<string> iconNamesInDesktopFiles, IReadOnlyCollection<string> pathsToRefineIcon)
     {
         var backgroundWorker = new  BackgroundWorker();
         backgroundWorker.DoWork += async (self, args) =>
@@ -52,9 +45,8 @@ public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIco
             }
             
 
-            var tasks = _actualPathsToRefineIcon
-                .Where(Directory.Exists)
-                .Select(dir => Task.Run(() => ProcessDirectory(dir, iconNamesSet,  StaticConfiguration.ValidIconExtensions)))
+            var tasks = pathsToRefineIcon
+                .Select(directory => Task.Run(() => ProcessDirectory(directory, iconNamesSet, options.Configuration.ValidIconExtensions)))
                 .ToArray();
 
             var results = await Task.WhenAll(tasks);
@@ -68,7 +60,7 @@ public sealed class DesktopFileIconPathRefiner(ILogger logger) : IDesktopFileIco
         backgroundWorker.RunWorkerAsync(backgroundWorker);
     }
 
-    private int ProcessDirectory(string directory, HashSet<string> iconNamesSet, string[] validExtensions)
+    private int ProcessDirectory(string directory, HashSet<string> iconNamesSet, IReadOnlyCollection<string> validExtensions)
     {
         var count = 0;
         var enumerationOptions = new EnumerationOptions

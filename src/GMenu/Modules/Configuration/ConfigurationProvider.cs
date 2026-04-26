@@ -1,8 +1,6 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.Modules.Configuration;
 
-public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
+public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConfigurationProvider
 {
     private ObservableConfiguration? _configuration;
     private Channel<string?>? _channel;
@@ -31,29 +29,35 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
 #pragma warning disable IL2026
 #pragma warning disable IL3050
         _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file, ObservableConfigurationSerializerContext.Default.Options);
+        logger.Information("Configuration loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
 #pragma warning restore IL2026
 #pragma warning restore IL3050
-        logger.Information("Configuration loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
     }
 
     private async Task CreateJsonFileAsync()
     {
         try
         {
-            if(!Directory.Exists(StaticConfiguration.ConfigurationDirectory))
-                Directory.CreateDirectory(StaticConfiguration.ConfigurationDirectory);
+            if(!Directory.Exists(options.Configuration.Directory))
+                Directory.CreateDirectory(options.Configuration.Directory);
 
             await using var file = File.Create(StaticConfiguration.ConfigurationPath);
+            var defaultConfiguration = new ObservableConfiguration()
+            {
+                Language = CultureInfo.CurrentCulture,
+                UnexistingCategories = [],
+                AccentColor = null,
+            };
 #pragma warning disable IL2026
 #pragma warning disable IL3050
             await JsonSerializer.SerializeAsync(
                 file, 
-                StaticConfiguration.DefaultJsonConfiguration,
+                defaultConfiguration,
                 ObservableConfigurationSerializerContext.Default.Options);
 #pragma warning restore IL2026
 #pragma warning restore IL3050
             logger.Information("Configuration file created in {path}", StaticConfiguration.ConfigurationPath);
-            _configuration = StaticConfiguration.DefaultJsonConfiguration;
+            _configuration = defaultConfiguration;
         }
         catch(Exception exception)
         {
@@ -66,8 +70,7 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
     
     private void StartObserveConfiguration()
     {
-        var backgroundWorker = new BackgroundWorker();
-        backgroundWorker.DoWork += (_, _) =>
+        Task.Run(() => 
         {
             _channel = Channel.CreateBounded<string?>(1);
 
@@ -87,13 +90,11 @@ public class ConfigurationProvider(ILogger logger) : IConfigurationProvider
                     StaticConfiguration.ConfigurationPath);
 
             };
-            _ = HandleJSONChangingAsync(_channel.Reader);
-        };
-        
-        backgroundWorker.RunWorkerAsync();
+            _ = HandleJsonChangingAsync(_channel.Reader);
+        });
     }
 
-    private async Task HandleJSONChangingAsync(ChannelReader<string?> reader)
+    private async Task HandleJsonChangingAsync(ChannelReader<string?> reader)
     {
         await foreach (var propertyName in reader.ReadAllAsync())
         {

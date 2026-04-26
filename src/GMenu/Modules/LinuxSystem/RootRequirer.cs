@@ -1,10 +1,8 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.Modules.LinuxSystem;
 
 public sealed class RootRequirer(ILogger logger) : IRootRequirer
 {
-    private const int SUCCESS_EXIT_CODE = 0;
+    private const int SuccessExitCode = 0;
     
     //This code requires polkitd and pkexec
     public async Task RequireRootAsync(CancellationTokenSource token)
@@ -18,7 +16,7 @@ public sealed class RootRequirer(ILogger logger) : IRootRequirer
 
     private static void CancelIfUnsuccess(CancellationTokenSource token, int exitCode)
     {
-        if (exitCode == SUCCESS_EXIT_CODE)
+        if (exitCode == SuccessExitCode)
             return;
         
         token.Cancel();
@@ -27,7 +25,7 @@ public sealed class RootRequirer(ILogger logger) : IRootRequirer
 
     private Process StartPolicyKit()
     {
-        //DO NOT USE Assembly.GetCurrentAssebmly().Location IT DO NOT WORK IN NATIVE AOT
+        //DO NOT USE Assembly.GetCurrentAssembly().Location IT DO NOT WORK IN NATIVE AOT
         var executionPath = Environment.ProcessPath ?? AppDomain.CurrentDomain.BaseDirectory;
         var processStartInfo = new ProcessStartInfo()
         {

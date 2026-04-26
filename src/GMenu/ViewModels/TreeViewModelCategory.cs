@@ -1,5 +1,3 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.ViewModels;
 
 public class TreeViewModelCategory : TreeViewModelBase

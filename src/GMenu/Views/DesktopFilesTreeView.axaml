@@ -33,24 +33,6 @@
             </Interaction.Behaviors>
 
             <TreeView.DataTemplates>
-                <TreeDataTemplate DataType="vm:TreeViewModelDirectories" ItemsSource="{Binding Children}">
-                    <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
-
-                        <icons:MaterialIcon
-                            Height="{StaticResource IconInTreeViewSize}"
-                            Kind="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={converters:BooleanToDirectoryMaterialIconKindConverter}}"
-                            Margin="5,0,7,0"
-                            Width="{StaticResource IconInTreeViewSize}" />
-                        <Label Margin="0,3,0,0">
-                            <Label.Content>
-                                <MultiBinding Converter="{converters:TryLocalizeDirectoryConverter}">
-                                    <Binding Path="LocalizationKey" />
-                                    <Binding Path="Path" />
-                                </MultiBinding>
-                            </Label.Content>
-                        </Label>
-                    </StackPanel>
-                </TreeDataTemplate>
 
                 <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
                     <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">

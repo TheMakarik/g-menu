@@ -1,11 +1,7 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileHeaderReader(
-    ILogger logger,
-    IConfigurationProvider configuration,
-    IRootRequirer rootRequirer) : IDesktopFileHeaderReader
+    ILogger logger) : IDesktopFileHeaderReader
 {
     private const string DesktopEntryHeader = "[Desktop Entry]";
     private const string ExecKey = "Exec";
@@ -15,14 +11,11 @@ public sealed class DesktopFileHeaderReader(
     private const string NoDisplayKey = "NoDisplay";
 
 
-    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders()
+    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(string[] paths)
     {
         logger.Information("Start searching desktop files");
-        var observableConfiguration = configuration.CurrentObservable;
-
-        var filesToHandle = observableConfiguration.SearchDesktopFilesDirectories
-            .Select(directory => directory.Path)
-            .Where(Directory.Exists)
+   
+        var filesToHandle = paths
             .SelectMany(directory => Directory
                 .EnumerateFiles(directory, "*.desktop", new EnumerationOptions() { RecurseSubdirectories = true }));
 
@@ -80,7 +73,10 @@ public sealed class DesktopFileHeaderReader(
                             break;
                         case NoDisplayKey:
                             if (bool.TryParse(value, out var isHidden))
+                            {
                                 desktopFileHeader.IsHidden = isHidden;
+                                wasFoundNoDisplay = true;
+                            }
                             else
                                 logger.Error("Desktop file: {path} has corrupted NoDisplay value", filePath);
                             break;
@@ -122,9 +118,9 @@ public sealed class DesktopFileHeaderReader(
     private static void GetDesktopFileLineEnumeration(out IEnumerable<string> lines, string filePath)
     {
         lines = File.ReadLines(filePath)
-            .SkipWhile(line => line != DesktopEntryHeader)
-            .Where(line => !string.IsNullOrEmpty(line))
+            .SkipWhile(static line => line != DesktopEntryHeader)
+            .Where(static line => !string.IsNullOrEmpty(line))
             .Skip(1) // skip entry header
-            .TakeWhile(line => line[0] is not '[');
+            .TakeWhile(static line => line[0] is not '[');
     }
 }

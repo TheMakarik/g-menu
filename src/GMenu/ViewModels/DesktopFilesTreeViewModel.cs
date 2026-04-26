@@ -1,5 +1,3 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.ViewModels;
 
 public sealed partial class DesktopFilesTreeViewModel(
@@ -12,7 +10,8 @@ public sealed partial class DesktopFilesTreeViewModel(
 {
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
     
-    public TreeViewModelBase? SelectedItem { 
+    public TreeViewModelBase? SelectedItem
+    { 
         get => field;
         set
         {
@@ -29,55 +28,37 @@ public sealed partial class DesktopFilesTreeViewModel(
     private async Task LoadDesktopFilesAsync()
     {
         var result = await WithRootRequire(
-            Observable.Start(reader.GetAllHeaders), 
+            Observable.Start(() => reader.GetAllHeaders(StaticConfiguration.PathToDesktopFiles)), 
             nameof(reader.GetAllHeaders));
         
-        iconPathRefiner.StartBackgroundIconsLoading(result.Where(header => header.IconPath is not null).Select(header => header.IconPath!));
+        iconPathRefiner.StartBackgroundIconsLoading(
+            result.Where(header => header.IconPath is not null).Select(header => header.IconPath!), 
+            StaticConfiguration.PathsToRefineIcon);
+        
         MessageBus.Current.SendMessage(new SetDesktopFilesCountMessage(){FilesCount = result.Count});
         
-        var configuredPaths = configuration.CurrentObservable.SearchDesktopFilesDirectories
-            .ToHashSet();
-        
-        var allGroups = result
-            .GroupBy(header => header.Directory)
-            .ToDictionary(group => group.Key, g => g.ToList());
-        
-        var allPaths = allGroups.Keys
-            .Where(path => configuredPaths.Any(configuredPath => Path.TrimEndingDirectorySeparator(path).StartsWith(Path.TrimEndingDirectorySeparator(configuredPath.Path))))
-            .OrderBy(path => path.Length)
-            .ToList();
-
-        var viewModels = new Dictionary<string, TreeViewModelDirectories>();
-
-        foreach (var path in allPaths)
-        {
-            var grouping = result
-                .GroupBy(header => header.Directory)
-                .First(group => group.Key == path);
-            
-            var viewModel = new TreeViewModelDirectories(
-                new DirectoryTreeViewInfo { Path = path, Headers =  grouping, LocalizationKey = configuredPaths.FirstOrDefault(searchPath => searchPath.Path == path).LocalizationKey },
-                iconPathRefiner, 
-                _logger,
-                localizationProvider,
-                _rootRequirer){Parent = null};
-            
-            viewModels[path] = viewModel;
-
-            if (!configuredPaths.Select(paths => Path.TrimEndingDirectorySeparator(paths.Path))
-                    .Contains(Path.TrimEndingDirectorySeparator(path)))
+        var groupedByCategory = result
+            .Where(header => !header.IsBroken)
+            .GroupBy(header => string.IsNullOrEmpty(header.Category) ? StaticConfiguration.Uncategorized : header.Category)
+            .OrderBy(group => group.Key)
+            .Select(group => new TreeViewModelCategory(
+                new CategoryTreeViewInfo
+                {
+                    Path = group.First().Path,
+                    Name = group.Key!,
+                    Headers = group
+                },
+                iconPathRefiner,
+                logger,
+                rootRequirer, 
+                localizationProvider)
             {
-                var lastSlash = path.LastIndexOf(Path.DirectorySeparatorChar);
-                var parentPath = lastSlash > 0 ? path[..lastSlash] : null;
-
-                if (parentPath is not null && viewModels.TryGetValue(parentPath, out var parent))
-                    parent.Children.Insert(0, viewModel);
-            }
-            else
-                _children.Insert(0, viewModel);
-        }
+                Parent = null
+            });
         
-        _logger.Information("Found {count} directories...", _children.Count);
+        _children.Clear();
+        _children.AddRange(groupedByCategory);
         
+        _logger.Information("Created {count} categories (no folders)", _children.Count);
     }
 }

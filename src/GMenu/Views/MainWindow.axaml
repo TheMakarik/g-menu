@@ -113,24 +113,6 @@
                 <Run Text="{Binding DesktopFilesCount}" />
             </TextBlock>
 
-            <TextBlock
-                Grid.Column="1"
-                HorizontalAlignment="Right"
-                Margin="0,0,20,0">
-                <Run Text="{Binding LocalizationProvider[Path]}" />
-                <Run Text=": " />
-                <Run>
-                    <Run.Text>
-                        <MultiBinding Converter="{converters:AddStringSeparatorConverter}">
-                            <Binding Path="DirectoryPath" />
-                            <Binding Path="DirectoryLocalizationKey" />
-                            <Binding Path="CategoryName" />
-                            <Binding Path="DesktopFileName" />
-                        </MultiBinding>
-                    </Run.Text>
-                </Run>
-            </TextBlock>
-
         </Grid>
 
     </Grid>

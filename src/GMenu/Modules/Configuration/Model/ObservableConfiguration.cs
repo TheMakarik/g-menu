@@ -30,26 +30,26 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
                 }
             };
     }
-
-
-    public User User
-    {
-        get;
-        set => SetField(ref field, value);
-    } 
-
-    public ObservableCollection<DesktopFileDirectory> SearchDesktopFilesDirectories
-    {
-        get;
-        set => SetField(ref field, value);
-    }
-
+    
+    
     public ObservableCollection<UnexistingCategory> UnexistingCategories
     {
         get;
         set => SetField(ref field, value);
     }
 
+    public CultureInfo Language
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+    
+    public string? AccentColor
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+    
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {

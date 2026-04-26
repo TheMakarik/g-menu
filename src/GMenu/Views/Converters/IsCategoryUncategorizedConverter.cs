@@ -9,7 +9,7 @@ public class IsCategoryUncategorizedConverter : MarkupExtension, IValueConverter
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value is StaticConfiguration.UncategorizedCategory;
+        return value is  StaticConfiguration.Uncategorized;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

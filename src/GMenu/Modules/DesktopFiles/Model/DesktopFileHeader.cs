@@ -1,5 +1,4 @@
-namespace GMenu.Models.DesktopFiles;
-
+namespace GMenu.Modules.DesktopFiles.Model;
 
 public sealed class DesktopFileHeader
 {

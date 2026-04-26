@@ -1,5 +1,3 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.ViewModels;
 
 public abstract partial class TreeViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ViewModelBase(logger, rootRequirer, localizationProvider)

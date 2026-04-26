@@ -1,15 +1,19 @@
-using ILogger = Serilog.ILogger;
-
 namespace GMenu.ViewModels;
 
-public partial class TreeViewModelDesktopFile : TreeViewModelBase
+public partial class TreeViewModelDesktopFile(
+    string filePath,
+    string iconPath,
+    string name,
+    IDesktopFileIconPathRefiner iconPathRefiner,
+    ILogger logger,
+    IRootRequirer rootRequirer,
+    ILocalizationProvider localizationProvider)
+    : TreeViewModelBase(logger, rootRequirer, localizationProvider)
 {
     private bool _searchingIcon = false;
-    private readonly IDesktopFileIconPathRefiner _iconPathRefiner;
-    private readonly string _iconPath;
 
-    public string FilePath { get; }
-    public string Name { get; }
+    public string FilePath { get; } = filePath;
+    public string Name { get; } = name;
 
     public string? IconPath
     {
@@ -22,33 +26,13 @@ public partial class TreeViewModelDesktopFile : TreeViewModelBase
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-   
-
-    public TreeViewModelDesktopFile(string filePath, string iconPath, string name, 
-        IDesktopFileIconPathRefiner iconPathRefiner, 
-        ILogger logger,
-        IRootRequirer rootRequirer,
-        ILocalizationProvider localizationProvider) : base(logger, rootRequirer, localizationProvider)
-    {
-        FilePath = filePath;
-        Name = name;
-        _iconPathRefiner =  iconPathRefiner;
-        _iconPath = iconPath;
-        
-    }
-    
 
     private void BeginIconLoading()
     {
         _searchingIcon = true;
-        _ = Task.Run(async () =>
-        {
-            var foundIcon = _iconPathRefiner.RefinePath(_iconPath);
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                IconPath = foundIcon;
-            });
-        });
+        Observable.Start(() => iconPathRefiner.RefinePath(iconPath, StaticConfiguration.PathsToRefineIcon))
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(result => IconPath = result);
     }
     
     private bool MustLoadIcon(string? iconPathField)
