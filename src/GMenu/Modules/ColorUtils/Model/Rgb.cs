@@ -1,3 +1,3 @@
 namespace GMenu.Modules.ColorUtils.Model;
 
-public record Rgb(byte Red, byte Green, byte Blue);
+public record Rgb(int Red, int Green, int Blue);

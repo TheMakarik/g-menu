@@ -8,5 +8,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         InitializeComponent();
     }
-   
+
+    public async void OpenInfo(object sender, RoutedEventArgs args)
+    {
+       await new InfoView().ShowDialog(this);
+    }
+    
 }

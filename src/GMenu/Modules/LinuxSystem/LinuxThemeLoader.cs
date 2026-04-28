@@ -2,16 +2,13 @@ namespace GMenu.Modules.LinuxSystem;
 
 public sealed class LinuxThemeLoader(ILogger logger) : ILinuxThemeLoader
 {
-    public const string AccentColorNamespace = "org.freedesktop.appereance";
-    public const string AccentColorName = "accent-color";
-    
-    
     public async Task<Rgb?> GetThemeHexAsync()
     {
         try
         {
-            logger.Debug("Getting theme from {namespace} {name}", AccentColorNamespace, AccentColorName);
-            var writer = DBusConnection.Session.GetMessageWriter();
+            var connection = new DBusConnection(DBusAddress.Session!);
+            await connection.ConnectAsync();
+            var writer = connection.GetMessageWriter();
             writer.WriteMethodCallHeader(
                 destination: "org.freedesktop.portal.Desktop",
                 path: "/org/freedesktop/portal/desktop",
@@ -19,25 +16,23 @@ public sealed class LinuxThemeLoader(ILogger logger) : ILinuxThemeLoader
                 member: "ReadOne",
                 signature: "ss");
         
-            writer.WriteString(AccentColorNamespace);
-            writer.WriteString(AccentColorName);
+            writer.WriteString("org.freedesktop.appearance");
+            writer.WriteString("accent-color");
 
             var message = writer.CreateMessage();
 
-            var reply = await DBusConnection.Session.CallMethodAsync(message, 
+            var reply = await connection.CallMethodAsync(message, 
                 (result, _) => result);
 
             var reader = reply.GetBodyReader();
             reader.AlignStruct();   
             
-            reader.ReadInt64(); //First value is strange, IDK why but I send the issue: 
-            var red = (byte)(reader.ReadDouble() * 255);
-            var green = (byte)(reader.ReadDouble() * 255);
-            var blue = (byte)(reader.ReadDouble() * 255);
-            
-            logger.Information("Found RGB: {r}, {g}, {b}", red, green, blue);
-            return new Rgb(red, green, blue);   
+            reader.ReadInt64();
+            var red = (int)(reader.ReadDouble() * 255);
+            var green = (int)(reader.ReadDouble() * 255);
+            var blue = (int)(reader.ReadDouble() * 255);
 
+            return new Rgb(red, green, blue);
         }
         catch (Exception e)
         {

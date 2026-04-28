@@ -11,7 +11,7 @@
 
     <Application.Styles>
         <icon:MaterialIconStyles />
-        <themes:CustomMaterialTheme />
+        <themes:CustomMaterialTheme PrimaryColor="CornflowerBlue" SecondaryColor="CornflowerBlue" />
     </Application.Styles>
 
     <Application.Resources>

@@ -69,5 +69,9 @@
   "Open": "Open",
   "View": "View",
   "SearchFile": "Search file",
-  "InputFileName": "Input file name..."
+  "InputFileName": "Input file name...",
+  "AboutApp": "About application",
+  "Version": "Version",
+  "AboutText": ".desktop files editor for GNu/Linux, powered by AvaloniaUI",
+  "AboutOpenSource": "This software is free and open source? you can see the source here"
 }

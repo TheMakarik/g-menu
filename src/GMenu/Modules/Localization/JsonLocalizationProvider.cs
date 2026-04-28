@@ -1,10 +1,10 @@
 namespace GMenu.Modules.Localization;
 
-public class JsonLocalizationProvider(ILogger logger, GMenuOptions options) : ILocalizationProvider
+public sealed class JsonLocalizationProvider(ILogger logger, GMenuOptions options) : ILocalizationProvider
 {
     private FrozenDictionary<string, string>? _values = null;
     
-    public async Task SetLocalizationAsync(CultureInfo cultureInfo)
+    public void SetLocalization(CultureInfo cultureInfo)
     {
         if (_values is not null)
         {
@@ -12,11 +12,11 @@ public class JsonLocalizationProvider(ILogger logger, GMenuOptions options) : IL
             return;
         }
 
-        await using var stream = File.Open(options.Localization.LocalizationPath, FileMode.Open);
+         using var stream = File.Open(Path.ChangeExtension(Path.Combine(options.Localization.LocalizationPath, cultureInfo.ToString()), ".json"), FileMode.Open);
 #pragma warning disable IL2026
 #pragma warning disable IL3050
-        _values = (await JsonSerializer
-            .DeserializeAsync<Dictionary<string, string>>(stream, DictionarySerializerContext.Default.Options))
+        _values = (JsonSerializer
+            .Deserialize<Dictionary<string, string>>(stream, DictionarySerializerContext.Default.Options))
 #pragma warning restore IL2026
 #pragma warning restore IL3050
             .ToFrozenDictionary();
@@ -24,5 +24,5 @@ public class JsonLocalizationProvider(ILogger logger, GMenuOptions options) : IL
         logger.Information("Localization loaded as {culture}", cultureInfo);
     }
 
-    public string this[string key] => _values![key];
+    public string this[string key] => _values!.TryGetValue(key, out var result) ? result : options.Localization.NotFoundValue;
 }

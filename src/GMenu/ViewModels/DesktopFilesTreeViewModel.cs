@@ -59,6 +59,6 @@ public sealed partial class DesktopFilesTreeViewModel(
         _children.Clear();
         _children.AddRange(groupedByCategory);
         
-        _logger.Information("Created {count} categories (no folders)", _children.Count);
+        _logger.Information("Created {count} categories", _children.Count);
     }
 }

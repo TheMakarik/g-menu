@@ -2,6 +2,7 @@ namespace GMenu;
 
 public sealed class Bootstrapper
 {
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(RollingInterval))]
     public IServiceProvider BuildApplication()
     {
         GMenuOptions options;
@@ -17,12 +18,11 @@ public sealed class Bootstrapper
             .Enrich.WithThreadId()
 #if DEBUG
             .WriteTo.Console(
-                theme: options!.Logging.SerilogConsoleTheme,
-                outputTemplate: options.Logging.OutputTemplate)
+                outputTemplate: options!.Logging.OutputTemplate)
 #endif
             .WriteTo.File(
                 outputTemplate: options.Logging.OutputTemplate,
-                rollingInterval: options.Logging.RollingInterval,
+                rollingInterval: Enum.Parse<RollingInterval>(options.Logging.RollingInterval),
                 path: Path.Combine(
                     options.Configuration.Directory, 
                     options.Logging.LogsDirectory, 
@@ -38,6 +38,7 @@ public sealed class Bootstrapper
             .AddSingleton<IDesktopFileHeaderReader, DesktopFileHeaderReader>()
             .AddSingleton<DesktopFilesTreeViewModel>()
             .AddSingleton<MainWindowViewModel>()
+            .AddTransient<InfoViewModel>()
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
             .AddScoped<ILinuxThemeLoader, LinuxThemeLoader>()

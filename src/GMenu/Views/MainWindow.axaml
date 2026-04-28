@@ -43,6 +43,7 @@
                 </MenuItem>
                 <MenuItem Header="{Binding LocalizationProvider[Help]}">
                     <MenuItem Header="{Binding LocalizationProvider[AboutDesktopFiles]}" Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
+                    <MenuItem Header="{Binding LocalizationProvider[AboutApp]}" Icon="{icons:MaterialIconExt Kind=About}" Click="OpenInfo" />
                 </MenuItem>
             </Menu>
             <TextBox

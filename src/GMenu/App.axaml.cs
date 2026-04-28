@@ -1,4 +1,3 @@
-using GMenu.Modules.ColorUtils.Interfaces;
 
 namespace GMenu;
 
@@ -20,18 +19,18 @@ public partial class App : Application
     {
         try
         {
+            //https://stackoverflow.com/questions/79933121/avaloniaui-strange-async-application-loading
             var provider = Services;
+            LoadLocalization(provider);
             provider.GetRequiredService<ILogger>().Information("Initializing GMenu...");
-            await LoadMaterialThemeAsync(provider);
+            //await LoadMaterialThemeAsync(provider);
             provider.GetRequiredService<ILogger>().Information("Desktop files paths: {paths}", StaticConfiguration.PathToDesktopFiles);
             provider.GetRequiredService<ILogger>().Information("Desktop files icons path: {paths}", StaticConfiguration.PathsToRefineIcon);
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
-        
-            var configurationTask =  LoadConfigurationAsync(provider);
-            var localizationTask = LoadLocalizationAsync(provider);
             
-            await Task.WhenAll(configurationTask, localizationTask).ConfigureAwait(false);
+            await LoadConfigurationAsync(provider).ConfigureAwait(false);
+          
         
             base.OnFrameworkInitializationCompleted();
         }
@@ -60,21 +59,17 @@ public partial class App : Application
             Environment.Exit(-1);
         }
         
-        var color = scope.ServiceProvider.GetRequiredService<INearСolorValueSearch>().GetNearColor(rgb);
-        
-     
-        
-        var materialTheme = this.LocateMaterialTheme<MaterialTheme>();
+        var materialTheme = this.LocateMaterialTheme<CustomMaterialTheme>();
         materialTheme.BaseTheme = BaseThemeMode.Inherit;
-        materialTheme.PrimaryColor = color.GetMaterialPrimaryColor() ?? default;
-        materialTheme.SecondaryColor = color.GetMaterialSecondaryColor() ?? default;
+        materialTheme.PrimaryColor = new Color(255, (byte)rgb.Red, (byte)rgb.Green, (byte)rgb.Blue );
+        materialTheme.SecondaryColor = new Color(255, (byte)rgb.Red, (byte)rgb.Green, (byte)rgb.Blue );
         
         this.Resources["AccentColor"] = materialTheme.PrimaryColor;
     }
     
-    private async Task LoadLocalizationAsync(IServiceProvider provider)
+    private void LoadLocalization(IServiceProvider provider)
     {
        var localizationProvider = provider.GetRequiredService<ILocalizationProvider>();
-       await localizationProvider.SetLocalizationAsync(new CultureInfo("ru-RU"));
+       localizationProvider.SetLocalization(new CultureInfo("ru-RU"));
     }
 }

@@ -1,0 +1,28 @@
+<rx:ReactiveWindow x:TypeArguments="vm:InfoViewModel" xmlns="https://github.com/avaloniaui"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:rx="http://reactiveui.net"
+                         xmlns:vm="clr-namespace:GMenu.ViewModels"
+                         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="350"
+                         Width="500"
+                         Height="350"
+                         x:DataType="vm:InfoViewModel"
+                         x:Class="GMenu.Views.InfoView"
+                         Title="{Binding LocalizationProvider[AboutApp]}">
+   <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+       <Image Source="/Assets/icon.png" Width="90" Height="90" ></Image>
+       <TextBlock Name="VersionTextBox" Margin="0, 20 0 0" TextAlignment="Center">
+           <Run Text="{Binding LocalizationProvider[Version]}"></Run>
+           <Run Text=": "></Run>
+           <Run Text="{Binding Version}"></Run>
+       </TextBlock>
+       <TextBlock Text="{Binding LocalizationProvider[AboutText]}" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
+       <TextBlock   TextWrapping="Wrap"  TextAlignment="Center" Margin="10 ">
+          <Run Text="{Binding LocalizationProvider[AboutOpenSource]}"></Run>
+           <HyperlinkButton NavigateUri="{Binding Github}">
+               <TextBlock Text="{Binding Github}" Margin="0 30 0 0"></TextBlock>
+           </HyperlinkButton>
+       </TextBlock>
+   </StackPanel>
+</rx:ReactiveWindow>
