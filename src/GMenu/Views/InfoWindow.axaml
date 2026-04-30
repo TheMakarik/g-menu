@@ -1,0 +1,49 @@
+<rx:ReactiveWindow
+    Height="350"
+    Title="{Binding LocalizationProvider[AboutApp]}"
+    Width="500"
+    d:DesignHeight="350"
+    d:DesignWidth="500"
+    mc:Ignorable="d"
+    x:Class="GMenu.Views.InfoWindow"
+    x:DataType="vm:InfoWindowViewModel"
+    x:TypeArguments="vm:InfoWindowViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rx="http://reactiveui.net"
+    xmlns:vm="clr-namespace:GMenu.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel
+        HorizontalAlignment="Center"
+        MaxWidth="450"
+        VerticalAlignment="Center">
+        <Image
+            Height="90"
+            Source="/Assets/icon.png"
+            Width="90" />
+        <TextBlock Margin="0,20,0,0" TextAlignment="Center">
+            <Run Text="{Binding LocalizationProvider[Version]}" />
+            <Run Text=": " />
+            <Run Text="{Binding Version}" />
+        </TextBlock>
+        <TextBlock
+            Text="{Binding LocalizationProvider[AboutText]}"
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
+
+        <TextBlock
+            Text="{Binding LocalizationProvider[AboutOpenSource]}"
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
+        <HyperlinkButton
+            HorizontalAlignment="Center"
+            Margin="0,0,0,5"
+            NavigateUri="{Binding Github}">
+            <TextBlock
+                Text="{Binding Github}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+        </HyperlinkButton>
+    </StackPanel>
+</rx:ReactiveWindow>

@@ -41,11 +41,6 @@
                             Height="{StaticResource IconInTreeViewSize}"
                             Width="{StaticResource IconInTreeViewSize}" />
                         <Label Content="{Binding CategoryName, Converter={converters:TryLocalizeValueConverter}}" Margin="0,3,0,0" />
-                        <icons:MaterialIcon
-                            Foreground="{DynamicResource AccentColor}"
-                            IsVisible="{Binding CategoryName, Converter={converters:IsCategoryUncategorizedConverter}}"
-                            Kind="QuestionBoxOutline"
-                            Margin="15,0,0,0" />
                     </StackPanel>
                 </TreeDataTemplate>
 

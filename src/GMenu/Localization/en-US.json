@@ -73,5 +73,12 @@
   "AboutApp": "About application",
   "Version": "Version",
   "AboutText": ".desktop files editor for GNu/Linux, powered by AvaloniaUI",
-  "AboutOpenSource": "This software is free and open source? you can see the source here"
+  "AboutOpenSource": "This software is free and open source? you can see the source here",
+  "OpenDesktopFilesPath": "Open .desktop files directories",
+  "OpenDesktopFilesIconPath": "Open .desktop files' icons directories",
+  "OpenFreedesktopDirectories": "Open XDG directories",
+  "WantToGoToTheLink": "Do you want to open the link",
+  "SelectDirectoryToOpen": "Select directory to open",
+  "ApplicationName": "GMenu - Menu editor",
+  "OpenDirectory": "Open directory"
 }

@@ -1,5 +1,5 @@
-<rxUI:ReactiveWindow
-    Title="gmenu"
+<rxUi:ReactiveWindow
+    Title="{Binding LocalizationProvider[ApplicationName]}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -12,7 +12,7 @@
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:material="using:Material.Styles.Assists"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:rxUI="http://reactiveui.net"
+    xmlns:rxUi="http://reactiveui.net"
     xmlns:userControls="clr-namespace:GMenu.Views"
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -32,18 +32,25 @@
                         InputGesture="Ctrl+T" />
                 </MenuItem>
                 <MenuItem Header="{Binding LocalizationProvider[Open]}">
-                    <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
-                    <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
-                    <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
-                </MenuItem>
-                <MenuItem Header="{Binding LocalizationProvider[View]}">
-                    <MenuItem Header="{Binding LocalizationProvider[OpenGithubSource]}" Icon="{icons:MaterialIconExt Kind=Github}" />
-                    <MenuItem Header="{Binding LocalizationProvider[CloseTheApp]}" Icon="{icons:MaterialIconExt Kind=CloseBold}" />
-                    <MenuItem Header="{Binding LocalizationProvider[OpenSettings]}" Icon="{icons:MaterialIconExt Kind=Settings}" />
+                    <MenuItem
+                        Click="OpenDesktopFilesDirectories"
+                        Header="{Binding LocalizationProvider[OpenDesktopFilesPath]}"
+                        Icon="{icons:MaterialIconExt Kind=Files}" />
+                    <MenuItem
+                        Click="OpenDesktopFileIconsDirectories"
+                        Header="{Binding LocalizationProvider[OpenDesktopFilesIconPath]}"
+                        Icon="{icons:MaterialIconExt Kind=Image}" />
+                    <MenuItem
+                        Click="OpenFreedesktopDirectories"
+                        Header="{Binding LocalizationProvider[OpenFreedesktopDirectories]}"
+                        Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
                 </MenuItem>
                 <MenuItem Header="{Binding LocalizationProvider[Help]}">
                     <MenuItem Header="{Binding LocalizationProvider[AboutDesktopFiles]}" Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
-                    <MenuItem Header="{Binding LocalizationProvider[AboutApp]}" Icon="{icons:MaterialIconExt Kind=About}" Click="OpenInfo" />
+                    <MenuItem
+                        Click="OpenInfo"
+                        Header="{Binding LocalizationProvider[AboutApp]}"
+                        Icon="{icons:MaterialIconExt Kind=About}" />
                 </MenuItem>
             </Menu>
             <TextBox
@@ -109,7 +116,10 @@
             Grid.Row="4"
             Margin="10,0,0,0"
             VerticalAlignment="Center">
-            <TextBlock Grid.Column="0">
+            <TextBlock
+                Grid.Column="0"
+                Margin="0,0,0,5"
+                VerticalAlignment="Center">
                 <Run Text="{Binding LocalizationProvider[FilesCount]}" />
                 <Run Text="{Binding DesktopFilesCount}" />
             </TextBlock>
@@ -118,4 +128,4 @@
 
     </Grid>
 
-</rxUI:ReactiveWindow>
+</rxUi:ReactiveWindow>

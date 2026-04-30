@@ -73,5 +73,12 @@
   "AboutApp": "О программе",
   "Version": "Версия",
   "AboutText": "Редактор .desktop файлов для GNU/Linux написанный на AvaloniaUI",
-  "AboutOpenSource": "Это ПО распростроняется как свободное, с открытым исходным кодом, вы можете увидеть код здесь"
+  "AboutOpenSource": "Это ПО распростроняется как свободное, с открытым исходным кодом, вы можете увидеть код здесь",
+  "OpenDesktopFilesPath": "Открыть каталоги .desktop файлов",
+  "OpenDesktopFilesIconPath": "Открыть каталоги .desktop иконок ",
+  "OpenFreedesktopDirectories": "Открыть XDG каталоги",
+  "WantToGoToTheLink": "Вы хотите открыть ссылку",
+  "SelectDirectoryToOpen": "Выберите каталог для открытия",
+  "ApplicationName": "Редактор меню GMenu",
+  "OpenDirectory": "Открыть каталог"
 }

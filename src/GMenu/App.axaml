@@ -3,7 +3,6 @@
     x:Class="GMenu.App"
     xmlns="https://github.com/avaloniaui"
     xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:local="using:GMenu"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

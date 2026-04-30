@@ -2,6 +2,7 @@ namespace GMenu.Views;
 
 public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTreeViewModel>
 {
+    [DynamicDependency( DynamicallyAccessedMemberTypes.PublicEvents, typeof(TreeView))]
     public DesktopFilesTreeView()
     {
         InitializeComponent();
@@ -29,4 +30,5 @@ public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTree
         (treeViewItem.Tag as DispatcherTimer)?.Stop();
         treeViewItem?.Tag = null;
     }
+
 }
