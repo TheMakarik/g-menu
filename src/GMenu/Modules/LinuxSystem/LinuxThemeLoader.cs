@@ -4,6 +4,7 @@ public sealed class LinuxThemeLoader(ILogger logger) : ILinuxThemeLoader
 {
     public async Task<Rgb?> GetThemeHexAsync()
     {
+        // https://stackoverflow.com/questions/79934943/tmds-dbus-query-works-in-the-consoleapp-but-thrown-exception-in-the-my-avaloniau
         try
         {
             var connection = new DBusConnection(DBusAddress.Session!);

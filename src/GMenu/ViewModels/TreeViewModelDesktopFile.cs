@@ -26,6 +26,11 @@ public partial class TreeViewModelDesktopFile(
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
+    [ReactiveCommand]
+    private async Task RunDesktopFile()
+    {
+    }
+    
 
     private void BeginIconLoading()
     {

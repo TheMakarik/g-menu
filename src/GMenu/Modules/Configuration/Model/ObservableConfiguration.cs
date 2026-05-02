@@ -3,6 +3,7 @@ namespace GMenu.Modules.Configuration.Model;
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]
 public sealed class ObservableConfiguration : INotifyPropertyChanged
 {
+    private bool _isObserving = false;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ObservableConfiguration()
@@ -38,7 +39,7 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
         set => SetField(ref field, value);
     }
 
-    public CultureInfo Language
+    public required CultureInfo Language
     {
         get;
         set => SetField(ref field, value);
@@ -48,6 +49,23 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     {
         get;
         set => SetField(ref field, value);
+    }
+    
+    public BaseTheme? Theme
+    { 
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public bool LocalizeDesktopFileNames
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public void BeginPropertyChangeRaising()
+    {
+        _isObserving = true; 
     }
     
 
@@ -60,10 +78,9 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     {
         if (EqualityComparer<T>.Default.Equals(field, value)) 
             return false;
-        var mustRaisePropertyChanged = field is not null;
         field = value;
-        if(mustRaisePropertyChanged)
-            OnPropertyChanged(propertyName);
+        if(_isObserving)
+              OnPropertyChanged(propertyName);
         return true;
     }
     

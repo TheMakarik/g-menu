@@ -1,8 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Platform.Storage;
-
 namespace GMenu.Views;
 
 public sealed partial class SelectFilesWindow : ReactiveWindow<SelectFilesWindowViewModel>

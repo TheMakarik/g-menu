@@ -11,5 +11,6 @@ public sealed class DesktopFileHeader
     public string? Exec { get; set; }
     public bool IsDummy { get; set; } = false;
     public bool IsBroken { get; set; }
+    public string? NameKey { get; set; }
 
 }

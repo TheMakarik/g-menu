@@ -5,12 +5,13 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
     private ObservableConfiguration? _configuration;
     private Channel<string?>? _channel;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-    
+    private string _jsonPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), options.Configuration.Directory, options.Configuration.ConfigFileName);
+
     public  ObservableConfiguration CurrentObservable => _configuration ?? throw new InvalidOperationException("Configuration not initialized");
 
     public async Task EnsureExistsAsync()
     {
-        if (File.Exists(StaticConfiguration.ConfigurationPath))
+        if (File.Exists(_jsonPath))
         {
             logger.Information("Configuration file already exists");
             await LoadConfigurationAsync();
@@ -25,28 +26,31 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
 
     private async Task LoadConfigurationAsync()
     {
-        await using var file = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
+        await using var file = File.Open(_jsonPath, FileMode.Open);
 #pragma warning disable IL2026
 #pragma warning disable IL3050
         _configuration = await JsonSerializer.DeserializeAsync<ObservableConfiguration>(file, ObservableConfigurationSerializerContext.Default.Options);
         logger.Information("Configuration loaded successfully: {configurationProvider}", JsonSerializer.Serialize(_configuration, ObservableConfigurationSerializerContext.Default.Options));
 #pragma warning restore IL2026
 #pragma warning restore IL3050
+        _configuration?.BeginPropertyChangeRaising();
     }
 
     private async Task CreateJsonFileAsync()
     {
         try
         {
-            if(!Directory.Exists(options.Configuration.Directory))
-                Directory.CreateDirectory(options.Configuration.Directory);
-
-            await using var file = File.Create(StaticConfiguration.ConfigurationPath);
+            if(!Directory.Exists(Path.GetDirectoryName(_jsonPath)))
+                Directory.CreateDirectory(Path.GetDirectoryName(_jsonPath)!);
+            
+            await using var file = File.Create(_jsonPath);
             var defaultConfiguration = new ObservableConfiguration()
             {
                 Language = CultureInfo.CurrentCulture,
                 UnexistingCategories = [],
                 AccentColor = null,
+                Theme = null,
+                LocalizeDesktopFileNames = true
             };
 #pragma warning disable IL2026
 #pragma warning disable IL3050
@@ -56,7 +60,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
                 ObservableConfigurationSerializerContext.Default.Options);
 #pragma warning restore IL2026
 #pragma warning restore IL3050
-            logger.Information("Configuration file created in {path}", StaticConfiguration.ConfigurationPath);
+            logger.Information("Configuration file created in {path}", _jsonPath);
             _configuration = defaultConfiguration;
         }
         catch(Exception exception)
@@ -101,7 +105,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
             await _semaphoreSlim.WaitAsync();
             try
             {
-                await using var json = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open);
+                await using var json = File.Open(_jsonPath, FileMode.Open);
 #pragma warning disable IL2026
 #pragma warning disable IL3050
                 await JsonSerializer.SerializeAsync(json, _configuration, ObservableConfigurationSerializerContext.Default.Options);

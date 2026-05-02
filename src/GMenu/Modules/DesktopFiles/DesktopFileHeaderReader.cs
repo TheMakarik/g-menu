@@ -1,6 +1,7 @@
 namespace GMenu.Modules.DesktopFiles;
 
 public sealed class DesktopFileHeaderReader(
+    IConfigurationProvider configurationProvider,
     ILogger logger) : IDesktopFileHeaderReader
 {
     private const string DesktopEntryHeader = "[Desktop Entry]";
@@ -14,9 +15,10 @@ public sealed class DesktopFileHeaderReader(
     public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(string[] paths)
     {
         logger.Information("Start searching desktop files");
+        var configuration = configurationProvider.CurrentObservable;
    
         var filesToHandle = paths
-            .SelectMany(directory => Directory
+            .SelectMany(static directory => Directory
                 .EnumerateFiles(directory, "*.desktop", new EnumerationOptions() { RecurseSubdirectories = true }));
 
         var stopwatch = Stopwatch.StartNew();
@@ -35,6 +37,7 @@ public sealed class DesktopFileHeaderReader(
                     Name = Path.GetFileNameWithoutExtension(filePath),
                 };
                 var wasFoundNoDisplay = false;
+                var wasFoundLocalizedName = false;
 
                 foreach (var line in lines)
                 {
@@ -52,12 +55,20 @@ public sealed class DesktopFileHeaderReader(
                     var value = line.AsSpan(equalsIndex + 1);
 
                     if (key[^1] == ']')
-                        continue;
+                        if(configuration.LocalizeDesktopFileNames && IsLocalizedName(key, configuration.Language))
+                        {
+                            desktopFileHeader.Name = value.ToString();
+                            wasFoundLocalizedName = true;
+                            desktopFileHeader.NameKey = key.ToString();
+                        }
+                        else 
+                            continue;
 
                     switch (key)
                     {
-                        case NameKey:
+                        case NameKey when !wasFoundLocalizedName:
                             desktopFileHeader.Name = value.ToString().Replace("\\n", " ");
+                            desktopFileHeader.NameKey = NameKey;
                             break;
                         case IconKey:
                             desktopFileHeader.IconPath = value.ToString();
@@ -98,6 +109,36 @@ public sealed class DesktopFileHeaderReader(
         stopwatch.Stop();
         logger.Information("Find desktop files: {count} for {time} ms", result.Count,  stopwatch.ElapsedMilliseconds);
         return result;
+    }
+
+    private static bool IsLocalizedName(
+        ReadOnlySpan<char> key,      
+        CultureInfo configurationLanguage)
+    {
+        if (!key.StartsWith(NameKey))
+            return false;
+    
+        if (key.Length <= NameKey.Length || key[NameKey.Length] != '[')
+            return false;
+    
+        var closingBracketIndex = key.IndexOf(']');
+        if (closingBracketIndex == -1)
+            return false;
+        
+        var languageCode = key.Slice(
+            NameKey.Length + 1,           
+            closingBracketIndex - NameKey.Length - 1 
+        );
+    
+        if (languageCode.IsEmpty)
+            return false;
+        
+        var userLanguage = configurationLanguage.Name; 
+        var normalizedUserLang = userLanguage.Replace('-', '_');
+        var desktopLang = languageCode.ToString();
+        
+        return desktopLang.Equals(normalizedUserLang, StringComparison.OrdinalIgnoreCase) ||
+               desktopLang.Equals(configurationLanguage.TwoLetterISOLanguageName, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsDesktopFileCorrect(DesktopFileHeader desktopFileHeader)

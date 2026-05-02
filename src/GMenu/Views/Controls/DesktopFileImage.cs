@@ -2,22 +2,18 @@ namespace GMenu.Views.Controls;
 
 public class DesktopFileImage : ContentControl
 {
-    
-    private string _sourceString = string.Empty;
-
     public static readonly DirectProperty<DesktopFileImage, string> SourceStringProperty = AvaloniaProperty.RegisterDirect<DesktopFileImage, string>(
         nameof(SourceString), o => o.SourceString, (o, v) => o.SourceString = v);
 
     public string SourceString
     {
-        get => _sourceString;
+        get;
         set
         {
-            if(SetAndRaise(SourceStringProperty, ref _sourceString, value))
-                 UpdateContentControl();
-            
+            if (SetAndRaise(SourceStringProperty, ref field, value))
+                UpdateContentControl();
         }
-    }
+    } = string.Empty;
 
     private void UpdateContentControl()
     {

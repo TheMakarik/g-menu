@@ -1,5 +1,3 @@
-using DynamicData.Binding;
-
 namespace GMenu.ViewModels;
 
 public partial class SelectFilesWindowViewModel(
@@ -30,7 +28,7 @@ public partial class SelectFilesWindowViewModel(
                 _rootRequirer, LocalizationProvider)));
         _logger.Debug("Loaded directories to select: {directories}", paths);
         this.WhenPropertyChanged(prop => prop.SelectedItem)
-            .Subscribe(async _ => await SelectDirectoryAsync(SelectedItem));
+            .Subscribe(async  _ => await SelectDirectoryAsync(SelectedItem));
     }
     
     [ReactiveCommand]
@@ -49,7 +47,6 @@ public partial class SelectFilesWindowViewModel(
         _logger.Debug("Selecting directory: {directory}", path);
         foreach (var openableFilesViewModel in PathsToSelect)
             openableFilesViewModel.IsOpen = openableFilesViewModel.Path == path;
-
         await OpenDirectory.Handle(path);
     }
 }
