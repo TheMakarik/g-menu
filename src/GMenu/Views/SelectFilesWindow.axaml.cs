@@ -1,9 +1,11 @@
 namespace GMenu.Views;
 
+
 public sealed partial class SelectFilesWindow : ReactiveWindow<SelectFilesWindowViewModel>
 {
     public string[] Paths { get; }
 
+    [DynamicDependency(DynamicallyAccessedMemberTypes.AllEvents, typeof(SelectFilesWindow))]
     public SelectFilesWindow(string[] paths)
     {
         Paths = paths;

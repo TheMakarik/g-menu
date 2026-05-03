@@ -1,10 +1,9 @@
 namespace GMenu.ViewModels;
 
 public partial class SelectFilesWindowViewModel(
-    IRootRequirer rootRequirer,
     ILocalizationProvider provider,
     ILogger logger)
-    : ViewModelBase(logger, rootRequirer, provider)
+    : ViewModelBase(provider)
 {
 
     [Reactive]
@@ -13,7 +12,6 @@ public partial class SelectFilesWindowViewModel(
     [Reactive] private OpenableFilesViewModel? _selectedItem;
 
     private readonly ILogger _logger = logger;
-    private readonly IRootRequirer _rootRequirer = rootRequirer;
 
     public Interaction<string, Unit> OpenDirectory { get; } = new();
 
@@ -23,9 +21,8 @@ public partial class SelectFilesWindowViewModel(
         PathsToSelect = new ObservableCollection<OpenableFilesViewModel>(paths
             .Select(path => new OpenableFilesViewModel(
                 path,
-                isOpen: false,
-                _logger,
-                _rootRequirer, LocalizationProvider)));
+                isOpen: false, 
+                LocalizationProvider)));
         _logger.Debug("Loaded directories to select: {directories}", paths);
         this.WhenPropertyChanged(prop => prop.SelectedItem)
             .Subscribe(async  _ => await SelectDirectoryAsync(SelectedItem));

@@ -80,5 +80,10 @@
   "WantToGoToTheLink": "Вы хотите открыть ссылку",
   "SelectDirectoryToOpen": "Выберите каталог для открытия",
   "ApplicationName": "Редактор меню GMenu",
-  "OpenDirectory": "Открыть каталог"
+  "OpenDirectory": "Открыть каталог",
+  "RunDesktopFile": "Запустить файл",
+  "RenameDesktopFile": "Переменовать",
+  "RemoveDesktopFile": "Удалить",
+  "ShowInFiles": "Показать в Files",
+  "SudoRunDesktopFile": "Запустить от имени супер пользователя"
 }

@@ -31,4 +31,10 @@ public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTree
         treeViewItem?.Tag = null;
     }
 
+    private void LoadContextMenuForDesktopFile(object sender, RoutedEventArgs e)
+    { 
+        var control = (Control)sender;
+        var treeView = control.GetLogicalParent<TreeViewItem>() ?? throw new InvalidOperationException("Cannot found tree view item");
+        treeView.ContextMenu = control.Resources["ContextMenuForFile"] as ContextMenu;
+    }
 }

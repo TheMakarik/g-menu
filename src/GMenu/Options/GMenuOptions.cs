@@ -7,5 +7,6 @@ public sealed class GMenuOptions
     public required LocalizationOptions Localization { get; set; }
     public required UiOptions Ui { get; set; }
     public required CoreOptions Core { get; set; }
+    public required LinuxOptions Linux { get; set; }
     public required Dictionary<string, string> CategoriesIcons { get; set; }
 }

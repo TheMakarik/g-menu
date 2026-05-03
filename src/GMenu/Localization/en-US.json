@@ -80,5 +80,10 @@
   "WantToGoToTheLink": "Do you want to open the link",
   "SelectDirectoryToOpen": "Select directory to open",
   "ApplicationName": "GMenu - Menu editor",
-  "OpenDirectory": "Open directory"
+  "OpenDirectory": "Open directory",
+  "RunDesktopFile": "Run file",
+  "RenameDesktopFile": "Rename",
+  "RemoveDesktopFile": "Delete",
+  "ShowInFiles": "Show in Files",
+  "SudoRunDesktopFile": "Run as superuser"
 }

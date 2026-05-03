@@ -1,20 +1,19 @@
 namespace GMenu.ViewModels;
 
 public partial class TreeViewModelDesktopFile(
-    string filePath,
-    string iconPath,
-    string name,
+    DesktopFileHeader desktopFileHeader,
+    IDesktopFilesRunner desktopFilesRunner,
     IDesktopFileIconPathRefiner iconPathRefiner,
     ILogger logger,
-    IRootRequirer rootRequirer,
     ILocalizationProvider localizationProvider)
-    : TreeViewModelBase(logger, rootRequirer, localizationProvider)
+    : TreeViewModelBase(logger, localizationProvider)
 {
     private bool _searchingIcon = false;
 
-    public string FilePath { get; } = filePath;
-    public string Name { get; } = name;
-
+    public string FilePath { get; } = desktopFileHeader.Path;
+    public string? Name { get; } = desktopFileHeader.Name;
+    public DesktopFileHeader Header => desktopFileHeader;
+    
     public string? IconPath
     {
         get
@@ -25,17 +24,35 @@ public partial class TreeViewModelDesktopFile(
         }
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
     [ReactiveCommand]
-    private async Task RunDesktopFile()
+    private void RunDesktopFile()
     {
+        Task.Factory.StartNew(async void () =>
+        {
+            await desktopFilesRunner.RunDesktopFileFromHeaderAsync(
+                desktopFileHeader,
+                requireSudo: false,
+                new CancellationTokenSource());
+        }, TaskCreationOptions.LongRunning);
+    }
+    
+    [ReactiveCommand]
+    private void SudoRunDesktopFile()
+    {
+        Task.Factory.StartNew(async void () =>
+        {
+            await desktopFilesRunner.RunDesktopFileFromHeaderAsync(
+               desktopFileHeader,
+                requireSudo: true,
+                new CancellationTokenSource());
+        }, TaskCreationOptions.LongRunning);
     }
     
 
     private void BeginIconLoading()
     {
         _searchingIcon = true;
-        Observable.Start(() => iconPathRefiner.RefinePath(iconPath, StaticConfiguration.PathsToRefineIcon))
+        Observable.Start(() => iconPathRefiner.RefinePath(desktopFileHeader.IconPath, StaticConfiguration.PathsToRefineIcon))
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(result => IconPath = result);
     }
@@ -50,7 +67,7 @@ public partial class TreeViewModelDesktopFile(
         this.Parent!.SendSelectionChangeMessage();
         var message = new UpdateSelectedDesktopFileMessage()
         {
-            Name = Name,
+            Name = Name ?? string.Empty,
         };
         MessageBus.Current.SendMessage(message);
     }

@@ -35,6 +35,7 @@ public sealed class Bootstrapper
         services
             .AddSingleton(options)
             .AddSingleton<IDesktopFileIconPathRefiner, DesktopFileIconPathRefiner>()
+            .AddSingleton<IDesktopFileReader, DesktopFileReader>()
             .AddSingleton<IDesktopFileHeaderReader, DesktopFileHeaderReader>()
             .AddSingleton<DesktopFilesTreeViewModel>()
             .AddSingleton<MainWindowViewModel>()
@@ -42,9 +43,10 @@ public sealed class Bootstrapper
             .AddTransient<SelectFilesWindowViewModel>()
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
+            .AddSingleton<ILinuxTerminalLauncher, LinuxTerminalLauncher>()
+            .AddSingleton<IDesktopFilesRunner, DesktopFilesRunner>()
             .AddScoped<ILinuxThemeLoader, LinuxThemeLoader>()
-            .AddSingleton<ILocalizationProvider, JsonLocalizationProvider>()
-            .AddSingleton<IRootRequirer, RootRequirer>();
+            .AddSingleton<ILocalizationProvider, JsonLocalizationProvider>();
         
         return services.BuildServiceProvider();
         

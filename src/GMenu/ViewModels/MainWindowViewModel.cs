@@ -11,8 +11,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public MainWindowViewModel(ILogger logger,
         ILocalizationProvider localizationProvider,
-        GMenuOptions options,
-        IRootRequirer rootRequirer) : base(logger, rootRequirer, localizationProvider)
+        GMenuOptions options) : base(localizationProvider)
     {
         _options = options;
         MessageBus.Current.Listen<SetDesktopFilesCountMessage>()

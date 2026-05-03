@@ -4,7 +4,12 @@ public class DesktopFileImage : ContentControl
 {
     public static readonly DirectProperty<DesktopFileImage, string> SourceStringProperty = AvaloniaProperty.RegisterDirect<DesktopFileImage, string>(
         nameof(SourceString), o => o.SourceString, (o, v) => o.SourceString = v);
+    
+    public static readonly DirectProperty<DesktopFileImage, IImage?> ActualSourceProperty = AvaloniaProperty.RegisterDirect<DesktopFileImage, IImage?>(
+        nameof(ActualSource), o => o.ActualSource, (o, v) => o.ActualSource = v);
 
+    public IImage? ActualSource { get => field ;  set => SetAndRaise(ActualSourceProperty, ref field, value); }
+ 
     public string SourceString
     {
         get;
@@ -31,9 +36,11 @@ public class DesktopFileImage : ContentControl
                 ".svg" => File.Exists(this.SourceString)
                     ? new SvgImage() { Source = SvgSource.Load(this.SourceString)  }
                     : null,
-                _ => null
+                _ => null //TO DO: add xpm image support 
             }
         };
+        this.ActualSource = image.Source;
+        
 
         this.Content = image;
     }

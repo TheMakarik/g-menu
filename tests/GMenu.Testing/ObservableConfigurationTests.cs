@@ -1,48 +1,165 @@
-using System.Collections;
-using FakeItEasy;
+using GMenu.Modules.ColorUtils.Model;
 using GMenu.Modules.Configuration.Model;
-using GMenu.Modules.DesktopFiles.Model;
 
 namespace GMenu.Testing;
 
 public class ObservableConfigurationTests
 {
-   [Fact]
-   public void AllProperties_WithNullValues_MustNoRaiseINotifyPropertyChanged()
-   {
-      //Arrange
-      var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() {User = null!, SearchDesktopFilesDirectories = null!, UnexistingCategories = null!};
-      observableConfiguration.PropertyChanged += (sender, args) => { wasPropertyChangedCalled = true; };
-      //Act
-      observableConfiguration.SearchDesktopFilesDirectories = [];
-      //Assert
-      Assert.False(wasPropertyChangedCalled);
-   }
    
    [Fact]
    public void AllProperties_WithNotNullValues_MustRaiseINotifyPropertyChanged()
    {
-      //Arrange
+      // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() {User = new  User(), SearchDesktopFilesDirectories = [], UnexistingCategories = []};
-      observableConfiguration.PropertyChanged += (sender, args) => { wasPropertyChangedCalled = true; };
-      //Act
-      observableConfiguration.SearchDesktopFilesDirectories = [new DesktopFileDirectory(string.Empty)];
-      //Assert
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [],
+          Language = System.Globalization.CultureInfo.CurrentCulture,
+          AccentColor = "#FFFFFF",
+          Theme = BaseTheme.Light
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          wasPropertyChangedCalled = true; 
+      };
+      
+      observableConfiguration.BeginPropertyChangeRaising();
+      
+      // Act
+      observableConfiguration.UnexistingCategories = [new UnexistingCategory(){Path = string.Empty, Name = string.Empty}];
+      
+      // Assert
       Assert.True(wasPropertyChangedCalled);
    }
    
    [Fact]
    public void ObservableCollection_OnValueChanging_MustRaiseINotifyPropertyChangedWithIndex()
    {
-      //Arrange
+      // Arrange
       var propertyName = string.Empty;
-      var observableConfiguration = new ObservableConfiguration() {User = new  User(), SearchDesktopFilesDirectories = [], UnexistingCategories = []};
-      observableConfiguration.PropertyChanged += (sender, args) => { propertyName = args.PropertyName; };
-      //Act
-      observableConfiguration.SearchDesktopFilesDirectories.Add(new   DesktopFileDirectory(string.Empty));
-      //Assert
-      Assert.EndsWith(propertyName, $"[{observableConfiguration.SearchDesktopFilesDirectories.Count - 1}]");
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [],
+          Language = System.Globalization.CultureInfo.CurrentCulture,
+          AccentColor = "#FFFFFF",
+          Theme = BaseTheme.Light
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          propertyName = args.PropertyName; 
+      };
+      
+      observableConfiguration.BeginPropertyChangeRaising();
+      
+      // Act
+      observableConfiguration.UnexistingCategories.Add(new UnexistingCategory(){Path = string.Empty, Name = string.Empty});
+      
+      // Assert
+      Assert.EndsWith($"[{observableConfiguration.UnexistingCategories.Count - 1}]", propertyName);
+   }
+   
+   [Fact]
+   public void ObservableCollection_OnCollectionReset_MustRaisePropertyChanged()
+   {
+      // Arrange
+      var wasPropertyChangedCalled = false;
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [new UnexistingCategory(){Path = string.Empty, Name = string.Empty}, new UnexistingCategory(){Path = string.Empty, Name = string.Empty}],
+          Language = System.Globalization.CultureInfo.CurrentCulture,
+          AccentColor = "#FFFFFF",
+          Theme = BaseTheme.Light
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          wasPropertyChangedCalled = true;
+      };
+      
+      observableConfiguration.BeginPropertyChangeRaising();
+      
+      // Act
+      observableConfiguration.UnexistingCategories.Clear();
+      
+      // Assert
+      Assert.True(wasPropertyChangedCalled);
+   }
+   
+   [Fact]
+   public void LocalizeDesktopFileNames_WhenChanged_MustRaisePropertyChanged()
+   {
+      // Arrange
+      var wasPropertyChangedCalled = false;
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [],
+          Language = System.Globalization.CultureInfo.CurrentCulture,
+          LocalizeDesktopFileNames = false
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          if (args.PropertyName == nameof(ObservableConfiguration.LocalizeDesktopFileNames))
+              wasPropertyChangedCalled = true;
+      };
+      
+      observableConfiguration.BeginPropertyChangeRaising();
+      
+      // Act
+      observableConfiguration.LocalizeDesktopFileNames = true;
+      
+      // Assert
+      Assert.True(wasPropertyChangedCalled);
+   }
+   
+   [Fact]
+   public void Language_WhenChanged_MustRaisePropertyChanged()
+   {
+      // Arrange
+      var wasPropertyChangedCalled = false;
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [],
+          Language = null!
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          if (args.PropertyName == nameof(ObservableConfiguration.Language))
+              wasPropertyChangedCalled = true;
+      };
+      
+      observableConfiguration.BeginPropertyChangeRaising();
+      
+      // Act
+      observableConfiguration.Language = new System.Globalization.CultureInfo("ru-RU");
+      
+      // Assert
+      Assert.True(wasPropertyChangedCalled);
+   }
+   
+   [Fact]
+   public void BeginPropertyChangeRaising_WhenNotCalled_ShouldNotRaiseEvents()
+   {
+      // Arrange
+      var wasPropertyChangedCalled = false;
+      var observableConfiguration = new ObservableConfiguration() 
+      { 
+          UnexistingCategories = [],
+          Language = System.Globalization.CultureInfo.CurrentCulture
+      };
+      
+      observableConfiguration.PropertyChanged += (sender, args) => 
+      { 
+          wasPropertyChangedCalled = true; 
+      };
+      
+      // Act
+      observableConfiguration.Language = new System.Globalization.CultureInfo("ru-RU");
+      
+      // Assert
+      Assert.False(wasPropertyChangedCalled);
    }
 }

@@ -5,6 +5,7 @@ public static class StaticConfiguration
     public const  JsonKnownNamingPolicy DefaultJsonNamingPolicy = JsonKnownNamingPolicy.CamelCase;
     public const string ConfigurationPath = "appsettings.json";
     public const string Uncategorized = "Uncategorized";
+    
 
     public static string[] FreedesktopDataDirectories = Environment.GetEnvironmentVariable("XDG_DATA_DIRS")!.Split(':');
     

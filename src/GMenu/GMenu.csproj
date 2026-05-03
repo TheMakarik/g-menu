@@ -6,11 +6,13 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ImplicitUsings>disable</ImplicitUsings>
-        <PublishAot>true</PublishAot>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>link</TrimMode>
         <PublishSingleFile>true</PublishSingleFile>
         <RuntimeIdentifiers>linux-x64;linux-arm64;linux-arm</RuntimeIdentifiers>
         <SelfContained>true</SelfContained>
         <WarningsAsErrors>true</WarningsAsErrors>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -41,6 +43,7 @@
         <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
         <PackageReference Include="Splat.Microsoft.Extensions.DependencyInjection" Version="19.3.1" />
         <PackageReference Include="Splat.Serilog" Version="19.3.1" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.9.5" />
@@ -61,9 +64,17 @@
       <Content Include="Localization\ru-RU.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Shell\gmenu-run-desktop-file-exec-wilth-policykit-1.sh" />
+      <Content Include="Shell\gmenu-run-desktop-file-exec-wilth-policykit-1.sh">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Modules\LinuxSystem\DBus\org.freedesktop.portal.Desktop.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Views\SpecificModel\" />
     </ItemGroup>
 </Project>

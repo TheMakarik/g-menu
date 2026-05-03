@@ -16,13 +16,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <TreeView ItemsSource="{Binding Children}" SelectedItem="{Binding SelectedItem}">
+        <TreeView ItemsSource="{Binding Children}" SelectedItem="{Binding SelectedItem}" IsVisible="{Binding SearchText, Converter={converters:IsValueNullConverter}}">
 
             <TreeView.Styles>
                 <Style Selector="TreeViewItem">
                     <Setter Property="FontSize" Value="15" />
                     <Setter Property="DragDrop.AllowDrop" Value="True" />
                 </Style>
+
 
             </TreeView.Styles>
 
@@ -39,8 +40,20 @@
                         <ContentControl
                             Content="{Binding CategoryName, Converter={converters:CategoryStringToMaterialIconConverter}}"
                             Height="{StaticResource IconInTreeViewSize}"
-                            Width="{StaticResource IconInTreeViewSize}" />
-                        <Label Content="{Binding CategoryName, Converter={converters:TryLocalizeValueConverter}}" Margin="0,3,0,0" />
+                            Width="{StaticResource IconInTreeViewSize}"
+                            x:Name="IconCategoryControl" />
+                        <Label Content="{Binding CategoryName, Converter={converters:TryLocalizeValueConverter}}">
+                            <Label.Margin>
+                                <Binding ElementName="IconCategoryControl" Path="Content">
+                                    <Binding.Converter>
+                                        <converters:MoveControlToLeftIfImageSourceOrMaterialIconIsNullConverter />
+                                    </Binding.Converter>
+                                    <Binding.ConverterParameter>
+                                        <Thickness>0, 3, 0, 0</Thickness>
+                                    </Binding.ConverterParameter>
+                                </Binding>
+                            </Label.Margin>
+                        </Label>
                     </StackPanel>
                 </TreeDataTemplate>
 
@@ -49,9 +62,27 @@
                         BorderThickness="3"
                         DragDrop.AllowDrop="True"
                         Height="{Binding Height, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
+                        Loaded="LoadContextMenuForDesktopFile"
                         PointerPressed="StartDrag"
                         PointerReleased="StopDrag"
                         Width="{Binding Width, RelativeSource={RelativeSource AncestorType=TreeView}}">
+
+                        <Border.Resources>
+                            <ContextMenu x:Key="ContextMenuForFile">
+                                <MenuItem
+                                    Command="{Binding RunDesktopFileCommand}"
+                                    Header="{Binding LocalizationProvider[RunDesktopFile]}"
+                                    Icon="{icons:MaterialIconExt Kind=PlayBox}" />
+                                <MenuItem
+                                    Command="{Binding SudoRunDesktopFileCommand}"
+                                    Header="{Binding LocalizationProvider[SudoRunDesktopFile]}"
+                                    Icon="{icons:MaterialIconExt Kind=PlayBoxEditOutline}" />
+                                <MenuItem Header="{Binding LocalizationProvider[RemoveDesktopFile]}" Icon="{icons:MaterialIconExt Kind=Trash}" />
+                                <MenuItem Header="{Binding LocalizationProvider[RenameDesktopFile]}" Icon="{icons:MaterialIconExt Kind=RenameBox}" />
+                                <MenuItem Header="{Binding LocalizationProvider[ShowInFiles]}" Icon="{icons:MaterialIconExt Kind=Folder}" />
+                            </ContextMenu>
+                        </Border.Resources>
+
                         <Grid
                             ColumnDefinitions="Auto, *"
                             Margin="-25,0,0,0"
@@ -61,11 +92,20 @@
                                 Grid.Column="0"
                                 Height="{StaticResource IconInTreeViewSize}"
                                 SourceString="{Binding IconPath}"
-                                Width="{StaticResource IconInTreeViewSize}" />
-                            <Label
-                                Content="{Binding Name}"
-                                Grid.Column="1"
-                                Margin="6,3,0,0" />
+                                Width="{StaticResource IconInTreeViewSize}"
+                                x:Name="DesktopFileImage" />
+                            <Label Content="{Binding Name}" Grid.Column="1">
+                                <Label.Margin>
+                                    <Binding ElementName="DesktopFileImage" Path="ActualSource">
+                                        <Binding.Converter>
+                                            <converters:MoveControlToLeftIfImageSourceOrMaterialIconIsNullConverter />
+                                        </Binding.Converter>
+                                        <Binding.ConverterParameter>
+                                            <Thickness>6, 3, 0, 0</Thickness>
+                                        </Binding.ConverterParameter>
+                                    </Binding>
+                                </Label.Margin>
+                            </Label>
                         </Grid>
                     </Border>
                 </TreeDataTemplate>

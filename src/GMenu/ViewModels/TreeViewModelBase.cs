@@ -1,6 +1,6 @@
 namespace GMenu.ViewModels;
 
-public abstract partial class TreeViewModelBase(ILogger logger, IRootRequirer rootRequirer, ILocalizationProvider localizationProvider) : ViewModelBase(logger, rootRequirer, localizationProvider)
+public abstract partial class TreeViewModelBase(ILogger logger, ILocalizationProvider localizationProvider) : ViewModelBase(localizationProvider)
 {
     public  required TreeViewModelBase?  Parent { get; init; }
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
