@@ -24,14 +24,13 @@ public partial class App : Application
             LoadLocalization(provider);
             var logger = provider.GetRequiredService<ILogger>();
             logger.Information("Initializing GMenu...");
-            //await LoadMaterialThemeAsync(provider);
             logger.Information("Desktop files paths: {paths}", StaticConfiguration.PathToDesktopFiles);
             logger.Information("Desktop files icons path: {paths}", StaticConfiguration.PathsToRefineIcon);
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
             
             await LoadConfigurationAsync(provider).ConfigureAwait(false);
-          
+            await LoadMaterialThemeAsync(provider).ConfigureAwait(false);
         
             base.OnFrameworkInitializationCompleted();
         }
@@ -54,13 +53,24 @@ public partial class App : Application
     
         var themeLoader = scope.ServiceProvider.GetRequiredService<ILinuxThemeLoader>();
         var rgb = await themeLoader.GetThemeHexAsync();
-        var color = new Color(255, (byte)rgb.Red, (byte)rgb.Green, (byte)rgb.Blue );
-        var materialTheme = this.LocateMaterialTheme<CustomMaterialTheme>();
-        materialTheme.BaseTheme = BaseThemeMode.Inherit;
-        materialTheme.PrimaryColor = color;
-        materialTheme.SecondaryColor = color;
+
+        if (rgb is null)
+        {
+            provider.GetRequiredService<ILogger>().Warning("Could not load theme from d-bus, so use default color theme or user-configured theme");
+            return;
+        }
         
-        this.Resources["AccentColor"] = materialTheme.PrimaryColor;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var color = new Color(255, (byte)rgb.Red, (byte)rgb.Green, (byte)rgb.Blue);
+            var materialTheme = this.LocateMaterialTheme<CustomMaterialTheme>();
+            materialTheme.BaseTheme = BaseThemeMode.Inherit;
+            materialTheme.PrimaryColor = color;
+            materialTheme.SecondaryColor = color;
+
+            this.Resources["AccentColor"] = materialTheme.PrimaryColor;
+        });
+
     }
     
     private void LoadLocalization(IServiceProvider provider)

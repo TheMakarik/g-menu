@@ -22,17 +22,17 @@ public sealed class LinuxThemeLoader(ILogger logger) : ILinuxThemeLoader
 
             var message = writer.CreateMessage();
 
-            var reply = await connection.CallMethodAsync(message, 
-                (result, _) => result);
+            var (red, green, blue) = await connection.CallMethodAsync(message, (m, _) =>
+            {                                                                                                                 
+                var reader = m.GetBodyReader();
+                reader.AlignStruct();                                                                                         
+                reader.ReadInt64();
+                return ((int)(reader.ReadDouble() * 255),
+                    (int)(reader.ReadDouble() * 255),
+                    (int)(reader.ReadDouble() * 255));                                                                    
+            }, null);
 
-            var reader = reply.GetBodyReader();
-            reader.AlignStruct();   
-            
-            reader.ReadInt64();
-            var red = (int)(reader.ReadDouble() * 255);
-            var green = (int)(reader.ReadDouble() * 255);
-            var blue = (int)(reader.ReadDouble() * 255);
-
+            logger.Information("Load colors: {red}, {green}, {blue}", red, green, blue);
             return new Rgb(red, green, blue);
         }
         catch (Exception e)

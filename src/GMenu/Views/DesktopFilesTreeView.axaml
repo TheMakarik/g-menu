@@ -16,7 +16,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <TreeView ItemsSource="{Binding Children}" SelectedItem="{Binding SelectedItem}" IsVisible="{Binding SearchText, Converter={converters:IsValueNullConverter}}">
+        <TreeView
+            IsVisible="{Binding SearchText, Converter={converters:IsValueNullConverter}}"
+            ItemsSource="{Binding Children}"
+            SelectedItem="{Binding SelectedItem}">
 
             <TreeView.Styles>
                 <Style Selector="TreeViewItem">

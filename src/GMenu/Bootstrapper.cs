@@ -41,6 +41,7 @@ public sealed class Bootstrapper
             .AddSingleton<MainWindowViewModel>()
             .AddTransient<InfoWindowViewModel>()
             .AddTransient<SelectFilesWindowViewModel>()
+            .AddSingleton<IDesktopFilesHeaderSearcher, DesktopFileHeaderSearcher>()
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
             .AddSingleton<ILinuxTerminalLauncher, LinuxTerminalLauncher>()
