@@ -55,7 +55,7 @@ Icon={icon}
 ")
             .Build();
 
-        var filePath = Path.Join(_fileSystem.Root, fileName);
+        var filePath = Path.ChangeExtension(fileName, ".desktop");
         var paths = new[] { _fileSystem.Root };
 
         // Act 
@@ -232,7 +232,7 @@ Terminal=true
 Icon=tint
 ")
             .AddDirectoriesWithNameGenerating(3, (_, builder) => 
-                builder.AddFilesWithNameGeneraing(".desktop", 5, @"
+                builder.AddFilesWithNameGenerating(".desktop", 5, @"
 [Desktop Entry]
 Type=Application
 Name=TINT

@@ -64,11 +64,16 @@ public sealed partial class DesktopFilesTreeViewModel(
         
         _logger.Information("Created {count} categories", _children.Count);
 
+        MessageBus.Current.Listen<UpdateSearchTextMessage>().Subscribe(message =>
+        {
+            SearchText = message.NewText;
+        });
+
         this.WhenPropertyChanged(property => property.SearchText)
             .Subscribe(onNext =>
             {
                 _searchCancellationTokenSource.Cancel();
-                if (onNext.Value is null)
+                if (string.IsNullOrWhiteSpace(onNext.Value))
                     return;
                 
                 _searchSemaphore.Wait();
@@ -95,6 +100,7 @@ public sealed partial class DesktopFilesTreeViewModel(
             .SelectMany(children => children.Children)
             .Cast<TreeViewModelDesktopFile>();
         Debug.Assert(SearchText is not null);
+        var counter = 0;
         Parallel.ForEach(searchChildren, (item, state) =>
         {
             if (_searchCancellationTokenSource.Token.CanBeCanceled)
@@ -107,6 +113,7 @@ public sealed partial class DesktopFilesTreeViewModel(
             try
             {
                 _searchResults.Add(item);
+                counter++;
             }
             catch (Exception e)
             {
@@ -117,6 +124,9 @@ public sealed partial class DesktopFilesTreeViewModel(
                 _searchSemaphore.Release();
             }
         });
+        #if DEBUG
+        _logger.Debug("Searching with pattern {p} and found {c} files categories", SearchText, counter);
+        #endif
     }
 
 }

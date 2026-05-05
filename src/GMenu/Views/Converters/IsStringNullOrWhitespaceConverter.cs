@@ -1,10 +1,10 @@
 namespace GMenu.Views.Converters;
 
-public class IsValueNullConverter : MarkupExtension, IValueConverter
+public class IsStringNullOrWhitespaceConverter : MarkupExtension, IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return value is null;
+        return string.IsNullOrWhiteSpace(value as string);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

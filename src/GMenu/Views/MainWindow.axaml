@@ -55,7 +55,8 @@
             </Menu>
             <TextBox
                 Grid.Column="1"
-                Watermark="{Binding LocalizationProvider[InputFileName]}"
+                PlaceholderText="{Binding LocalizationProvider[InputFileName]}"
+                Text="{Binding SearchText}"
                 Width="250">
                 <TextBox.InnerLeftContent>
                     <icons:MaterialIcon
