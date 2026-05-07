@@ -1,3 +1,4 @@
+
 namespace GMenu;
 
 public sealed class Bootstrapper
@@ -5,33 +6,34 @@ public sealed class Bootstrapper
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(RollingInterval))]
     public IServiceProvider BuildApplication()
     {
-        GMenuOptions options;
+        GMenuOptions? options;
         
         using (var stream = File.Open(StaticConfiguration.ConfigurationPath, FileMode.Open))
 #pragma warning disable IL2026
 #pragma warning disable IL3050
-            options = JsonSerializer.Deserialize<GMenuOptions>(stream, GMenuOptionsSerializationContext.Default.Options);
+            options = JsonSerializer.Deserialize<GMenuOptions?>(stream, GMenuOptionsSerializationContext.Default.Options);
 #pragma warning restore IL2026
 #pragma warning restore IL3050
         
-        Log.Logger = new LoggerConfiguration()
+        var loggerConfiguration = new LoggerConfiguration()
             .Enrich.WithThreadId()
-#if DEBUG
-            .WriteTo.Console(
-                outputTemplate: options!.Logging.OutputTemplate)
-#endif
             .WriteTo.File(
-                outputTemplate: options.Logging.OutputTemplate,
+                outputTemplate: options!.Logging.OutputTemplate,
                 rollingInterval: Enum.Parse<RollingInterval>(options.Logging.RollingInterval),
-                path: Path.Combine(
+                path: Path.Join(
                     options.Configuration.Directory, 
                     options.Logging.LogsDirectory, 
                     options.Logging.LogFileNamePrefix))
-            .MinimumLevel.Debug()
-            .CreateLogger();
+                    .MinimumLevel.Debug()
+                .WriteTo.Console(outputTemplate: options.Logging.OutputTemplate);
+        
+        
+        Log.Logger = loggerConfiguration.CreateLogger();
         
         var services = new ServiceCollection();
 
+        
+        Log.Logger.Information("Configure services...");
         services
             .AddSingleton(options)
             .AddSingleton<IDesktopFileIconPathRefiner, DesktopFileIconPathRefiner>()
@@ -42,6 +44,7 @@ public sealed class Bootstrapper
             .AddTransient<InfoWindowViewModel>()
             .AddTransient<SelectFilesWindowViewModel>()
             .AddSingleton<IDesktopFilesHeaderSearcher, DesktopFileHeaderSearcher>()
+            .AddSingleton<IDesktopFilesExecFormatter, DesktopFilesExecFormatter>()
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
             .AddSingleton<ILinuxTerminalLauncher, LinuxTerminalLauncher>()

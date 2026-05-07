@@ -16,6 +16,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+
         <Panel>
             <TreeView
                 IsVisible="{Binding SearchText, Converter={converters:IsStringNullOrWhitespaceConverter}}"
@@ -41,7 +42,10 @@
                 <TreeView.DataTemplates>
 
                     <TreeDataTemplate DataType="vm:TreeViewModelCategory" ItemsSource="{Binding Children}">
-                        <StackPanel Margin="-10,0,0,0" Orientation="Horizontal">
+                        <StackPanel
+                            Height="{Binding Height, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
+                            Margin="-10,0,0,0"
+                            Orientation="Horizontal">
                             <ContentControl
                                 Content="{Binding CategoryName, Converter={converters:CategoryStringToMaterialIconConverter}}"
                                 Height="{StaticResource IconInTreeViewSize}"
@@ -64,12 +68,9 @@
 
                     <TreeDataTemplate DataType="vm:TreeViewModelDesktopFile" ItemsSource="{Binding Children}">
                         <Border
-                            BorderThickness="3"
                             DragDrop.AllowDrop="True"
                             Height="{Binding Height, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
-                            Loaded="LoadContextMenuForDesktopFile"
-                            PointerPressed="StartDrag"
-                            PointerReleased="StopDrag"
+                            Loaded="LoadContextMenuAndDragAndDrop"
                             Width="{Binding Width, RelativeSource={RelativeSource AncestorType=TreeView}}">
 
                             <Border.Resources>
@@ -99,7 +100,10 @@
                                     SourceString="{Binding IconPath}"
                                     Width="{StaticResource IconInTreeViewSize}"
                                     x:Name="DesktopFileImage" />
-                                <Label Content="{Binding Name}" Grid.Column="1">
+                                <Label
+                                    Content="{Binding Name}"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center">
                                     <Label.Margin>
                                         <Binding ElementName="DesktopFileImage" Path="ActualSource">
                                             <Binding.Converter>
@@ -117,13 +121,32 @@
 
                 </TreeView.DataTemplates>
             </TreeView>
-            <ListBox IsVisible="{Binding IsVisible, ElementName=TreeView, Converter={converters:ReverseBooleanConverter}}" ItemsSource="{Binding SearchResults}">
+            <ListBox
+                IsVisible="{Binding IsVisible, ElementName=TreeView, Converter={converters:ReverseBooleanConverter}}"
+                ItemsSource="{Binding SearchResults}"
+                Margin="20,0,0,0">
+
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="vm:TreeViewModelDesktopFile">
-                        <Grid
-                            ColumnDefinitions="Auto, *"
-                            Margin="-25,0,0,0"
-                            VerticalAlignment="Center">
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto, *" VerticalAlignment="Center">
+
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Command="{Binding RunDesktopFileCommand}"
+                                        Header="{Binding LocalizationProvider[RunDesktopFile]}"
+                                        Icon="{icons:MaterialIconExt Kind=PlayBox}" />
+                                    <MenuItem
+                                        Command="{Binding SudoRunDesktopFileCommand}"
+                                        Header="{Binding LocalizationProvider[SudoRunDesktopFile]}"
+                                        Icon="{icons:MaterialIconExt Kind=PlayBoxEditOutline}" />
+                                    <MenuItem Header="{Binding LocalizationProvider[RemoveDesktopFile]}" Icon="{icons:MaterialIconExt Kind=Trash}" />
+                                    <MenuItem Header="{Binding LocalizationProvider[RenameDesktopFile]}" Icon="{icons:MaterialIconExt Kind=RenameBox}" />
+                                    <MenuItem Header="{Binding LocalizationProvider[ShowInFiles]}" Icon="{icons:MaterialIconExt Kind=Folder}" />
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+
+
                             <controls:DesktopFileImage
                                 BorderThickness="3"
                                 Grid.Column="0"
@@ -131,7 +154,11 @@
                                 SourceString="{Binding IconPath}"
                                 Width="{StaticResource IconInTreeViewSize}"
                                 x:Name="DesktopFileImage" />
-                            <Label Content="{Binding Name}" Grid.Column="1">
+
+                            <Label
+                                Content="{Binding Name}"
+                                Grid.Column="1"
+                                VerticalAlignment="Center">
                                 <Label.Margin>
                                     <Binding ElementName="DesktopFileImage" Path="ActualSource">
                                         <Binding.Converter>

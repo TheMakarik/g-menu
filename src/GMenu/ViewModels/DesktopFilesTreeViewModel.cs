@@ -1,3 +1,4 @@
+
 namespace GMenu.ViewModels;
 
 public sealed partial class DesktopFilesTreeViewModel(
@@ -10,10 +11,9 @@ public sealed partial class DesktopFilesTreeViewModel(
 {
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
     [Reactive] private string? _searchText;
-    [Reactive] private ObservableCollection<TreeViewModelBase> _searchResults = [];
+    [Reactive] private ObservableCollection<TreeViewModelDesktopFile> _searchResults = [];
     
     
-    private SemaphoreSlim _searchSemaphore = new(1, 1);
     private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
     
     public TreeViewModelBase? SelectedItem
@@ -53,8 +53,8 @@ public sealed partial class DesktopFilesTreeViewModel(
                 },
                 desktopFilesRunner,
                 iconPathRefiner,
-                logger,
-                localizationProvider)
+                _logger,
+                LocalizationProvider)
             {
                 Parent = null
             });
@@ -69,64 +69,60 @@ public sealed partial class DesktopFilesTreeViewModel(
             SearchText = message.NewText;
         });
 
-        this.WhenPropertyChanged(property => property.SearchText)
+        this.WhenPropertyChanged(static property => property.SearchText)
             .Subscribe(onNext =>
             {
+                RxSchedulers.MainThreadScheduler.Schedule(() => SearchResults.Clear());
+                
                 _searchCancellationTokenSource.Cancel();
+                _searchCancellationTokenSource = new CancellationTokenSource();
                 if (string.IsNullOrWhiteSpace(onNext.Value))
                     return;
                 
-                _searchSemaphore.Wait();
-                try
-                {
-                    _searchResults.Clear();
-                }
-                catch (Exception e)
-                {
-                    _logger.Error(e, "Error while searching");
-                }
-                finally
-                {
-                    _searchSemaphore.Release();
-                }
-                BeginSearch();
+                BeginSearch(_searchCancellationTokenSource.Token);
             });
     }
 
-  
-    private void BeginSearch()
+
+    private void BeginSearch(CancellationToken token = default)
     {
         var searchChildren = Children
-            .SelectMany(children => children.Children)
+            .SelectMany(static children => children.Children)
             .Cast<TreeViewModelDesktopFile>();
         Debug.Assert(SearchText is not null);
+#if DEBUG
         var counter = 0;
-        Parallel.ForEach(searchChildren, (item, state) =>
+#endif
+       
+        try
         {
-            if (_searchCancellationTokenSource.Token.CanBeCanceled)
-               state.Break();
-
-            if (!searcher.IsSearchValue(SearchText, item.Header))
-                return;
-
-            _searchSemaphore.Wait();
-            try
+            var searchValues = searchChildren.Where((child) =>
             {
-                _searchResults.Add(item);
-                counter++;
-            }
-            catch (Exception e)
+                token.ThrowIfCancellationRequested();
+                var isSearchValue = searcher.IsSearchValue(SearchText, child.Header);
+#if DEBUG
+                if(isSearchValue)
+                  counter++;
+#endif
+                return isSearchValue;
+            });
+            
+            RxSchedulers.MainThreadScheduler.Schedule(() =>
             {
-                _logger.Error(e, "Error while searching");
-            }
-            finally
-            {
-                _searchSemaphore.Release();
-            }
-        });
-        #if DEBUG
+                foreach (var value in searchValues)
+                {
+                    token.ThrowIfCancellationRequested();
+                    SearchResults.Add(value);
+                }
+            });
+        }
+        catch (OperationCanceledException e)
+        {
+            RxSchedulers.MainThreadScheduler.Schedule(() => SearchResults.Clear());
+        }
+       
+#if DEBUG
         _logger.Debug("Searching with pattern {p} and found {c} files categories", SearchText, counter);
-        #endif
+#endif
     }
-
 }

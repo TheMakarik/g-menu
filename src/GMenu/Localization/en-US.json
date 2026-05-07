@@ -85,5 +85,8 @@
   "RenameDesktopFile": "Rename",
   "RemoveDesktopFile": "Delete",
   "ShowInFiles": "Show in Files",
-  "SudoRunDesktopFile": "Run as superuser"
+  "SudoRunDesktopFile": "Run as superuser",
+  "FileOrCatalogNotFound": "Cannot find file or catalog.",
+  "Error": "Error",
+  "Ok": "OK"
 }

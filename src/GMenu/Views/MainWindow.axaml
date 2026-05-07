@@ -1,4 +1,5 @@
 <rxUi:ReactiveWindow
+    Icon="/Assets/icon.png"
     Title="{Binding LocalizationProvider[ApplicationName]}"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -7,6 +8,7 @@
     x:DataType="vm:MainWindowViewModel"
     x:TypeArguments="vm:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:controls="clr-namespace:Material.Styles.Controls;assembly=Material.Styles"
     xmlns:converters="clr-namespace:GMenu.Views.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
@@ -55,6 +57,7 @@
             </Menu>
             <TextBox
                 Grid.Column="1"
+                Loaded="LoadInnerLoftContentForegroundUpdating"
                 PlaceholderText="{Binding LocalizationProvider[InputFileName]}"
                 Text="{Binding SearchText}"
                 Width="250">
@@ -80,11 +83,9 @@
             <Grid RowDefinitions="Auto, *, Auto">
 
                 <Grid.Styles>
-                    <!--  Huge icons  -->
                     <Style Selector="icons|MaterialIcon">
                         <Setter Property="Width" Value="20" />
                     </Style>
-                    <!--  Hidden border for outline button  -->
                     <Style Selector="Button">
                         <Setter Property="BorderThickness" Value="0" />
                     </Style>
@@ -103,7 +104,6 @@
 
 
 
-                <!--  Desktop files tree view  -->
                 <userControls:DesktopFilesTreeView Grid.Row="1" Name="TreeViewDesktopFiles" />
 
             </Grid>

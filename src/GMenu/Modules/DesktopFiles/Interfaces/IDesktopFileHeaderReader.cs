@@ -2,5 +2,5 @@ namespace GMenu.Modules.DesktopFiles.Interfaces;
 
 public interface IDesktopFileHeaderReader
 {
-    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(string[] paths);
+    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(IReadOnlyCollection<string> paths);
 }

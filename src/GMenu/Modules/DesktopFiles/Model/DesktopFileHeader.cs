@@ -12,6 +12,7 @@ public sealed class DesktopFileHeader
     public bool IsDummy { get; set; } = false;
     public bool IsBroken { get; set; }
     public string? NameKey { get; set; }
-    public string? UnlocalizedName { get => field is null ? Name : field; set; }
+    public string? UnlocalizedName { get => field ?? Name; set; }
+    
 
 }

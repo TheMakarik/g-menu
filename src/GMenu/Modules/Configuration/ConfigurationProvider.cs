@@ -5,7 +5,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
     private ObservableConfiguration? _configuration;
     private Channel<string?>? _channel;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
-    private string _jsonPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), options.Configuration.Directory, options.Configuration.ConfigFileName);
+    private readonly string _jsonPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), options.Configuration.Directory, options.Configuration.ConfigFileName);
 
     public  ObservableConfiguration CurrentObservable => _configuration ?? throw new InvalidOperationException("Configuration not initialized");
 
@@ -50,7 +50,9 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
                 UnexistingCategories = [],
                 AccentColor = null,
                 Theme = null,
-                LocalizeDesktopFileNames = true
+                LocalizeDesktopFiles = true,
+                ShowDescriptionForDesktopFileHeaders = true,
+                Version = options.Core.Version,
             };
 #pragma warning disable IL2026
 #pragma warning disable IL3050

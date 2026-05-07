@@ -16,7 +16,8 @@ public class ObservableConfigurationTests
           UnexistingCategories = [],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
-          Theme = BaseTheme.Light
+          Theme = BaseTheme.Light,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 
@@ -38,12 +39,15 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var propertyName = string.Empty;
-      var observableConfiguration = new ObservableConfiguration() 
-      { 
-          UnexistingCategories = [],
+      var observableConfiguration = new ObservableConfiguration
+      {
+          UnexistingCategories =
+          [
+          ],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
-          Theme = BaseTheme.Light
+          Theme = BaseTheme.Light,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 
@@ -70,7 +74,8 @@ public class ObservableConfigurationTests
           UnexistingCategories = [new UnexistingCategory(){Path = string.Empty, Name = string.Empty}, new UnexistingCategory(){Path = string.Empty, Name = string.Empty}],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
-          Theme = BaseTheme.Light
+          Theme = BaseTheme.Light,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 
@@ -96,19 +101,20 @@ public class ObservableConfigurationTests
       { 
           UnexistingCategories = [],
           Language = System.Globalization.CultureInfo.CurrentCulture,
-          LocalizeDesktopFileNames = false
+          LocalizeDesktopFiles = false,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 
       { 
-          if (args.PropertyName == nameof(ObservableConfiguration.LocalizeDesktopFileNames))
+          if (args.PropertyName == nameof(ObservableConfiguration.LocalizeDesktopFiles))
               wasPropertyChangedCalled = true;
       };
       
       observableConfiguration.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.LocalizeDesktopFileNames = true;
+      observableConfiguration.LocalizeDesktopFiles = true;
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -122,7 +128,8 @@ public class ObservableConfigurationTests
       var observableConfiguration = new ObservableConfiguration() 
       { 
           UnexistingCategories = [],
-          Language = null!
+          Language = null!,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 
@@ -148,7 +155,8 @@ public class ObservableConfigurationTests
       var observableConfiguration = new ObservableConfiguration() 
       { 
           UnexistingCategories = [],
-          Language = System.Globalization.CultureInfo.CurrentCulture
+          Language = System.Globalization.CultureInfo.CurrentCulture,
+          Version = null!
       };
       
       observableConfiguration.PropertyChanged += (sender, args) => 

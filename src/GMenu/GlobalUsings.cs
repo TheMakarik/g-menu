@@ -1,6 +1,7 @@
 // Global using directives
 
 global using System;
+global using System.Buffers;
 global using System.Collections;
 global using System.Collections.Concurrent;
 global using System.Collections.Frozen;
@@ -24,6 +25,7 @@ global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Nodes;
 global using System.Text.Json.Serialization;
+global using System.Text.RegularExpressions;
 global using System.Threading;
 global using System.Threading.Channels;
 global using System.Threading.Tasks;
@@ -47,7 +49,6 @@ global using Avalonia.Svg.Skia;
 global using Avalonia.Threading;
 global using DynamicData;
 global using DynamicData.Binding;
-global using GMenu.Enums;
 global using GMenu.JsonConverters;
 global using GMenu.JsonSerializationContexts;
 global using GMenu.Modules.ColorUtils.Model;

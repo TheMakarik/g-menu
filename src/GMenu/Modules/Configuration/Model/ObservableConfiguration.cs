@@ -57,12 +57,21 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
         set => SetField(ref field, value);
     }
 
-    public bool LocalizeDesktopFileNames
+    public bool LocalizeDesktopFiles
     {
         get;
         set => SetField(ref field, value);
     }
-
+    
+    public bool ShowDescriptionForDesktopFileHeaders
+    {
+        get;
+        set => SetField(ref field, value);
+    }
+    
+    public required Version Version { get; set; }
+    
+    
     public void BeginPropertyChangeRaising()
     {
         _isObserving = true; 

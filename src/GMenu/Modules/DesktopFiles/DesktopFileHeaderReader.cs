@@ -6,7 +6,7 @@ public sealed class DesktopFileHeaderReader(
     ILogger logger) : IDesktopFileHeaderReader
 {
     
-    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(string[] paths)
+    public IReadOnlyCollection<DesktopFileHeader> GetAllHeaders(IReadOnlyCollection<string> paths)
     {
         logger.Information("Start searching desktop files");
         var configuration = configurationProvider.CurrentObservable;
@@ -49,7 +49,7 @@ public sealed class DesktopFileHeaderReader(
                     var value = line.AsSpan(equalsIndex + 1);
 
                     if (key[^1] == ']')
-                        if(configuration.LocalizeDesktopFileNames && IsLocalizedName(key, CultureInfo.CurrentCulture))
+                        if(configuration.LocalizeDesktopFiles && IsLocalizedName(key, CultureInfo.CurrentCulture))
                         {
                             desktopFileHeader.Name = value.ToString();
                             wasFoundLocalizedName = true;
@@ -143,15 +143,13 @@ public sealed class DesktopFileHeaderReader(
 
     private static bool IsDesktopFileCorrect(DesktopFileHeader desktopFileHeader)
     {
-        return desktopFileHeader.Name is not null 
-               && desktopFileHeader.Exec is not null;
+        return desktopFileHeader.Exec is not null;
     }
 
     private static bool DesktopFileHeaderIsReady(DesktopFileHeader desktopFileHeader, bool wasFoundNoDisplay)
     {
         return desktopFileHeader.Exec is not null
                && desktopFileHeader.IconPath is not null
-               && desktopFileHeader.Name is not null
                && desktopFileHeader.Category is not null
                && wasFoundNoDisplay;
     }

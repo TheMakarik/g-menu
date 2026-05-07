@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using Avalonia.Data.Converters;
-
 namespace GMenu.Views.Converters;
 
 public class MoveControlToLeftIfImageSourceOrMaterialIconIsNullConverter : MarkupExtension, IValueConverter

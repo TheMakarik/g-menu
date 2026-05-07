@@ -85,5 +85,8 @@
   "RenameDesktopFile": "Переменовать",
   "RemoveDesktopFile": "Удалить",
   "ShowInFiles": "Показать в Files",
-  "SudoRunDesktopFile": "Запустить от имени супер пользователя"
+  "SudoRunDesktopFile": "Запустить от имени супер пользователя",
+  "FileOrCatalogNotFound": "Файл или каталог не найден.",
+  "Error": "Ошибка",
+  "Ok": "ОК"
 }

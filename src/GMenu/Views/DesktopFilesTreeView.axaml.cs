@@ -2,7 +2,7 @@ namespace GMenu.Views;
 
 public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTreeViewModel>
 {
-    
+    public const string DesktopFileContextMenuResourceKey = "ContextMenuForFile";
     [DynamicDependency( DynamicallyAccessedMemberTypes.PublicEvents, typeof(TreeView))]
     public DesktopFilesTreeView()
     {
@@ -22,6 +22,7 @@ public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTree
 
        };
        
+       Console.WriteLine("SDGKLKDSLL");
        treeViewItem.Tag = dispatcherTimer;
     }
 
@@ -32,10 +33,22 @@ public partial class DesktopFilesTreeView : ReactiveUserControl<DesktopFilesTree
         treeViewItem?.Tag = null;
     }
 
-    private void LoadContextMenuForDesktopFile(object sender, RoutedEventArgs e)
+    private void LoadContextMenuAndDragAndDrop(object sender, RoutedEventArgs e)
     { 
         var control = (Control)sender;
-        var treeView = control.GetLogicalParent<TreeViewItem>() ?? throw new InvalidOperationException("Cannot found tree view item");
-        treeView.ContextMenu = control.Resources["ContextMenuForFile"] as ContextMenu;
+        var treeView = control.GetLogicalParent<TreeViewItem>() ?? throw new InvalidOperationException("Cannot found parent");
+        LoadContextMenu(treeView, control);
+        LoadDragAndDrop(treeView);
+
+    }
+
+    private void LoadDragAndDrop(TreeViewItem treeViewItem)
+    {
+      treeViewItem.PointerPressed += (sender, args) => {StartDrag(sender!, args);};
+    }
+
+    private void LoadContextMenu(TreeViewItem treeViewItem, Control control)
+    {
+        treeViewItem.ContextMenu = control.Resources[DesktopFileContextMenuResourceKey] as ContextMenu;
     }
 }

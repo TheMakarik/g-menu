@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 
 namespace GMenu.Modules.DesktopFiles;
 
@@ -6,14 +5,9 @@ public sealed partial class DesktopFilesRunner(
     GMenuOptions options,
     ILogger logger,
     ILinuxTerminalLauncher terminalLauncher,
-    IDesktopFileReader reader) : IDesktopFilesRunner    
+    IDesktopFileReader reader,
+    IDesktopFilesExecFormatter formatter) : IDesktopFilesRunner    
 {
-    [GeneratedRegex(@"\s*%[fFuUiIcC]\s*")]
-    private static partial Regex FieldCodesRegex();
-
-    [GeneratedRegex(@"^(?:sh|bash)\s+-c\s+""(.+)""$")]
-    private static partial Regex ShWrapperRegex();
-    
     public async ValueTask RunDesktopFileFromHeaderAsync(DesktopFileHeader header, bool requireSudo, CancellationTokenSource source)
     {
         try
@@ -24,74 +18,79 @@ public sealed partial class DesktopFilesRunner(
                 return;
             }
 
+            var terminal = await ParseTerminalKeyAsync(header.Path);
+            var command = formatter.PrepareCommand(header.Exec.AsSpan());
 
-            var terminal = false;
-            await foreach(var line in reader.ReadEntryAsync(header.Path))
+            if (string.IsNullOrWhiteSpace(command))
             {
-                var equalsIndex = line.IndexOf('=');
-                if (equalsIndex == -1)
-                    continue;
-                
-                var key = line.AsSpan(0, equalsIndex);
-                var value = line.AsSpan(equalsIndex + 1);
-
-                if (key != DesktopFile.TerminalKey)
-                    continue;
-
-                if (!bool.TryParse(value, out terminal))
-                {
-                    logger.Error("Can't parse Terminal value {value}", value.ToString());
-                    return;
-                }
-               
-                break;
+                logger.Error("Prepared command is empty for: {path}", header.Path);
+                return;
             }
 
-            var command = PrepareExecToShellRun(header.Exec);
-
-            var argumentSudoCommand = $"{options.Linux.ShellScripts.ExecuteWithPolicyKit} \"{command}\"";
-            if(terminal)
-                if(requireSudo)
-                  await terminalLauncher.LaunchTerminalAsync(argumentSudoCommand);
-                else 
-                    await terminalLauncher.LaunchTerminalAsync(command);
-            else
+            if (terminal)
             {
-                var startInfo = new ProcessStartInfo()
+                await terminalLauncher.LaunchTerminalAsync(command);
+                logger.Debug("Run in terminal with command: {command}", command);
+                return;
+            }
+
+            if (requireSudo)
+            {
+                var finalCommand = $"{options.Linux.ShellScripts.ExecuteWithPolicyKit} {formatter.EscapeForShSingleQuotes(command)}";
+                var startInfo = new ProcessStartInfo
                 {
                     FileName = "/bin/sh",
-                    UseShellExecute = true,
-                    Arguments = requireSudo ? argumentSudoCommand : $"-c {command}",
+                    Arguments = $"-c {formatter.EscapeForShSingleQuotes(finalCommand)}",
+                    UseShellExecute = false
                 };
-                
                 Process.Start(startInfo);
+                logger.Debug("Run with sudo via script: {finalCommand}", finalCommand);
             }
-            
-            logger.Debug("Run process with start info command: {command}", command);
+            else
+            {
+                var args = formatter.ParseCommandLine(command);
+                if (args.Count == 0)
+                {
+                    logger.Error("Failed to parse command line: {command}", command);
+                    return;
+                }
+
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = args[0],
+                    UseShellExecute = false,
+                    CreateNoWindow = false
+                };
+                foreach (var arg in args.Skip(1))
+                    startInfo.ArgumentList.Add(arg);
+
+                using var process = Process.Start(startInfo);
+                if (process is null)
+                    logger.Error("Failed to start process for {command}", command);
+                else
+                    logger.Debug("Run process with command: {command}", command);
+            }
         }
         catch (OperationCanceledException)
         {
             logger.Warning("Run app from desktop file {path} with sudo mode was cancel", header.Path);
         }
-       
     }
 
-    private string PrepareExecToShellRun(string headerExec)
+    private async Task<bool> ParseTerminalKeyAsync(string path)
     {
-        logger.Debug("Preparing Exec for shell run: {Exec}", headerExec);
-        
-        var command = FieldCodesRegex().Replace(headerExec, " ");
-        
-        var shMatch = ShWrapperRegex().Match(command);
-        if (shMatch.Success)
+        await foreach (var line in reader.ReadEntryAsync(path))
         {
-            command = shMatch.Groups[1].Value;
-            logger.Debug("Extracted command from sh/bash -c wrapper: {Command}", command);
+            var equalsIndex = line.AsSpan().IndexOf('=');
+            if (equalsIndex == -1) continue;
+            var key = line.AsSpan(0, equalsIndex);
+            if (!key.SequenceEqual(DesktopFile.TerminalKey.AsSpan())) continue;
+            var value = line.AsSpan(equalsIndex + 1);
+            if (bool.TryParse(value, out var terminal))
+                return terminal;
+            logger.Error("Can't parse Terminal value {value}", value.ToString());
+            return false;
         }
-
-        command = command.Trim();
-
-        logger.Debug("Prepared command: {Command}", command);
-        return command;
+        return false;
     }
 }

@@ -7,4 +7,5 @@ public partial class InfoWindow : ReactiveWindow<InfoWindowViewModel>
         InitializeComponent();
         DataContext = App.Services.GetRequiredService<InfoWindowViewModel>();
     }
+    
 }

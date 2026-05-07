@@ -11,11 +11,12 @@ public sealed class LinuxTerminalLauncher(ILogger logger, GMenuOptions options) 
             logger.Error("SupportedTerminals list is empty or null");
             return;
         }
-
-        logger.Information("Searching for a terminal to run command: {Command}", command);
+        
         logger.Information("Terminals available in config: {Count}", terminals.Count);
-
-        foreach (var terminal in terminals)
+        
+        var orderedTerminals = terminals.OrderBy(t => t.Name == "xdg-terminal-exec" ? 0 : 1);
+        
+        foreach (var terminal in orderedTerminals)
         {
             logger.Debug("Checking terminal: {Name}", terminal.Name);
 
@@ -29,18 +30,40 @@ public sealed class LinuxTerminalLauncher(ILogger logger, GMenuOptions options) 
 
             try
             {
-                var args = terminal.Command.Replace("{0}", command);
+                var shellCommand = BuildTerminalLaunchCommand(command, terminal);
                 
-                logger.Debug("Launch arguments: {Args}", args);
+                logger.Debug("Launching terminal: {Terminal} with command: {Command}", terminal.Name, shellCommand);
 
-                var proccessStartInfo = new ProcessStartInfo
+                // Разбираем командную строку терминала на аргументы
+                var args = ParseCommandLine(shellCommand);
+                if (args.Count == 0)
                 {
-                    FileName = terminal.Name,
-                    Arguments = args,
-                    UseShellExecute = true,
+                    logger.Error("Failed to parse terminal command: {Command}", shellCommand);
+                    continue;
+                }
+
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = args[0],
+                    UseShellExecute = false,
+                    RedirectStandardError = false,
+                    RedirectStandardInput = false,
+                    RedirectStandardOutput = false,
+                    CreateNoWindow = false,
+                    Environment =
+                    {
+                        ["DISPLAY"] = Environment.GetEnvironmentVariable("DISPLAY") ?? string.Empty,
+                        ["XAUTHORITY"] = Environment.GetEnvironmentVariable("XAUTHORITY") ??  string.Empty,
+                        ["DBUS_SESSION_BUS_ADDRESS"] = Environment.GetEnvironmentVariable("DBUS_SESSION_BUS_ADDRESS") ??  string.Empty,
+                        ["XDG_RUNTIME_DIR"] = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR") ??  string.Empty,
+                        ["WAYLAND_DISPLAY"] = Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") ??  string.Empty
+                    }
                 };
 
-                using var process = Process.Start(proccessStartInfo);
+                foreach (var arg in args.Skip(1))
+                    processStartInfo.ArgumentList.Add(arg);
+
+                using var process = Process.Start(processStartInfo);
                 
                 if (process is null)
                 {
@@ -48,6 +71,8 @@ public sealed class LinuxTerminalLauncher(ILogger logger, GMenuOptions options) 
                     continue;
                 }
 
+                process.EnableRaisingEvents = true;
+                
                 logger.Information("Terminal {Name} launched successfully (PID: {Pid})", terminal.Name, process.Id);
                 return;
             }
@@ -59,12 +84,68 @@ public sealed class LinuxTerminalLauncher(ILogger logger, GMenuOptions options) 
 
         logger.Error("No terminal could launch the command: {Command}", command);
     }
+    
+    private string BuildTerminalLaunchCommand(string userCommand, SupportedTerminal terminal)
+    {
+        var innerCommand = BuildInnerShellCommand(userCommand);
+        var terminalCommand = terminal.Command.Replace("{0}", innerCommand);
+        return $"{terminal.Name} {terminalCommand}";
+    }
+    
+    private string BuildInnerShellCommand(string userCommand)
+    {
+        var escaped = userCommand.Replace("'", "'\\''");
+        return $"sh -c '{escaped}; exec sh'";
+    }
+    
+    private static List<string> ParseCommandLine(string commandLine)
+    {
+        var args = new List<string>();
+        var current = new StringBuilder();
+        var inQuote = false;
+        var quoteChar = '\0';
+        var i = 0;
+        while (i < commandLine.Length)
+        {
+            var c = commandLine[i];
+            switch (inQuote)
+            {
+                case false when (c == '"' || c == '\''):
+                    inQuote = true;
+                    quoteChar = c;
+                    i++;
+                    continue;
+                case true when c == quoteChar:
+                    inQuote = false;
+                    quoteChar = '\0';
+                    i++;
+                    continue;
+                case false when char.IsWhiteSpace(c):
+                {
+                    if (current.Length > 0)
+                    {
+                        args.Add(current.ToString());
+                        current.Clear();
+                    }
+                    i++;
+                    continue;
+                }
+                default:
+                    current.Append(c);
+                    i++;
+                    break;
+            }
+        }
+        if (current.Length > 0)
+            args.Add(current.ToString());
+        return args;
+    }
 
     private async Task<bool> IsExecutableAvailableAsync(string name)
     {
         try
         {
-            var psi = new ProcessStartInfo
+            var whichPsi = new ProcessStartInfo
             {
                 FileName = "which",
                 Arguments = name,
@@ -73,18 +154,69 @@ public sealed class LinuxTerminalLauncher(ILogger logger, GMenuOptions options) 
                 UseShellExecute = false
             };
 
-            using var process = Process.Start(psi);
+            using var whichProcess = Process.Start(whichPsi);
             
-            if (process is null)
-                return false;
-            
-            await process.WaitForExitAsync();
-            return process.ExitCode == 0;
+            if (whichProcess is not null)
+            {
+                await whichProcess.WaitForExitAsync();
+                if (whichProcess.ExitCode == 0)
+                    return true;
+            }
         }
         catch (Exception ex)
         {
             logger.Debug(ex, "Error checking availability of {Name} via which", name);
-            return false;
         }
+        
+        try
+        {
+            var commandPsi = new ProcessStartInfo
+            {
+                FileName = "sh",
+                Arguments = $"-c \"command -v {name}\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            };
+
+            using var commandProcess = Process.Start(commandPsi);
+            
+            if (commandProcess is not null)
+            {
+                await commandProcess.WaitForExitAsync();
+                if (commandProcess.ExitCode == 0)
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.Debug(ex, "Error checking availability of {Name} via command -v", name);
+        }
+
+        try
+        {
+            var testProcessStartInfo = new ProcessStartInfo
+            {
+                FileName = name,
+                Arguments = "--version",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            };
+
+            using var testProcess = Process.Start(testProcessStartInfo);
+
+            if (testProcess is not null)
+            {
+                await testProcess.WaitForExitAsync();
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            logger.Debug(e, "Error checking availability of {Name} via version test", name);
+        }
+        
+        return false;
     }
 }

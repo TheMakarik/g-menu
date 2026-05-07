@@ -22,11 +22,14 @@ public class DesktopFileHeaderReaderTests : IDisposable
         _configurationProvider = A.Fake<IConfigurationProvider>();
         _desktopFileReader = new DesktopFileReader();
         
-        A.CallTo(() => _configurationProvider.CurrentObservable).ReturnsLazily(() => new ObservableConfiguration()
+        A.CallTo(() => _configurationProvider.CurrentObservable).ReturnsLazily(() => new ObservableConfiguration
         {
-            UnexistingCategories = [],
+            UnexistingCategories =
+            [
+            ],
             Language = CultureInfo.CurrentCulture,
-            LocalizeDesktopFileNames = false
+            LocalizeDesktopFiles = false,
+            Version = new Version()
         });
         
         _systemUnderTest = new DesktopFileHeaderReader(
@@ -269,11 +272,14 @@ Categories=Utility;
             .Build();
 
         // Setup configuration with Russian language and localization enabled
-        A.CallTo(() => _configurationProvider.CurrentObservable).Returns(new ObservableConfiguration()
+        A.CallTo(() => _configurationProvider.CurrentObservable).Returns(new ObservableConfiguration
         {
-            UnexistingCategories = [],
+            UnexistingCategories =
+            [
+            ],
             Language = new CultureInfo("ru-RU"),
-            LocalizeDesktopFileNames = true
+            LocalizeDesktopFiles = true,
+            Version = null!
         });
 
         var systemUnderTest = new DesktopFileHeaderReader(

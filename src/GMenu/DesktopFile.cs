@@ -9,4 +9,5 @@ public static class DesktopFile
     public const string CategoriesKey = "Categories";
     public const string NoDisplayKey = "NoDisplay";
     public const string TerminalKey = "Terminal";
+    public const string CommentKey = "Comment";
 }
