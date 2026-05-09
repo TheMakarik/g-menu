@@ -62,11 +62,11 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
         get;
         set => SetField(ref field, value);
     }
-    
-    public bool ShowDescriptionForDesktopFileHeaders
+
+    public bool ShowCannotLoadThemeFromDBusMessage
     {
         get;
-        set => SetField(ref field, value);
+        set =>  SetField(ref field, value);
     }
     
     public required Version Version { get; set; }

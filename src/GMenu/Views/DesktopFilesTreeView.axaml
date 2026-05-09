@@ -12,6 +12,7 @@
     xmlns:icons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rx="http://reactiveui.net"
+    xmlns:thisNamespace="clr-namespace:GMenu.Views"
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -21,7 +22,7 @@
             <TreeView
                 IsVisible="{Binding SearchText, Converter={converters:IsStringNullOrWhitespaceConverter}}"
                 ItemsSource="{Binding Children}"
-                Name="TreeView"
+                Name="DesktopFilesTreeViewControl"
                 SelectedItem="{Binding SelectedItem}">
 
                 <TreeView.Styles>
@@ -70,11 +71,12 @@
                         <Border
                             DragDrop.AllowDrop="True"
                             Height="{Binding Height, RelativeSource={RelativeSource AncestorType=TreeViewItem}}"
-                            Loaded="LoadContextMenuAndDragAndDrop"
+                            Loaded="LoadContextMenu"
                             Width="{Binding Width, RelativeSource={RelativeSource AncestorType=TreeView}}">
 
                             <Border.Resources>
-                                <ContextMenu x:Key="ContextMenuForFile">
+                                <ContextMenu x:Key="{x:Static thisNamespace:DesktopFilesTreeView.DesktopFileContextMenuResourceKey}">
+
                                     <MenuItem
                                         Command="{Binding RunDesktopFileCommand}"
                                         Header="{Binding LocalizationProvider[RunDesktopFile]}"
@@ -83,9 +85,16 @@
                                         Command="{Binding SudoRunDesktopFileCommand}"
                                         Header="{Binding LocalizationProvider[SudoRunDesktopFile]}"
                                         Icon="{icons:MaterialIconExt Kind=PlayBoxEditOutline}" />
-                                    <MenuItem Header="{Binding LocalizationProvider[RemoveDesktopFile]}" Icon="{icons:MaterialIconExt Kind=Trash}" />
                                     <MenuItem Header="{Binding LocalizationProvider[RenameDesktopFile]}" Icon="{icons:MaterialIconExt Kind=RenameBox}" />
-                                    <MenuItem Header="{Binding LocalizationProvider[ShowInFiles]}" Icon="{icons:MaterialIconExt Kind=Folder}" />
+                                    <MenuItem
+                                        Command="{Binding ShowInTextEditorCommand}"
+                                        Header="{Binding LocalizationProvider[ShowInTextEditor]}"
+                                        Icon="{icons:MaterialIconExt Kind=FileTextEdit}" />
+                                    <MenuItem
+                                        Command="{Binding RemoveSelfCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="{Binding LocalizationProvider[Remove]}"
+                                        Icon="{icons:MaterialIconExt Kind=TrashCan}" />
                                 </ContextMenu>
                             </Border.Resources>
 
@@ -100,6 +109,7 @@
                                     SourceString="{Binding IconPath}"
                                     Width="{StaticResource IconInTreeViewSize}"
                                     x:Name="DesktopFileImage" />
+
                                 <Label
                                     Content="{Binding Name}"
                                     Grid.Column="1"
@@ -122,16 +132,21 @@
                 </TreeView.DataTemplates>
             </TreeView>
             <ListBox
-                IsVisible="{Binding IsVisible, ElementName=TreeView, Converter={converters:ReverseBooleanConverter}}"
+                IsVisible="{Binding IsVisible, ElementName=DesktopFilesTreeViewControl, Converter={converters:ReverseBooleanConverter}}"
                 ItemsSource="{Binding SearchResults}"
-                Margin="20,0,0,0">
+                Margin="20,0,0,0"
+                Name="DesktopFilesListBoxControl"
+                SelectedItem="{Binding SelectedItem}">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid ColumnDefinitions="Auto, *" VerticalAlignment="Center">
+                        <Grid
+                            ColumnDefinitions="Auto, *"
+                            Loaded="LoadContextMenu"
+                            VerticalAlignment="Center">
 
-                            <Grid.ContextMenu>
-                                <ContextMenu>
+                            <Grid.Resources>
+                                <ContextMenu x:Key="{x:Static thisNamespace:DesktopFilesTreeView.DesktopFileContextMenuResourceKey}">
                                     <MenuItem
                                         Command="{Binding RunDesktopFileCommand}"
                                         Header="{Binding LocalizationProvider[RunDesktopFile]}"
@@ -140,11 +155,18 @@
                                         Command="{Binding SudoRunDesktopFileCommand}"
                                         Header="{Binding LocalizationProvider[SudoRunDesktopFile]}"
                                         Icon="{icons:MaterialIconExt Kind=PlayBoxEditOutline}" />
-                                    <MenuItem Header="{Binding LocalizationProvider[RemoveDesktopFile]}" Icon="{icons:MaterialIconExt Kind=Trash}" />
                                     <MenuItem Header="{Binding LocalizationProvider[RenameDesktopFile]}" Icon="{icons:MaterialIconExt Kind=RenameBox}" />
-                                    <MenuItem Header="{Binding LocalizationProvider[ShowInFiles]}" Icon="{icons:MaterialIconExt Kind=Folder}" />
+                                    <MenuItem
+                                        Command="{Binding ShowInTextEditorCommand}"
+                                        Header="{Binding LocalizationProvider[ShowInTextEditor]}"
+                                        Icon="{icons:MaterialIconExt Kind=FileTextEdit}" />
+                                    <MenuItem
+                                        Command="{Binding RemoveSelfCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="{Binding LocalizationProvider[Remove]}"
+                                        Icon="{icons:MaterialIconExt Kind=TrashCan}" />
                                 </ContextMenu>
-                            </Grid.ContextMenu>
+                            </Grid.Resources>
 
 
                             <controls:DesktopFileImage

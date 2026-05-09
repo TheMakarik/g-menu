@@ -95,11 +95,31 @@
                     Grid.Row="0"
                     Margin="0,0,0,15"
                     Orientation="Horizontal">
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=DeleteForever}" />
+
+                    <StackPanel.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Margin" Value="0 0 5 0" />
+                        </Style>
+                        <Style Selector="Button icons|MaterialIcon">
+                            <Setter Property="Height" Value="{StaticResource IconElementThemeHeight}" />
+                            <Setter Property="Width" Value="{StaticResource IconElementThemeWidth}" />
+                        </Style>
+                    </StackPanel.Styles>
+
+                    <Button
+                        Classes="outline"
+                        Command="{Binding RemoveSelectedCommand}"
+                        Content="{icons:MaterialIconExt Kind=DeleteForever}" />
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=CategoryPlus}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FolderPlus}" />
                     <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FilePlus}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=Play}" />
+                    <Button
+                        Classes="outline"
+                        Command="{Binding SendGoUpInDesktopFilesViewMessageCommand}"
+                        Content="{icons:MaterialIconExt Kind=ArrowUpBold}" />
+                    <Button
+                        Classes="outline"
+                        Command="{Binding SendGoDownInDesktopFilesViewMessageCommand}"
+                        Content="{icons:MaterialIconExt Kind=ArrowDownBold}" />
                 </StackPanel>
 
 

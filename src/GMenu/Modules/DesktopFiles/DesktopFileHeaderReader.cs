@@ -60,29 +60,29 @@ public sealed class DesktopFileHeaderReader(
 
                     switch (key)
                     {
-                        case DesktopFile.NameKey:
+                        case DesktopFileKeys.NameKey:
                             if (wasFoundLocalizedName)
                                 desktopFileHeader.UnlocalizedName = value.ToString();
                             else
                             {
                                 desktopFileHeader.Name = value.ToString().Replace("\\n", " ");
-                                desktopFileHeader.NameKey = DesktopFile.NameKey;
+                                desktopFileHeader.NameKey = DesktopFileKeys.NameKey;
                             }
 
                             break;
-                        case DesktopFile.IconKey:
+                        case DesktopFileKeys.IconKey:
                             desktopFileHeader.IconPath = value.ToString();
                             break;
-                        case DesktopFile.CategoriesKey:
+                        case DesktopFileKeys.CategoriesKey:
                             var semicolonIndex = value.IndexOf(';');
                             desktopFileHeader.Category = semicolonIndex == -1
                                 ? value.ToString()
                                 : value[..semicolonIndex].ToString();
                             break;
-                        case DesktopFile.ExecKey:
+                        case DesktopFileKeys.ExecKey:
                             desktopFileHeader.Exec = value.ToString();
                             break;
-                        case DesktopFile.NoDisplayKey:
+                        case DesktopFileKeys.NoDisplayKey:
                             if (bool.TryParse(value, out var isHidden))
                             {
                                 desktopFileHeader.IsHidden = isHidden;
@@ -115,10 +115,10 @@ public sealed class DesktopFileHeaderReader(
         ReadOnlySpan<char> key,      
         CultureInfo configurationLanguage)
     {
-        if (!key.StartsWith(DesktopFile.NameKey))
+        if (!key.StartsWith(DesktopFileKeys.NameKey))
             return false;
     
-        if (key.Length <= DesktopFile.NameKey.Length || key[DesktopFile.NameKey.Length] != '[')
+        if (key.Length <= DesktopFileKeys.NameKey.Length || key[DesktopFileKeys.NameKey.Length] != '[')
             return false;
     
         var closingBracketIndex = key.IndexOf(']');
@@ -126,8 +126,8 @@ public sealed class DesktopFileHeaderReader(
             return false;
         
         var languageCode = key.Slice(
-            DesktopFile.NameKey.Length + 1,           
-            closingBracketIndex - DesktopFile.NameKey.Length - 1 
+            DesktopFileKeys.NameKey.Length + 1,           
+            closingBracketIndex - DesktopFileKeys.NameKey.Length - 1 
         );
     
         if (languageCode.IsEmpty)

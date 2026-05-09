@@ -84,7 +84,7 @@
   "RunDesktopFile": "Run file",
   "RenameDesktopFile": "Rename",
   "RemoveDesktopFile": "Delete",
-  "ShowInFiles": "Show in Files",
+  "ShowInTextEditor": "Show in text editor",
   "SudoRunDesktopFile": "Run as superuser",
   "FileOrCatalogNotFound": "Cannot find file or catalog.",
   "Error": "Error",

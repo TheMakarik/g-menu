@@ -2,7 +2,7 @@ namespace GMenu.ViewModels;
 
 public abstract partial class TreeViewModelBase(ILogger logger, ILocalizationProvider localizationProvider) : ViewModelBase(localizationProvider)
 {
-    public  required TreeViewModelBase?  Parent { get; init; }
+    public TreeViewModelBase? Parent { get; init; }
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
     
     public bool IsSelected
@@ -11,12 +11,12 @@ public abstract partial class TreeViewModelBase(ILogger logger, ILocalizationPro
         set
         {
             if (value)
-                SendSelectionChangeMessage();
+                MessageBus.Current.SendMessage(new SendSelectedItemMessage(){SelectedItem = this});
             this.RaiseAndSetIfChanged(ref field, value);
         }
     }
 
-    
+    [Obsolete("UI do not use this API Anymore, so you can delete it")]
     public abstract void SendSelectionChangeMessage();
     
 }

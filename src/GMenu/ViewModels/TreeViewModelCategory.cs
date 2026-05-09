@@ -18,13 +18,5 @@ public class TreeViewModelCategory : TreeViewModelBase
         
     }
 
-    public override void SendSelectionChangeMessage()
-    {
-        this.Parent!.SendSelectionChangeMessage();
-        var message = new UpdateSelectedCategoryMessage()
-        {
-            CategoryName = CategoryName,
-        };
-        MessageBus.Current.SendMessage(message);
-    }
+    public override void SendSelectionChangeMessage() { }
 }

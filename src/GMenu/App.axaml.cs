@@ -16,7 +16,6 @@ public partial class App : Application
 #if DEBUG
         this.AttachDeveloperTools();
 #endif
-        
     }
 
    
@@ -32,7 +31,7 @@ public partial class App : Application
             logger.Information("Desktop files paths: {paths}", StaticConfiguration.PathToDesktopFiles);
             logger.Information("Desktop files icons path: {paths}", StaticConfiguration.PathsToRefineIcon);
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                desktop.MainWindow = new MainWindow { DataContext = Services.GetRequiredService<MainWindowViewModel>() };
+                desktop.MainWindow = new MainWindow();
             
             await LoadConfigurationAsync(provider).ConfigureAwait(false);
             await LoadMaterialThemeAsync(provider).ConfigureAwait(false);

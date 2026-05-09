@@ -1,6 +1,6 @@
 namespace GMenu;
 
-public static class DesktopFile
+public static class DesktopFileKeys
 {
     public const string DesktopEntryHeader = "[Desktop Entry]";
     public const string ExecKey = "Exec";

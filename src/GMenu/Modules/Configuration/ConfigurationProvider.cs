@@ -46,12 +46,13 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
             await using var file = File.Create(_jsonPath);
             var defaultConfiguration = new ObservableConfiguration()
             {
-                Language = CultureInfo.CurrentCulture,
+                Language = options.Localization.SupportedCultures.Contains(CultureInfo.CurrentCulture) 
+                    ? CultureInfo.CurrentCulture 
+                    : options.Localization.DefaultCulture,
                 UnexistingCategories = [],
                 AccentColor = null,
                 Theme = null,
                 LocalizeDesktopFiles = true,
-                ShowDescriptionForDesktopFileHeaders = true,
                 Version = options.Core.Version,
             };
 #pragma warning disable IL2026

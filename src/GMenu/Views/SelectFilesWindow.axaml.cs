@@ -1,6 +1,4 @@
-using MsBox.Avalonia;
-using MsBox.Avalonia.Dto;
-using MsBox.Avalonia.Models;
+using GMenu.Views.Utils;
 
 namespace GMenu.Views;
 
@@ -23,30 +21,16 @@ public sealed partial class SelectFilesWindow : ReactiveWindow<SelectFilesWindow
 
             if (!Directory.Exists(context.Input))
             {
-                ShowCannotFindDirectoryBox(context.Input);
+                await MessageBoxUtil.ShowCannotFindDirectoryBoxAsync(context.Input, ViewModel!.LocalizationProvider, this);
                 return;
             }
             
             var success = await topLevel.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(context.Input));
             if (!success)
             {
-                
+                await MessageBoxUtil.ShowCannotFindDirectoryBoxAsync(context.Input, ViewModel!.LocalizationProvider, this);
             }
         });
     }
-
-    private void ShowCannotFindDirectoryBox(string path)
-    {
-        var messageBox = new MessageBoxCustomParams();
-        messageBox.Icon = MsBox.Avalonia.Enums.Icon.Warning;
-        messageBox.ContentTitle = ViewModel!.LocalizationProvider["Error"];
-        messageBox.ContentMessage = $"{ViewModel.LocalizationProvider["FileOrCatalogNotFound"]}: {path}";
-        messageBox.ShowInCenter = true;
-        messageBox.ButtonDefinitions = [new ButtonDefinition()
-        {
-            Name = ViewModel!.LocalizationProvider["Ok"]
-        }];
-        messageBox.CloseOnClickAway = true;
-        
-    }
+    
 }

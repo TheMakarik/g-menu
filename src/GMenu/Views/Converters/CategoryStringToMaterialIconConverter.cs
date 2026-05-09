@@ -11,7 +11,9 @@ public sealed class CategoryStringToMaterialIconConverter : MarkupExtension, IVa
 
         return App.Services.GetRequiredService<GMenuOptions>().CategoriesIcons.TryGetValue(category, out var iconKind)
             ? new MaterialIcon(){Kind = Enum.Parse<MaterialIconKind>(iconKind)}
-            : null;
+            : Enum.TryParse<MaterialIconKind>(category, out var materialIconKind)
+                ? new MaterialIcon(){Kind = materialIconKind} 
+                : null;
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -47,6 +47,18 @@ public partial class TreeViewModelDesktopFile(
                 new CancellationTokenSource());
         }, TaskCreationOptions.LongRunning);
     }
+
+    [ReactiveCommand]
+    private void ShowInTextEditor()
+    {
+        MessageBus.Current.SendMessage(new RaiseShowInTextEditorInteraction(){Path = FilePath});
+    }
+
+    [ReactiveCommand]
+    private void RemoveSelf(TreeViewModelDesktopFile desktopFile)
+    {
+        MessageBus.Current.SendMessage(new RemoveTreeViewItem(){ItemToRemove = desktopFile});
+    }
     
 
     private void BeginIconLoading()
@@ -70,5 +82,6 @@ public partial class TreeViewModelDesktopFile(
             Name = Name ?? string.Empty,
         };
         MessageBus.Current.SendMessage(message);
+
     }
 }

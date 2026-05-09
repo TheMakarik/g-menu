@@ -1,5 +1,8 @@
 {
   "AudioVideo": "Аудио и Видео",
+  "Applications": "Приложения",
+  "Application": "Приложения",
+  "Chat": "Общение",
   "Audio": "Аудио",
   "Video": "Видео",
   "Development": "Разработка",
@@ -64,7 +67,7 @@
   "CloseTheApp": "Закрыть приложение",
   "Global": "Глобальные",
   "Help": "Справка",
-  "AboutDesktopFiles": "О .desktop файлах",
+  "AboutDesktopFiles": "О .desktop файлах на Arch Wiki",
   "Local": "Пользовательские",
   "Open": "Открыть",
   "View": "Вид",
@@ -84,9 +87,18 @@
   "RunDesktopFile": "Запустить файл",
   "RenameDesktopFile": "Переменовать",
   "RemoveDesktopFile": "Удалить",
-  "ShowInFiles": "Показать в Files",
+  "ShowInTextEditor": "Открыть в текстовом редакторе",
   "SudoRunDesktopFile": "Запустить от имени супер пользователя",
   "FileOrCatalogNotFound": "Файл или каталог не найден.",
   "Error": "Ошибка",
-  "Ok": "ОК"
+  "Ok": "ОК",
+  "NothingToDelete": "Удалять нечего, не один из элементов не выбран",
+  "NothingToDeleteTitle": "Удалять нечего",
+  "WantToDeleteFile": "Вы точно хотите удалить этот компонент меню?",
+  "EnsureAction": "Подтвердите действие",
+  "WantToDeleteCategory": "Вы точно хотите удалять эту категорию и все компоненты меню в ней?",
+  "Yes": "Да",
+  "No": "Нет",
+  "Remove": "Удалить безвозвратно",
+  "CannotLoadTheme": "Не удалось получить системную тему. Ваша оболочка или не имеет акцентного цвета или не поддерживает необходимый Freedesktop стандарт. Вы можете изменить акцентный цвет в настрояках"
 }

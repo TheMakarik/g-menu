@@ -2,19 +2,22 @@
 namespace GMenu.ViewModels;
 
 public sealed partial class DesktopFilesTreeViewModel(
-    IDesktopFileHeaderReader reader, 
-    ILogger logger, 
+    IDesktopFileHeaderReader reader,
+    ILogger logger,
     IDesktopFilesHeaderSearcher searcher,
     IDesktopFileIconPathRefiner iconPathRefiner,
     IDesktopFilesRunner desktopFilesRunner,
-    ILocalizationProvider localizationProvider) : ViewModelBase(localizationProvider)
+    ILocalizationProvider localizationProvider)
+    : ViewModelBase(localizationProvider)
 {
     [Reactive] private ObservableCollection<TreeViewModelBase> _children = [];
     [Reactive] private string? _searchText;
     [Reactive] private ObservableCollection<TreeViewModelDesktopFile> _searchResults = [];
     
-    
     private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
+
+    public Interaction<Unit, Unit> GoDownInTheDesktopFilesView { get; } = new();
+    public Interaction<Unit, Unit> GoUpInTheDesktopFilesView { get; } = new();
     
     public TreeViewModelBase? SelectedItem
     { 
@@ -26,8 +29,6 @@ public sealed partial class DesktopFilesTreeViewModel(
             this.RaiseAndSetIfChanged(ref field, value);
         }
     }
-    
-    private readonly ILogger _logger = logger;
 
     [ReactiveCommand]
     private async Task LoadDesktopFilesAsync()
@@ -53,7 +54,7 @@ public sealed partial class DesktopFilesTreeViewModel(
                 },
                 desktopFilesRunner,
                 iconPathRefiner,
-                _logger,
+                logger,
                 LocalizationProvider)
             {
                 Parent = null
@@ -62,12 +63,22 @@ public sealed partial class DesktopFilesTreeViewModel(
         _children.Clear();
         _children.AddRange(groupedByCategory);
         
-        _logger.Information("Created {count} categories", _children.Count);
+        logger.Information("Created {count} categories", _children.Count);
 
-        MessageBus.Current.Listen<UpdateSearchTextMessage>().Subscribe(message =>
+        MessageBus.Current
+            .Listen<UpdateSearchTextMessage>()
+            .Subscribe(message =>
         {
             SearchText = message.NewText;
         });
+        
+        MessageBus.Current
+            .Listen<GoDownInDesktopFilesViewMessage>()
+            .Subscribe(async _ => await GoDownInTheDesktopFilesView.Handle(Unit.Default));
+        
+        MessageBus.Current
+            .Listen<GoUpInDesktopFilesViewMessage>()
+            .Subscribe(async _ => await GoUpInTheDesktopFilesView.Handle(Unit.Default));
 
         this.WhenPropertyChanged(static property => property.SearchText)
             .Subscribe(onNext =>
@@ -122,7 +133,7 @@ public sealed partial class DesktopFilesTreeViewModel(
         }
        
 #if DEBUG
-        _logger.Debug("Searching with pattern {p} and found {c} files categories", SearchText, counter);
+        logger.Debug("Searching with pattern {p} and found {c} files categories", SearchText, counter);
 #endif
     }
 }

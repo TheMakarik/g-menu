@@ -84,7 +84,7 @@
       </Content>
       <None Remove="Shell\gmenu-run-desktop-file-exec-wilth-policykit-1.sh" />
       <Content Include="Shell\gmenu-run-desktop-file-exec-wilth-policykit-1.sh">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
@@ -93,6 +93,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Modules\DesktopFiles\Enums\" />
       <Folder Include="Views\SpecificModel\" />
     </ItemGroup>
 </Project>

@@ -28,7 +28,7 @@ public class ObservableConfigurationTests
       observableConfiguration.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.UnexistingCategories = [new UnexistingCategory(){Path = string.Empty, Name = string.Empty}];
+      observableConfiguration.UnexistingCategories = [new UnexistingCategory(){Name = string.Empty}];
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -58,7 +58,7 @@ public class ObservableConfigurationTests
       observableConfiguration.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.UnexistingCategories.Add(new UnexistingCategory(){Path = string.Empty, Name = string.Empty});
+      observableConfiguration.UnexistingCategories.Add(new UnexistingCategory(){Name = string.Empty});
       
       // Assert
       Assert.EndsWith($"[{observableConfiguration.UnexistingCategories.Count - 1}]", propertyName);
@@ -71,7 +71,7 @@ public class ObservableConfigurationTests
       var wasPropertyChangedCalled = false;
       var observableConfiguration = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [new UnexistingCategory(){Path = string.Empty, Name = string.Empty}, new UnexistingCategory(){Path = string.Empty, Name = string.Empty}],
+          UnexistingCategories = [new UnexistingCategory(){ Name = string.Empty}, new UnexistingCategory(){Name = string.Empty}],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
           Theme = BaseTheme.Light,

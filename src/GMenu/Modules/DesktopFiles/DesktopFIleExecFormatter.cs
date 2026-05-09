@@ -64,11 +64,17 @@ public sealed partial class DesktopFilesExecFormatter : IDesktopFilesExecFormatt
         return args;
     }
 
-    public string EscapeForShSingleQuotes(string argument)
+    public string EscapeForShDoubleQuotes(string argument)
     {
         if (string.IsNullOrEmpty(argument))
-            return "''";
-        var escaped = argument.Replace("'", "'\\''");
+            return "\"\"";
+        
+        var escaped = argument
+            .Replace("\\", "\\\\")  
+            .Replace("\"", "\\\"")  
+            .Replace("$", "\\$")  
+            .Replace("`", "\\`");  
+
         return $"'{escaped}'";
     }
 

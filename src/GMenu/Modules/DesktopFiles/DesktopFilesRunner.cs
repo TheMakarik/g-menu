@@ -27,54 +27,66 @@ public sealed partial class DesktopFilesRunner(
                 return;
             }
 
+            if (requireSudo)
+                command = $"{Path.Join(Environment.CurrentDirectory, options.Linux.ShellScripts.ExecuteWithPolicyKit)} {formatter.EscapeForShDoubleQuotes(command)}";
+
             if (terminal)
             {
                 await terminalLauncher.LaunchTerminalAsync(command);
                 logger.Debug("Run in terminal with command: {command}", command);
                 return;
             }
-
-            if (requireSudo)
+            
+            var args = formatter.ParseCommandLine(command);
+            if (args.Count == 0)
             {
-                var finalCommand = $"{options.Linux.ShellScripts.ExecuteWithPolicyKit} {formatter.EscapeForShSingleQuotes(command)}";
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/sh",
-                    Arguments = $"-c {formatter.EscapeForShSingleQuotes(finalCommand)}",
-                    UseShellExecute = false
-                };
-                Process.Start(startInfo);
-                logger.Debug("Run with sudo via script: {finalCommand}", finalCommand);
+                logger.Error("Failed to parse command line: {command}", command);
+                return;
             }
-            else
-            {
-                var args = formatter.ParseCommandLine(command);
-                if (args.Count == 0)
-                {
-                    logger.Error("Failed to parse command line: {command}", command);
-                    return;
-                }
 
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = args[0],
-                    UseShellExecute = false,
-                    CreateNoWindow = false
-                };
-                foreach (var arg in args.Skip(1))
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = args[0],
+                UseShellExecute = false,
+                CreateNoWindow = false,
+            };
+            foreach (var arg in args.Skip(1))
                     startInfo.ArgumentList.Add(arg);
 
-                using var process = Process.Start(startInfo);
-                if (process is null)
-                    logger.Error("Failed to start process for {command}", command);
-                else
-                    logger.Debug("Run process with command: {command}", command);
-            }
+            Process.Start(startInfo);
+            logger.Debug("Run process with command: {command}", command);
         }
         catch (OperationCanceledException)
         {
             logger.Warning("Run app from desktop file {path} with sudo mode was cancel", header.Path);
         }
+    }
+
+    private void RedirectOutput(Process? process)
+    {
+        if (process is null)
+            return;
+
+        Task.Factory.StartNew(() =>
+        {
+            try
+            {
+                while (!process.StandardOutput.EndOfStream)
+                {
+                    var line = process.StandardOutput.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    logger.Debug("App ({ProcessProcessName}) output: {Line}", process.ProcessName, line);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error occurred");
+                throw;
+            }
+           
+        }, TaskCreationOptions.LongRunning);
     }
 
     private async Task<bool> ParseTerminalKeyAsync(string path)
@@ -84,7 +96,7 @@ public sealed partial class DesktopFilesRunner(
             var equalsIndex = line.AsSpan().IndexOf('=');
             if (equalsIndex == -1) continue;
             var key = line.AsSpan(0, equalsIndex);
-            if (!key.SequenceEqual(DesktopFile.TerminalKey.AsSpan())) continue;
+            if (!key.SequenceEqual(DesktopFileKeys.TerminalKey.AsSpan())) continue;
             var value = line.AsSpan(equalsIndex + 1);
             if (bool.TryParse(value, out var terminal))
                 return terminal;
