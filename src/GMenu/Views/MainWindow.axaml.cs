@@ -1,5 +1,3 @@
-using GMenu.Views.Utils;
-
 namespace GMenu.Views;
 
 
@@ -108,15 +106,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private void LoadInnerLoftContentForegroundUpdating(object sender, RoutedEventArgs e)
     {
-        var textBox = (TextBox)sender;
-        var materialUnderLine = (MaterialUnderline)textBox.GetTemplateDescendants().First(visual => visual is MaterialUnderline);
-        materialUnderLine.GetPropertyChangedObservable(MaterialUnderline.IsActiveProperty)
-            .Subscribe(args =>
-            {
-                var innerLeftContent = textBox.InnerLeftContent as TemplatedControl;
-                innerLeftContent?.Foreground = args.NewValue is true 
-                    ? materialUnderLine.ActiveBrush
-                    : materialUnderLine.IdleBrush;
-            });
+       UiUtils.BindInnerLeftContentForegroundToTextBoxMaterialUnderline((TextBox)sender);
+    }
+
+    private async void AddCategory(object? sender, RoutedEventArgs e)
+    {
+        await (new AddNewCategoryWindow().ShowDialog(this));
     }
 }

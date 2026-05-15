@@ -49,11 +49,12 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
                 Language = options.Localization.SupportedCultures.Contains(CultureInfo.CurrentCulture) 
                     ? CultureInfo.CurrentCulture 
                     : options.Localization.DefaultCulture,
-                UnexistingCategories = [],
+                CustomCategories = [],
                 AccentColor = null,
                 Theme = null,
                 LocalizeDesktopFiles = true,
                 Version = options.Core.Version,
+                ShowCannotLoadThemeFromDBusMessage =  true,
             };
 #pragma warning disable IL2026
 #pragma warning disable IL3050
@@ -85,6 +86,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
             {
                 try
                 {
+                    logger.Information("Configuration key ({key}) will be changed in {path}", args.PropertyName, _jsonPath);
                     await _channel.Writer.WriteAsync(args.PropertyName);
                 }
                 catch (Exception e)
@@ -92,10 +94,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
                     logger.Error(e, "Something go wrong during configuration update");
                     throw;
                 }
-
-                logger.Information("Configuration key ({key}) will be changed in {path}", args.PropertyName,
-                    StaticConfiguration.ConfigurationPath);
-
+                
             };
             _ = HandleJsonChangingAsync(_channel.Reader);
         });
@@ -108,13 +107,13 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
             await _semaphoreSlim.WaitAsync();
             try
             {
-                await using var json = File.Open(_jsonPath, FileMode.Open);
+                await using var json = File.Open(_jsonPath, FileMode.Truncate);
 #pragma warning disable IL2026
 #pragma warning disable IL3050
                 await JsonSerializer.SerializeAsync(json, _configuration, ObservableConfigurationSerializerContext.Default.Options);
 #pragma warning restore IL2026
 #pragma warning restore IL3050
-                logger.Debug("Configuration key ({key}) was fully changed in {path}", propertyName, StaticConfiguration.ConfigurationPath);
+                logger.Debug("Configuration key ({key}) was fully changed in {path}", propertyName, _jsonPath);
             }
             finally
             {

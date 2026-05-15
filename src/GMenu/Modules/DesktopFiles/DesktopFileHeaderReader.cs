@@ -85,7 +85,7 @@ public sealed class DesktopFileHeaderReader(
                         case DesktopFileKeys.NoDisplayKey:
                             if (bool.TryParse(value, out var isHidden))
                             {
-                                desktopFileHeader.IsHidden = isHidden;
+                                desktopFileHeader.NoDisplay = isHidden;
                                 wasFoundNoDisplay = true;
                             }
                             else

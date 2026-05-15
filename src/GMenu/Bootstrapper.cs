@@ -21,6 +21,7 @@ public sealed class Bootstrapper
                 outputTemplate: options!.Logging.OutputTemplate,
                 rollingInterval: Enum.Parse<RollingInterval>(options.Logging.RollingInterval),
                 path: Path.Join(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     options.Configuration.Directory, 
                     options.Logging.LogsDirectory, 
                     options.Logging.LogFileNamePrefix))
@@ -32,8 +33,7 @@ public sealed class Bootstrapper
         
         var services = new ServiceCollection();
 
-        
-        Log.Logger.Information("Configure services...");
+        Log.Logger.Information(".NET Version: {version}", Environment.Version.ToString());
         services
             .AddSingleton(options)
             .AddSingleton<IDesktopFileIconPathRefiner, DesktopFileIconPathRefiner>()
@@ -41,16 +41,20 @@ public sealed class Bootstrapper
             .AddSingleton<IDesktopFileHeaderReader, DesktopFileHeaderReader>()
             .AddSingleton<DesktopFilesTreeViewModel>()
             .AddSingleton<MainWindowViewModel>()
+            .AddTransient<AddNewCategoryWindowViewModel>()
             .AddTransient<InfoWindowViewModel>()
             .AddTransient<SelectFilesWindowViewModel>()
             .AddSingleton<IDesktopFilesHeaderSearcher, DesktopFileHeaderSearcher>()
             .AddSingleton<IDesktopFilesExecFormatter, DesktopFilesExecFormatter>()
+            .AddSingleton<ICustomUserCategoryManager, CustomUserCategoryManager>()
             .AddSingleton(Log.Logger)
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
             .AddSingleton<ILinuxTerminalLauncher, LinuxTerminalLauncher>()
             .AddSingleton<IDesktopFilesRunner, DesktopFilesRunner>()
             .AddScoped<ILinuxThemeLoader, LinuxThemeLoader>()
             .AddSingleton<ILocalizationProvider, JsonLocalizationProvider>();
+        
+        Log.Logger.Information("Configured {count} services", services.Count);
         
         return services.BuildServiceProvider();
         

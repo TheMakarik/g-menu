@@ -7,6 +7,7 @@ public sealed partial class DesktopFilesTreeViewModel(
     IDesktopFilesHeaderSearcher searcher,
     IDesktopFileIconPathRefiner iconPathRefiner,
     IDesktopFilesRunner desktopFilesRunner,
+    ICustomUserCategoryManager customUserCategoryManager,
     ILocalizationProvider localizationProvider)
     : ViewModelBase(localizationProvider)
 {
@@ -40,16 +41,16 @@ public sealed partial class DesktopFilesTreeViewModel(
             StaticConfiguration.PathsToRefineIcon);
         
         MessageBus.Current.SendMessage(new SetDesktopFilesCountMessage(){FilesCount = result.Count});
-        
+
         var groupedByCategory = result
             .Where(static header => !header.IsBroken)
-            .GroupBy(static header => string.IsNullOrEmpty(header.Category) ? StaticConfiguration.Uncategorized : header.Category)
-            .OrderBy(static group => group.Key)
+            .GroupBy(static header =>
+                string.IsNullOrEmpty(header.Category) ? StaticConfiguration.Uncategorized : header.Category)
             .Select(group => new TreeViewModelCategory(
                 new CategoryTreeViewInfo
                 {
-                    Path = group.First().Path,
                     Name = group.Key!,
+                    Icon = group.Key!,
                     Headers = group
                 },
                 desktopFilesRunner,
@@ -58,7 +59,18 @@ public sealed partial class DesktopFilesTreeViewModel(
                 LocalizationProvider)
             {
                 Parent = null
-            });
+            }).Union((customUserCategoryManager.GetAll() ?? []).Select(category => new TreeViewModelCategory(
+                new CategoryTreeViewInfo()
+                {
+                    Name = category.LocalizedName,
+                    Icon = category.IconKind ?? category.Name,
+                    Headers = null
+                },
+                desktopFilesRunner,
+                iconPathRefiner,
+                logger,
+                LocalizationProvider)))
+            .OrderBy(category => category.CategoryName);
         
         _children.Clear();
         _children.AddRange(groupedByCategory);
@@ -79,6 +91,36 @@ public sealed partial class DesktopFilesTreeViewModel(
         MessageBus.Current
             .Listen<GoUpInDesktopFilesViewMessage>()
             .Subscribe(async _ => await GoUpInTheDesktopFilesView.Handle(Unit.Default));
+
+        MessageBus.Current
+            .Listen<GetCategoriesListMessage>()
+            .Subscribe(message => message.SetCategoriesListAction(this.Children
+                .Cast<TreeViewModelCategory>()
+                .Select(category => category.CategoryName)
+                .ToList()));
+
+        MessageBus.Current
+            .Listen<AddCategoryMessage>()
+            .Subscribe(message =>
+            {
+                _children.Add(new TreeViewModelCategory(
+                    message.Category,
+                    desktopFilesRunner,
+                    iconPathRefiner,
+                    logger,
+                    LocalizationProvider));
+
+                _children = new ObservableCollection<TreeViewModelBase>(
+                    _children
+                         .Cast<TreeViewModelCategory>()
+                         .OrderBy(category => category.CategoryName));
+            });
+
+        MessageBus.Current.Listen<RemoveCategoryMessage>()
+            .Subscribe(message =>
+            {
+
+            });
 
         this.WhenPropertyChanged(static property => property.SearchText)
             .Subscribe(onNext =>

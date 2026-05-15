@@ -4,5 +4,5 @@ public interface IDesktopFilesExecFormatter
 {
     public string PrepareCommand(ReadOnlySpan<char> headerExec);
     public IReadOnlyList<string> ParseCommandLine(string commandLine);
-    public string EscapeForShDoubleQuotes(string argument);
+    public string EscapeForShSingleQuotes(string argument);
 }

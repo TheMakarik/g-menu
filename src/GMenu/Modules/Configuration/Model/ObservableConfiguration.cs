@@ -6,34 +6,8 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     private bool _isObserving = false;
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ObservableConfiguration()
-    {
-        var propertiesToRedirectEvents = this.GetType()
-            .GetProperties()
-            .Where(propertyInfo => propertyInfo.PropertyType == typeof(INotifyCollectionChanged))
-            .Select(propertyInfo => (INotifyCollectionChanged)propertyInfo.GetValue(this)!);
-
-        foreach (var propertyInfo in propertiesToRedirectEvents)
-            propertyInfo.CollectionChanged += (sender, args) =>
-            {
-                switch (args.Action)
-                {
-                    case NotifyCollectionChangedAction.Reset:
-                        OnPropertyChanged(sender!.GetType().Name);
-                        break;
-                    case NotifyCollectionChangedAction.Move:
-                        PropertyChanged?.Invoke(this, FormatEventArgs(sender, args.NewStartingIndex));
-                        PropertyChanged?.Invoke(this, FormatEventArgs(sender, args.OldStartingIndex));
-                        break;
-                    default:
-                        PropertyChanged?.Invoke(this, FormatEventArgs(sender, args.NewStartingIndex));
-                        break;
-                }
-            };
-    }
     
-    
-    public ObservableCollection<UnexistingCategory> UnexistingCategories
+    public ObservableCollection<CustomUserCategory>? CustomCategories
     {
         get;
         set => SetField(ref field, value);
@@ -74,7 +48,32 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
     
     public void BeginPropertyChangeRaising()
     {
-        _isObserving = true; 
+        _isObserving = true;
+
+        var propertiesToRedirectEvents = this.GetType()
+            .GetProperties()
+            .Select(property => new { PropertyInfo = property, Value = property.GetValue(this) })
+            .Where(property => property.Value is INotifyCollectionChanged)
+            .Select(property => (INotifyCollectionChanged?)property.Value);
+        
+        foreach (var property in propertiesToRedirectEvents)
+            property?.CollectionChanged += (sender, args) =>
+            {
+                if (!_isObserving)
+                    return;
+                switch (args.Action)
+                {
+                    case NotifyCollectionChangedAction.Reset:
+                        OnPropertyChanged(sender!.GetType().Name);
+                        break;
+                    case NotifyCollectionChangedAction.Move:
+                        PropertyChanged?.Invoke(this, FormatEventArgs(sender, $"{args.OldStartingIndex}...{args.NewStartingIndex}"));
+                        break;
+                    default:
+                        PropertyChanged?.Invoke(this, FormatEventArgs(sender, args.NewStartingIndex.ToString()));
+                        break;
+                }
+            };
     }
     
 
@@ -83,17 +82,16 @@ public sealed class ObservableConfiguration : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    private bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    private void SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
         if (EqualityComparer<T>.Default.Equals(field, value)) 
-            return false;
+            return;
         field = value;
         if(_isObserving)
               OnPropertyChanged(propertyName);
-        return true;
     }
     
-    private PropertyChangedEventArgs FormatEventArgs(object? sender, int index)
+    private PropertyChangedEventArgs FormatEventArgs(object? sender, string index)
     {
         ArgumentNullException.ThrowIfNull(sender);
         return new PropertyChangedEventArgs($"{sender!.GetType().Name}[{index}]");

@@ -18,6 +18,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(ILogger logger,
         ILocalizationProvider localizationProvider,
+        IConfigurationProvider configurationProvider,
         GMenuOptions options) : base(localizationProvider)
     {
         _logger = logger;
@@ -54,6 +55,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
                 await ShowInTextEditor.Handle(message.Path);
             });
         
+
     }
 
     [ReactiveCommand]
@@ -88,9 +90,12 @@ public sealed partial class MainWindowViewModel : ViewModelBase
 
     private async Task ExecuteRemovingAsync(TreeViewModelBase? selectedItem)
     {
-        var result = await (_selectedItem is TreeViewModelDesktopFile
+        var ensureDelete = await (_selectedItem is TreeViewModelDesktopFile
             ? EnsureFileDeleteAction.Handle(Unit.Default) 
             : EnsureCategoryDeleteAction.Handle(Unit.Default));
 
+        if(ensureDelete)
+            if(selectedItem is TreeViewModelCategory category)
+                MessageBus.Current.SendMessage(new RemoveCategoryMessage{Category = category});
     }
 }

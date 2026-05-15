@@ -48,7 +48,7 @@
                         Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
                 </MenuItem>
                 <MenuItem Header="{Binding LocalizationProvider[Help]}">
-                    <MenuItem Header="{Binding LocalizationProvider[AboutDesktopFiles]}" Icon="{icons:MaterialIconExt Kind=DesktopClassic}" />
+                    <MenuItem Header="{Binding LocalizationProvider[AboutDesktopFiles]}" Icon="{icons:MaterialIconExt Kind=Arch}" />
                     <MenuItem
                         Click="OpenInfo"
                         Header="{Binding LocalizationProvider[AboutApp]}"
@@ -109,17 +109,32 @@
                     <Button
                         Classes="outline"
                         Command="{Binding RemoveSelectedCommand}"
-                        Content="{icons:MaterialIconExt Kind=DeleteForever}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=CategoryPlus}" />
-                    <Button Classes="outline" Content="{icons:MaterialIconExt Kind=FilePlus}" />
+                        Content="{icons:MaterialIconExt Kind=DeleteForever}"
+                        HotKey="Delete"
+                        ToolTip.Tip="{Binding LocalizationProvider[RemoveTip]}" />
+                    <Button
+                        Classes="outline"
+                        Click="AddCategory"
+                        Content="{icons:MaterialIconExt Kind=CategoryPlus}"
+                        HotKey="Ctrl+a+c"
+                        ToolTip.Tip="{Binding LocalizationProvider[AddCategoryTip]}" />
+                    <Button
+                        Classes="outline"
+                        Content="{icons:MaterialIconExt Kind=FilePlus}"
+                        HotKey="Ctrl+a+e"
+                        ToolTip.Tip="{Binding LocalizationProvider[AddFileTip]}" />
                     <Button
                         Classes="outline"
                         Command="{Binding SendGoUpInDesktopFilesViewMessageCommand}"
-                        Content="{icons:MaterialIconExt Kind=ArrowUpBold}" />
+                        Content="{icons:MaterialIconExt Kind=ArrowUpBold}"
+                        HotKey="Up"
+                        ToolTip.Tip="{Binding LocalizationProvider[GoToUp]}" />
                     <Button
                         Classes="outline"
                         Command="{Binding SendGoDownInDesktopFilesViewMessageCommand}"
-                        Content="{icons:MaterialIconExt Kind=ArrowDownBold}" />
+                        Content="{icons:MaterialIconExt Kind=ArrowDownBold}"
+                        HotKey="Down"
+                        ToolTip.Tip="{Binding LocalizationProvider[GoToDown]}" />
                 </StackPanel>
 
 

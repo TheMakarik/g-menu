@@ -53,7 +53,7 @@ public partial class App : Application
 
     private async Task LoadMaterialThemeAsync(IServiceProvider provider)
     {
-        using var scope = provider.CreateScope();
+        await using var scope = provider.CreateAsyncScope();
     
         var themeLoader = scope.ServiceProvider.GetRequiredService<ILinuxThemeLoader>();
         var rgb = await themeLoader.GetThemeHexAsync();
@@ -61,6 +61,7 @@ public partial class App : Application
         if (rgb is null)
         {
             provider.GetRequiredService<ILogger>().Warning("Could not load theme from d-bus, so use default color theme or user-configured theme");
+            MessageBoxUtil.ShowCannotLoadThemeMessageLazy(((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime!).MainWindow);
             return;
         }
         
@@ -76,7 +77,8 @@ public partial class App : Application
         });
 
     }
-    
+
+  
     private void LoadLocalization(IServiceProvider provider)
     {
        var localizationProvider = provider.GetRequiredService<ILocalizationProvider>();

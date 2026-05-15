@@ -1,6 +1,6 @@
 ﻿namespace GMenu.ViewModels;
 
-public abstract  partial class ViewModelBase(ILocalizationProvider localizationProvider) : ReactiveObject
+public abstract  partial class ViewModelBase(ILocalizationProvider localizationProvider) : ReactiveValidationObject
 {
 
     [Reactive] private ILocalizationProvider _localizationProvider  = localizationProvider;

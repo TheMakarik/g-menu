@@ -11,24 +11,24 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() 
+      var systemUnderTests = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [],
+          CustomCategories = [],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
           Theme = BaseTheme.Light,
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           wasPropertyChangedCalled = true; 
       };
       
-      observableConfiguration.BeginPropertyChangeRaising();
+      systemUnderTests.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.UnexistingCategories = [new UnexistingCategory(){Name = string.Empty}];
+      systemUnderTests.CustomCategories = [new CustomUserCategory(){Name = string.Empty, LocalizedName = string.Empty}];
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -39,9 +39,9 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var propertyName = string.Empty;
-      var observableConfiguration = new ObservableConfiguration
+      var systemUnderTests = new ObservableConfiguration
       {
-          UnexistingCategories =
+          CustomCategories =
           [
           ],
           Language = System.Globalization.CultureInfo.CurrentCulture,
@@ -50,18 +50,18 @@ public class ObservableConfigurationTests
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           propertyName = args.PropertyName; 
       };
       
-      observableConfiguration.BeginPropertyChangeRaising();
+      systemUnderTests.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.UnexistingCategories.Add(new UnexistingCategory(){Name = string.Empty});
+      systemUnderTests.CustomCategories.Add(new CustomUserCategory(){Name = string.Empty, LocalizedName = string.Empty});
       
       // Assert
-      Assert.EndsWith($"[{observableConfiguration.UnexistingCategories.Count - 1}]", propertyName);
+      Assert.EndsWith($"[{systemUnderTests.CustomCategories.Count - 1}]", propertyName);
    }
    
    [Fact]
@@ -69,24 +69,24 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() 
+      var systemUnderTests = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [new UnexistingCategory(){ Name = string.Empty}, new UnexistingCategory(){Name = string.Empty}],
+          CustomCategories = [new CustomUserCategory(){Name = string.Empty, LocalizedName = string.Empty}, new CustomUserCategory(){Name = string.Empty, LocalizedName = string.Empty}],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           AccentColor = "#FFFFFF",
           Theme = BaseTheme.Light,
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           wasPropertyChangedCalled = true;
       };
       
-      observableConfiguration.BeginPropertyChangeRaising();
+      systemUnderTests.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.UnexistingCategories.Clear();
+      systemUnderTests.CustomCategories.Clear();
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -97,24 +97,24 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() 
+      var systemUnderTests = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [],
+          CustomCategories = [],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           LocalizeDesktopFiles = false,
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           if (args.PropertyName == nameof(ObservableConfiguration.LocalizeDesktopFiles))
               wasPropertyChangedCalled = true;
       };
       
-      observableConfiguration.BeginPropertyChangeRaising();
+      systemUnderTests.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.LocalizeDesktopFiles = true;
+      systemUnderTests.LocalizeDesktopFiles = true;
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -125,23 +125,23 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() 
+      var systemUnderTests = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [],
+          CustomCategories = [],
           Language = null!,
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           if (args.PropertyName == nameof(ObservableConfiguration.Language))
               wasPropertyChangedCalled = true;
       };
       
-      observableConfiguration.BeginPropertyChangeRaising();
+      systemUnderTests.BeginPropertyChangeRaising();
       
       // Act
-      observableConfiguration.Language = new System.Globalization.CultureInfo("ru-RU");
+      systemUnderTests.Language = new System.Globalization.CultureInfo("ru-RU");
       
       // Assert
       Assert.True(wasPropertyChangedCalled);
@@ -152,20 +152,20 @@ public class ObservableConfigurationTests
    {
       // Arrange
       var wasPropertyChangedCalled = false;
-      var observableConfiguration = new ObservableConfiguration() 
+      var systemUnderTests = new ObservableConfiguration() 
       { 
-          UnexistingCategories = [],
+          CustomCategories = [],
           Language = System.Globalization.CultureInfo.CurrentCulture,
           Version = null!
       };
       
-      observableConfiguration.PropertyChanged += (sender, args) => 
+      systemUnderTests.PropertyChanged += (sender, args) => 
       { 
           wasPropertyChangedCalled = true; 
       };
       
       // Act
-      observableConfiguration.Language = new System.Globalization.CultureInfo("ru-RU");
+      systemUnderTests.Language = new System.Globalization.CultureInfo("ru-RU");
       
       // Assert
       Assert.False(wasPropertyChangedCalled);

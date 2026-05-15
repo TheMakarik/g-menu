@@ -28,7 +28,7 @@ public sealed partial class DesktopFilesRunner(
             }
 
             if (requireSudo)
-                command = $"{Path.Join(Environment.CurrentDirectory, options.Linux.ShellScripts.ExecuteWithPolicyKit)} {formatter.EscapeForShDoubleQuotes(command)}";
+                command = $"{Path.Join(Environment.CurrentDirectory, options.Linux.ShellScripts.ExecuteWithPolicyKit)} {formatter.EscapeForShSingleQuotes(command)}";
 
             if (terminal)
             {

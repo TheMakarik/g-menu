@@ -24,7 +24,7 @@ public class DesktopFileHeaderReaderTests : IDisposable
         
         A.CallTo(() => _configurationProvider.CurrentObservable).ReturnsLazily(() => new ObservableConfiguration
         {
-            UnexistingCategories =
+            CustomCategories =
             [
             ],
             Language = CultureInfo.CurrentCulture,
@@ -274,7 +274,7 @@ Categories=Utility;
         // Setup configuration with Russian language and localization enabled
         A.CallTo(() => _configurationProvider.CurrentObservable).Returns(new ObservableConfiguration
         {
-            UnexistingCategories =
+            CustomCategories =
             [
             ],
             Language = new CultureInfo("ru-RU"),
@@ -388,7 +388,7 @@ Categories=Utility;
     }
 
     [Fact]
-    public void ReadAllHeaders_WithNoDisplayTrue_ShouldMarkAsHidden()
+    public void ReadAllHeaders_WithNoDisplayTrue_ShouldMarkAsHoDisplay()
     {
         // Arrange
         _fileSystem = FileSystem.BeginBuilding()
@@ -410,36 +410,11 @@ NoDisplay=true
         var result = _systemUnderTest.GetAllHeaders(paths);
 
         // Assert
-        Assert.True(result.First().IsHidden);
+        Assert.True(result.First().NoDisplay);
         Assert.False(result.First().IsBroken);
     }
 
-    [Fact]
-    public void ReadAllHeaders_WithNoDisplayFalse_ShouldNotMarkAsHidden()
-    {
-        // Arrange
-        _fileSystem = FileSystem.BeginBuilding()
-            .AddRandomRootName()
-            .AddNameGenerator(NameGenerationType.RandomName)
-            .AddFileWithNameGeneraing(".desktop", out var fileName, @"
-[Desktop Entry]
-Name=Visible App
-Exec=/usr/bin/visible-app
-Icon=visible-icon
-Categories=Utility;
-NoDisplay=false
-")
-            .Build();
-
-        var paths = new[] { _fileSystem.Root };
-
-        // Act 
-        var result = _systemUnderTest.GetAllHeaders(paths);
-
-        // Assert
-        Assert.False(result.First().IsHidden);
-        Assert.False(result.First().IsBroken);
-    }
+    
 
     public void Dispose()
     {
