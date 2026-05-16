@@ -10,4 +10,5 @@ public static class StringExtensions
             or '$' or '%' or '^' or '&' or '*' or '(' or ')' or '-' or '_' or '+' or '=' or '[' or ']' or '{' or '}'
             or ';' or ':' or '\'' or '"' or ',' or '.' or '<' or '>' or '/' or '?' or '|' or '`' or '~' or ' ');
     }
+    
 }

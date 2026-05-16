@@ -34,13 +34,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase
             .Subscribe(message =>
             {
                 _selectedItem = message.SelectedItem;
-                logger.Information("Selected item: {CategoryCategoryName}", 
-                    _selectedItem is TreeViewModelCategory category 
-                        ? $"Category: {category.CategoryName}"
-                        : _selectedItem is TreeViewModelDesktopFile file 
-                                  ? $"File: {file.FilePath}"
-                                  : "Unknown"
-                    );
+
+                switch (_selectedItem)
+                {
+                    case TreeViewModelDesktopFile desktopFile:
+                        MessageBus.Current.SendMessage(new SetDesktopFileToEditMessage(){Path = desktopFile.FilePath});
+                        logger.Information("Select file: {path}", desktopFile.FilePath);
+                        break;
+                    case TreeViewModelCategory category:
+                        logger.Information("Select category: {name}", category.CategoryName);
+                        break;
+                }
             });
         
         MessageBus.Current

@@ -16,7 +16,10 @@
     xmlns:vm="using:GMenu.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Disabled"
+        Theme="{StaticResource MaterialModernScrollViewer}"
+        VerticalScrollBarVisibility="Auto">
 
         <Panel>
             <TreeView

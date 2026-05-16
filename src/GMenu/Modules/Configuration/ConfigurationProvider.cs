@@ -6,7 +6,7 @@ public class ConfigurationProvider(ILogger logger, GMenuOptions options) : IConf
     private Channel<string?>? _channel;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private readonly string _jsonPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), options.Configuration.Directory, options.Configuration.ConfigFileName);
-
+    
     public  ObservableConfiguration CurrentObservable => _configuration ?? throw new InvalidOperationException("Configuration not initialized");
 
     public async Task EnsureExistsAsync()

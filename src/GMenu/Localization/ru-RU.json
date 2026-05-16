@@ -115,5 +115,21 @@
   "RemoveTip": "Удалить (Delete)",
   "AddFileTip":"Добавить элемент меню (Ctrl+a+e)",
   "GoToUp": "Передвинуть вверх (ArrowUp)",
-  "GoToDown": "Передвинуть вниз (ArrowDown)"
+  "GoToDown": "Передвинуть вниз (ArrowDown)",
+  "AboutCategories": "Categories - список категорий через точку с запятой (например 'Development;IDE;'). Определяет разделы меню где будет отображаться приложение",
+  "AboutGenericName": "GenericName - обобщенное название типа приложения через точку с запятой (TextEditor;IDE)",
+  "AboutDBusActivatable": "DBusActivatable - если true, приложение запускается через D-Bus активацию, а поле Exec игнорируется",
+  "AboutStartupNotify": "StartupNotify - если true, рабочий стол показывает курсор ожидания во время запуска приложения",
+  "AboutStartupWmClass": "StartupWMClass - значение WM_CLASS окна приложения для правильной группировки на панели задач",
+  "AboutMimeTypes": "MimeType - список MIME-типов через точку с запятой, которые может открывать приложение (например 'text/plain;image/png;')",
+  "AboutSingleMainWindow": "SingleMainWindow - если true, приложение поддерживает только одно главное окно и не открывает новые экземпляры",
+  "AboutImplements": "Implements - список D-Bus интерфейсов через точку с запятой, которые реализует приложение",
+  "AboutTryExec": "TryExec - путь к исполняемому файлу для проверки. Если файл не существует, .desktop запись игнорируется",
+  "AboutXGnomeAutoRestart": "X-GNOME-AutoRestart - если true, приложение будет автоматически перезапущено при аварийном завершении GNOME",
+  "AboutXGnomeUsesNotifications": "X-GNOME-UsesNotifications - если true, приложение использует систему уведомлений GNOME",
+  "AboutOnlyShowIn": "OnlyShowIn - список окружений через точку с запятой, где показывать приложение (например 'GNOME;Unity;')",
+  "AboutNotShowIn": "NotShowIn - список окружений через точку с запятой, где НЕ показывать приложение",
+  "AboutHidden": "Hidden - если true, файл игнорируется полностью (как будто его не существует). Отличается от NoDisplay тем что отключает и MIME-ассоциации",
+  "AboutVersion": "Version - версия спецификации .desktop файла (1.0, 1.1, 1.2, 1.3, 1.4 или 1.5)",
+  "AboutWorkingDirectory": "Directory - рабочий каталог. Если указан, приложение будет запущено из этой директории"
 }

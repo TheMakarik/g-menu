@@ -113,8 +113,7 @@ public sealed class DesktopFileEntityReader(
                         desktopFile.GenericName = value.ToString().Replace("\\n", " ");
                     break;
                 case DesktopFileKeys.KeywordsKey:
-                    if (desktopFile.Keywords is null)
-                        desktopFile.Keywords = value.ToString();
+                    desktopFile.Keywords ??= value.ToString();
                     break;
                 case DesktopFileKeys.VersionKey:
                     desktopFile.Version = value.ToString();
@@ -128,10 +127,10 @@ public sealed class DesktopFileEntityReader(
                         desktopFile.StartupNotify = startupNotify;
                     break;
                 case DesktopFileKeys.StartupWmClassKey:
-                    desktopFile.StartupWMClass = value.ToString();
+                    desktopFile.StartupWmClass = value.ToString();
                     break;
                 case DesktopFileKeys.MimeTypeKey:
-                    desktopFile.MimeType = value.ToString();
+                    desktopFile.MimeTypes = value.ToString();
                     break;
                 case DesktopFileKeys.SingleMainWindowKey:
                     if (bool.TryParse(value, out var singleMainWindow))
@@ -169,6 +168,13 @@ public sealed class DesktopFileEntityReader(
         if (desktopFile.Exec is null)
             desktopFile.IsBroken = true;
 
+        logger.Information("Read desktop file entity: {entity}", 
+#pragma warning disable IL2026
+#pragma warning disable IL3050
+            JsonSerializer.Serialize(desktopFile, DesktopFileSerializerContext.Default.Options)
+#pragma warning restore IL2026
+#pragma warning restore IL3050
+            );
         return desktopFile;
     }
 

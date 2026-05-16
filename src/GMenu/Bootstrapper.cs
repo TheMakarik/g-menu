@@ -51,6 +51,8 @@ public sealed class Bootstrapper
             .AddSingleton<IConfigurationProvider, ConfigurationProvider>()
             .AddSingleton<ILinuxTerminalLauncher, LinuxTerminalLauncher>()
             .AddSingleton<IDesktopFilesRunner, DesktopFilesRunner>()
+            .AddSingleton<EditDesktopFilesViewModel>()
+            .AddSingleton<IDesktopFileEntityReader, DesktopFileEntityReader>()
             .AddScoped<ILinuxThemeLoader, LinuxThemeLoader>()
             .AddSingleton<ILocalizationProvider, JsonLocalizationProvider>();
         

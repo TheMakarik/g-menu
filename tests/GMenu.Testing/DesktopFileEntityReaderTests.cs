@@ -200,7 +200,7 @@ Path=/home/user/work
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("MyApp", result.StartupWMClass);
+        Assert.Equal("MyApp", result.StartupWmClass);
         Assert.Equal("text/plain;image/png;", result.MimeType);
         Assert.Equal("org.freedesktop.FileManager1", result.Implements);
         Assert.Equal("/usr/bin/check", result.TryExec);
